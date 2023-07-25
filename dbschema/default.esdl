@@ -1,0 +1,70 @@
+module default {
+    scalar type Gender extending enum<Male, Female>;
+    scalar type Days extending enum<Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday>;
+    type User{
+        required name: str;
+        required national_id: str;
+        required email: str{
+            constraint exclusive;
+        };
+        required gender: Gender;
+        required date_of_birth: datetime;
+        required password: str
+    }
+    type CasualEvent{
+        required title: str;
+        required organizer_name: str;
+        required organizer_email: str;
+        required maximum_capacity: int64;
+        required location: str;
+        required start_date: datetime;
+        required end_date: datetime;
+        tags: array<str>;
+        required current_capacity: int64
+    }
+    type CasualTicket{
+        required reserver_name: str;
+        required reserver_email: str;
+        required casual_event: CasualEvent{
+            on target delete delete source;
+        }
+    }
+    type Availability {
+        required day: Days;
+        required start_time: cal::local_time;
+        required end_time: cal::local_time;
+    }
+    type Business{
+        required name: str;
+        required email: str{
+            constraint exclusive;
+        };
+        required password: str;
+        required description: str;
+        multi availability_slots: Availability
+    }
+    type Appointments{
+        required customer: User;
+        required business: Business;
+        required appointment_slot: Availability
+    }
+    type QueueEvent{
+        required title: str;
+        required organizer_name: str;
+        required organizer_email: str;
+        required maximum_capacity: int64;
+        required location: str;
+        required start_date: datetime;
+        required end_date: datetime;
+        tags: array<str>;
+        required current_capacity: int64
+    }
+    type QueueTicket{
+        required customer_name: str;
+        required customer_email: str;
+        required queue_event: QueueEvent{
+            on target delete delete source;
+        }
+        required queue_number: int64
+    }
+}
