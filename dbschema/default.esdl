@@ -3,7 +3,7 @@ module default {
     scalar type Days extending enum<Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday>;
     type User{
         required name: str;
-        required national_id: str;
+        required phone_number: str;
         required email: str{
             constraint exclusive;
         };
@@ -43,10 +43,10 @@ module default {
         required description: str;
         multi availability_slots: Availability
     }
-    type Appointments{
+    type Appointment{
         required customer: User;
         required business: Business;
-        required appointment_slot: Availability
+        required appointment_slot: datetime
     }
     type QueueEvent{
         required title: str;
@@ -62,6 +62,7 @@ module default {
     type QueueTicket{
         required customer_name: str;
         required customer_email: str;
+        required customer_phone_number: str;
         required queue_event: QueueEvent{
             on target delete delete source;
         }
