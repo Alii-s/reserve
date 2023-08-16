@@ -1,0 +1,23 @@
+﻿.nav-title {
+    color: #06adef !important;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.navbar-bg {
+    background-color: #e5f5fe !important;
+}
+
+.reserve-red-button-link {
+    color: #ffffff !important;
+    background-color: #ff3259;
+    font-size: 1.1rem;
+    border-radius: 40px;
+}
+
+.reserve-blue-button-link:hover {
+    color: #ffffff !important;
+    background-color: #06adef;
+    font-size: 1.1rem;
+    border-radius: 40px;
+}
