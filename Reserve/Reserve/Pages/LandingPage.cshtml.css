@@ -30,14 +30,3 @@
         margin: 10px auto;
     }
 }
-
-@media (max-width: 1000px) {
-    .main-content {
-        padding: 50px;
-    }
-
-    .btn-custom {
-        display: block;
-        margin: 10px auto;
-    }
-}
