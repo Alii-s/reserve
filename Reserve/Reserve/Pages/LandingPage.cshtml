@@ -1,0 +1,65 @@
+﻿@page
+@model LandingPageModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Landing Page</title>
+    <style>
+        body {
+            background-image: url('https://source.unsplash.com/bwOAixLG0uc');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .main-content {
+            text-align: center;
+            padding: 100px;
+        }
+
+        .highlight {
+            color: #06adef;
+        }
+
+        .btn-custom {
+            background-color: #06adef;
+            color: white;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <h1>Secure Your Appointments and Reservations<br /><span class="highlight">with Our Online Reservation System</span></h1>
+        <p>
+            Simplify the reservation process for any event. Our online booking system provides a convenient and efficient way to schedule your appointments and reservations.
+            Don't want to sign up? You can easily reserve and create an event with a few clicks without signing up!
+            Suitable for creating quick events for groups of friends without too much hassle. Suitable for businesses that want the traditional appointments model.
+        </p>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-md-4">
+                <h3 class="highlight">Create Event</h3>
+                <p>Create an Event now with a few clicks without any hassle or signing up. You can view a list of people who reserved and end reservations early or edit event information.</p>
+            </div>
+            <div class="col-md-4">
+                <h3 class="highlight">Create Queue</h3>
+                <p>Create a queue line in one step and people can queue up with the link. You can also reset the queue or mark people as served.</p>
+            </div>
+            <div class="col-md-4">
+                <h3 class="highlight">Create Appointment</h3>
+                <p>Suitable for any type of user whether you are an organization who wants to let customers know its appointment slots or someone who wants to create a calendar that shows their free time for other people.</p>
+            </div>
+        </div>
+        <div class="mt-5">
+            <a href="#" class="btn btn-custom">Create an Event!</a>
+            <a href="#" class="btn btn-custom mx-3">Create a Queue!</a>
+            <a href="#" class="btn btn-custom">Create an Appointment!</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Reserve.Pages.Shared
+namespace Reserve.Pages
 {
     public class LandingPageModel : PageModel
     {
