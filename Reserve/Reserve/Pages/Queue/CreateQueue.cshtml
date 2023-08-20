@@ -1,0 +1,27 @@
+﻿@page
+@model Reserve.Pages.Queue.CreateQueueModel
+
+<div class="container mt-5">
+    <div class="card border rounded">
+        <div class="card-body">
+            <h1 class="card-title text-center">Create Queue</h1>
+            <form method="post">
+                <div class="mb-3">
+                    <label for="QueueName" class="form-label">Queue Name</label>
+                    <input type="text" class="form-control" asp-for="NewQueue.Title" name="QueueName" placeholder="Enter Queue Name" />
+                </div>
+                <div class="mb-3">
+                    <label for="EmailAddress" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" asp-for="NewQueue.OrganizerEmail" name="EmailAddress" placeholder="Enter Email Address" />
+                </div>
+                <div class="mb-3">
+                    <label for="Description" class="form-label">Description</label>
+                    <textarea class="form-control" asp-for="NewQueue.Description" name="Description" placeholder="Enter Description"></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="reserve-blue-button btn btn-custom btn-lg">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

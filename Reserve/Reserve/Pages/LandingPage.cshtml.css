@@ -20,6 +20,18 @@
     border-radius: 30px;
 }
 
+.reserve-blue-button {
+    color: #ffffff !important;
+    background-color: #06adef;
+    font-size: 0.9rem;
+    border-radius: 40px;
+    font-family: 'Source Sans 3', sans-serif;
+}
+
+    .reserve-blue-button:hover {
+        background-color: #20a3d7;
+    }
+
 @media (max-width: 1000px) {
     .main-content {
         padding: 50px;
