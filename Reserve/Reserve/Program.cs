@@ -1,4 +1,6 @@
 using EdgeDB;
+using Reserve.Repositories;
+using Reserve.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +10,7 @@ builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("reserve"), config 
 {
     config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
 });
-
+builder.Services.AddScoped<IEventRepository, EventRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

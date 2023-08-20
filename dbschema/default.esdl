@@ -9,18 +9,19 @@ module default {
         };
         required gender: Gender;
         required date_of_birth: datetime;
-        required password: str
+        required password: str;
     }
     type CasualEvent{
         required title: str;
         required organizer_name: str;
         required organizer_email: str;
-        required maximum_capacity: int64;
+        required maximum_capacity: int32;
         required location: str;
+        required description: str;
         required start_date: datetime;
         required end_date: datetime;
         tags: array<str>;
-        required current_capacity: int64
+        required current_capacity: int32;
     }
     type CasualTicket{
         required reserver_name: str;
@@ -46,18 +47,18 @@ module default {
     type Appointment{
         required customer: User;
         required business: Business;
-        required appointment_slot: datetime
+        required appointment_slot: datetime;
     }
     type QueueEvent{
         required title: str;
         required organizer_name: str;
         required organizer_email: str;
-        required maximum_capacity: int64;
+        required maximum_capacity: int32;
         required location: str;
         required start_date: datetime;
         required end_date: datetime;
         tags: array<str>;
-        required current_capacity: int64
+        required current_capacity: int32;
     }
     type QueueTicket{
         required customer_name: str;
@@ -66,6 +67,6 @@ module default {
         required queue_event: QueueEvent{
             on target delete delete source;
         }
-        required queue_number: int64
+        required queue_number: int32;
     }
 }

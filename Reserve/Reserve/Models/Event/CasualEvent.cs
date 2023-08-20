@@ -8,10 +8,13 @@ public class CasualEvent
     [Required]
     public string Title { get; set; }
     [Required]
+    [Display(Name = "Organizer Name")]
     public string OrganizerName { get; set; }
     [Required]
+    [Display(Name = "Organizer Email")]
     public string OrganizerEmail { get; set; }
     [Required]
+    [Display(Name = "Maximum Capacity")]
     public int MaximumCapacity { get; set; }
     [Required]
     public string Location { get; set; }
@@ -20,7 +23,9 @@ public class CasualEvent
     [Required]
     public DateTime EndDate { get; set; }
     [Required]
-    public List<string> Tags { get; set; }
+    public string[] Tags { get; set; }
     [Required]
     public int CurrentCapacity { get; set; }
+    [Required]
+    public string Description { get; set; }
 }
