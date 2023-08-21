@@ -8,8 +8,15 @@
 <head>
     <title>Home Page</title>
     <link rel="stylesheet" href="/LandingPage.cshtml.css" />
+    <style>
+        .body-image {
+            background-size: cover !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+        }
+    </style>
 </head>
-<body>
+<body class="body-image" background="\images\background.jpg">
     <div class="main-content">
         <h1>Secure Your Appointments and Reservations<br /><span class="highlight">with Our Online Reservation System</span></h1>
         <p>
@@ -34,9 +41,9 @@
             </div>
         </div>
         <div class="mt-5">
-            <a href="/Event/CreateEvent" class="btn btn-custom">Create an Event!</a>
-            <a href="#" class="btn btn-custom mx-3">Create a Queue!</a>
-            <a href="#" class="btn btn-custom">Create an Appointment!</a>
+            <a href="/Event/CreateEvent" class="btn btn-custom reserve-blue-button">Create an Event!</a>
+            <a href="#" class="btn btn-custom reserve-blue-button mx-3">Create a Queue!</a>
+            <a href="#" class="btn btn-custom reserve-blue-button">Create an Appointment!</a>
         </div>
     </div>
 </body>

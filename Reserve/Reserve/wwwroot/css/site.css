@@ -35,6 +35,18 @@ body {
     background-color: #20a3d7;
 }
 
+.reserve-red-button {
+    color: #ffffff !important;
+    background-color: #ff3259;
+    font-size: 0.9rem;
+    border-radius: 40px;
+    font-family: 'Source Sans 3', sans-serif;
+}
+
+.reserve-red-button:hover {
+    background-color: #fa1414;
+}
+
 .body-font{
     font-family: 'Mulish', sans-serif;
 }
@@ -44,3 +56,24 @@ body {
     font: 700;
 }
 
+.notification-title{
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1.5rem;
+    display:flex;
+    justify-content: center;
+}
+
+.notification-text {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1.2rem;
+}
+
+.notification-border {
+    border: 1px solid #d7dfef;
+    border-radius: 30px;
+    padding-left: 10px!important;
+    padding-right: 10px!important;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    width:60%;
+}

@@ -12,10 +12,25 @@ public class EventRepository : IEventRepository
         _client = client;     
     }
 
-    public async Task Create(CasualEvent newEvent)
+    public async Task<CasualEvent> Create(CasualEvent newEvent)
     {
-        var query = "INSERT CasualEvent {title:= <str>$title, organizer_name:= <str>$organizer_name, organizer_email:= <str>$organizer_email, maximum_capacity:= <int32>$maximum_capacity, location:= <str>$location, start_date:=<datetime>$start_date, end_date:=<datetime>$end_date, tags:= <array<str>>$tags, current_capacity:= <int32>$current_capacity, description:= <str>$description}";
-        await _client.ExecuteAsync(query, new Dictionary<string, object?>
+        var query = @"With Inserted := (
+                        INSERT CasualEvent {
+                            title:= <str>$title,
+                            organizer_name:= <str>$organizer_name,
+                            organizer_email:= <str>$organizer_email,
+                            maximum_capacity:= <int32>$maximum_capacity,
+                            location:= <str>$location,
+                            start_date:=<datetime>$start_date,
+                            end_date:=<datetime>$end_date,
+                            tags:= <array<str>>$tags,
+                            current_capacity:= <int32>$current_capacity,
+                            description:= <str>$description,
+                            image_url:=<str>$image_url
+                        }
+                    )
+                    Select Inserted{*};";
+        var result = await _client.QuerySingleAsync<CasualEvent>(query, new Dictionary<string, object?>
         {
             {"title", newEvent.Title },
             {"organizer_name", newEvent.OrganizerName },
@@ -26,7 +41,20 @@ public class EventRepository : IEventRepository
             {"end_date", newEvent.EndDate },
             {"tags", newEvent.Tags },
             {"current_capacity", newEvent.CurrentCapacity },
-            {"description", newEvent.Description }
+            {"description", newEvent.Description },
+            {"image_url", newEvent.ImageUrl }
         });
+        return result;
+    }
+
+    public async Task<CasualEvent?> GetById(string id)
+    {
+        Guid guidId = Guid.Parse(id);
+        var query = @"SELECT CasualEvent {*} FILTER .id = <uuid>$id;";
+        var result = await _client.QuerySingleAsync<CasualEvent>(query, new Dictionary<string, object?>
+        {
+            {"id", guidId }
+        });
+        return result;
     }
 }
