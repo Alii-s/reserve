@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace Reserve.Models.Event;
 
@@ -28,4 +29,6 @@ public class CasualEvent
     public int CurrentCapacity { get; set; }
     [Required]
     public string Description { get; set; }
+    [ValidateNever]
+    public string ImageUrl { get; set; }
 }

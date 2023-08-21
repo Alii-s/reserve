@@ -4,5 +4,6 @@ namespace Reserve.Repositories;
 
 public interface IEventRepository
 {
-    Task Create(CasualEvent newEvent);
+    Task<CasualEvent> Create(CasualEvent newEvent);
+    Task<CasualEvent?> GetById(string id);
 }

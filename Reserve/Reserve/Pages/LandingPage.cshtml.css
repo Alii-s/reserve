@@ -1,8 +1,9 @@
-﻿body {
-    background-image: url('https://source.unsplash.com/bwOAixLG0uc');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+﻿.body-image {
+    background-image: url('https://source.unsplash.com/bwOAixLG0uc')!important;
+    background-size: cover!important;
+    background-repeat: no-repeat!important;
+    background-attachment: fixed!important;
+    opacity: 0.9!important;
 }
 
 .main-content {
@@ -18,6 +19,34 @@
     background-color: #06adef;
     color: white;
     border-radius: 30px;
+}
+
+.reserve-blue-button {
+    color: #ffffff !important;
+    background-color: #06adef;
+    font-size: 0.9rem;
+    border-radius: 40px;
+    font-family: 'Source Sans 3', sans-serif;
+}
+
+    .reserve-blue-button:hover {
+        background-color: #20a3d7;
+    }
+
+.reserve-red-button {
+    color: #ffffff !important;
+    background-color: #ff3259;
+    font-size: 0.9rem;
+    border-radius: 40px;
+    font-family: 'Source Sans 3', sans-serif;
+}
+
+.reserve-red-button:hover {
+    background-color: #fa1414;
+}
+
+.body-font {
+    font-family: 'Mulish', sans-serif;
 }
 
 @media (max-width: 1000px) {

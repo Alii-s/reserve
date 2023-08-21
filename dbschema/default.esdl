@@ -18,6 +18,7 @@ module default {
         required maximum_capacity: int32;
         required location: str;
         required description: str;
+        image_url: str;
         required start_date: datetime;
         required end_date: datetime;
         tags: array<str>;
