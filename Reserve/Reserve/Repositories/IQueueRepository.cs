@@ -5,5 +5,6 @@ namespace Reserve.Repositories;
 
 public interface IQueueRepository
 {
-    Task Create(QueueEvent newQueue);
+    Task<QueueEvent> Create(QueueEvent newQueue);
+    Task<QueueEvent> GetByID(string id);
 }

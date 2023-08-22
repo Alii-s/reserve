@@ -11,6 +11,7 @@ builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("reserve"), config 
     config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
 });
 builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IQueueRepository, QueueRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
