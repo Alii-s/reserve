@@ -17,6 +17,7 @@ module default {
         required organizer_email: str;
         required maximum_capacity: int32;
         required location: str;
+        required opened: bool;
         required description: str;
         image_url: str;
         required start_date: datetime;
@@ -27,9 +28,13 @@ module default {
     type CasualTicket{
         required reserver_name: str;
         required reserver_email: str;
+        required reserver_phone_number: str;
         required casual_event: CasualEvent{
             on target delete delete source;
         }
+        constraint expression on (
+            .casual_event.current_capacity < .casual_event.maximum_capacity and .casual_event.opened = true
+        );
     }
     type Availability {
         required day: Days;

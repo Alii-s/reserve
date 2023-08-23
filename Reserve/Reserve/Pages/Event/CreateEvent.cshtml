@@ -2,7 +2,6 @@
 @model Reserve.Pages.Event.CreateEventModel
 
 <h1 class="event-title">Create Event</h1>
-
 <form method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="title-icon mb-lg-3 subtitle-font">
@@ -38,7 +37,7 @@
     </div>
     <div class="row col-md-8 mt-3 body-font">
         <label class="form-label" asp-for="NewEvent.Tags">Tags</label>
-        <input class="form-control" asp-for="NewEvent.Tags" name="NewEvent.Tags" type="text" placeholder="Improve discoverability by adding relevant tags" />
+        <input class="form-control" asp-for="NewEvent.Tags" name="NewEvent.Tags" id="Tags" type="text" placeholder="Improve discoverability by adding relevant tags" />
         <span asp-validation-for="NewEvent.Tags" class="text-danger"></span>
     </div>
     <div class="row col-md-8 mt-3 body-font">

@@ -10,10 +10,10 @@
             <div class="card mb-3">
                 <img class="card-img-top event-details-image" src="@Model.DetailedEvent.ImageUrl" alt="Card image cap">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between mb-lg-3">
                         <h5 class="card-title event-fields">@Model.DetailedEvent.Title</h5>
                         <div class="justify-content-end">
-                            <a class="btn btn-custom reserve-red-button">Reserve Now!</a>
+                            <a href="@Url.Page("ReserveEvent", new {id = Model.DetailedEvent.Id})" class="btn btn-custom reserve-red-button">Reserve Now!</a>
                             <a class="btn btn-custom reserve-blue-button">View Attendees</a>
                         </div>
                     </div>

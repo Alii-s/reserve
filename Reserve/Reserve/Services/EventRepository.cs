@@ -26,6 +26,7 @@ public class EventRepository : IEventRepository
                             tags:= <array<str>>$tags,
                             current_capacity:= <int32>$current_capacity,
                             description:= <str>$description,
+                            opened:= <bool>$opened,
                             image_url:=<str>$image_url
                         }
                     )
@@ -42,6 +43,7 @@ public class EventRepository : IEventRepository
             {"tags", newEvent.Tags },
             {"current_capacity", newEvent.CurrentCapacity },
             {"description", newEvent.Description },
+            {"opened", true },
             {"image_url", newEvent.ImageUrl }
         });
         return result;
@@ -56,5 +58,37 @@ public class EventRepository : IEventRepository
             {"id", guidId }
         });
         return result;
+    }
+
+    public async Task AddReserver(CasualTicket newTicket)
+    {
+        await _client.TransactionAsync(async (tx) =>
+        {
+            await tx.ExecuteAsync(@"INSERT CasualTicket {
+                reserver_name:= <str>$reserver_name,
+                reserver_email:= <str>$reserver_email,
+                reserver_phone_number:= <str>$reserver_phone_number,
+                casual_event:= (
+                    SELECT CasualEvent
+                    FILTER .id = <uuid>$casual_event
+                    limit 1
+                )   
+            };", new Dictionary<string, object?>
+            {
+                {"reserver_name", newTicket.ReserverName },
+                {"reserver_email", newTicket.ReserverEmail },
+                {"reserver_phone_number", newTicket.ReserverPhoneNumber },
+                {"casual_event", newTicket.CasualEvent.Id }
+            });
+
+            await tx.ExecuteAsync(@"UPDATE CasualEvent
+                FILTER .id = <uuid>$casual_event
+                SET {
+                    current_capacity := .current_capacity + 1
+                };", new Dictionary<string, object?>
+            {
+                {"casual_event", newTicket.CasualEvent.Id }
+            });
+        });
     }
 }
