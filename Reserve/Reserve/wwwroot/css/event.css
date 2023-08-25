@@ -14,3 +14,10 @@
 .title-icon{
     display:flex;
 }
+
+@media (max-width:600px){
+    .event-buttons{
+        display:flex;
+        flex-direction:column;
+    }
+}
