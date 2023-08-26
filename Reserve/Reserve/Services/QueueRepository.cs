@@ -59,9 +59,9 @@ public class QueueRepository : IQueueRepository
         return result;
     }
 
-    public async Task<QueueTicket> RegisterCustomer(QueueTicket queueTicket, string queueId)
+    public async Task<QueueTicket> RegisterCustomer(QueueTicket queueTicket)
     {
-        Guid guidId = Guid.Parse(queueId);
+        Guid guidId = queueTicket.QueueEventId;
         var query = @"WITH Inserted := (
                     INSERT QueueTicket {
                         customer_name := <str>$customer_name,

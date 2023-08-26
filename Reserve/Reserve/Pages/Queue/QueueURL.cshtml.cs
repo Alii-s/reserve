@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Reserve.Pages.Queue
+namespace Reserve.Pages.Queue;
+
+public class QueueURLModel : PageModel
 {
-    public class QueueURLModel : PageModel
+    public Guid QueueId { get; set; }
+
+    public void OnGet(Guid id)
     {
-        public void OnGet()
-        {
-        }
+        QueueId = id;
     }
 }

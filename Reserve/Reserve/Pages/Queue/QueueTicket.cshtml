@@ -1,4 +1,4 @@
-﻿@page 
+﻿@page
 @model Reserve.Pages.Queue.QueueTicketModel
 
 <div class="container mt-5">
@@ -6,20 +6,20 @@
 
     <div class="card border rounded mt-4">
         <div class="card-body">
-            <h3 class="card-title text-center">Welcome to Title Event, you are currently in queue</h3>
+            <h3 class="card-title text-center">Welcome to @Model.CurrentQueue.Title, you are currently in queue</h3>
             <br />
             <div class="text-center">
                 <p class="card-text" style="font-size: 2rem; font-weight: bold;">Your Number:</p>
-                <p class="card-text text-center" style="font-size: 3rem; font-weight: bold;">26</p>
+                <p class="card-text text-center" style="font-size: 3rem; font-weight: bold;"></p>
             </div>
 
             <p class="card-text text-center mt-3">
-                Use this link to monitor your progress: <a href="#">https://reserve/queue-ticket/17305a4e-2ad7-11ee-a6fc-b713ebdf36e6</a>
+                Use this link to monitor your progress: <a href="#">https://reserve/queue-ticket/@Model.QueueId-@Model.QueueTicketId</a>
             </p>
         </div>
 
         <div class="card-footer">
-            <p class="text-muted text-center">Current Number Served: 21</p>
+            <p class="text-muted text-center">Current Number Served: @Model.CurrentQueue.CurrentNumberServed</p>
         </div>
     </div>
 </div>

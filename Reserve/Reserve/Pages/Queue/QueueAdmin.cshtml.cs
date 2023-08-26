@@ -5,7 +5,7 @@ namespace Reserve.Pages.Queue
 {
     public class QueueAdminModel : PageModel
     {
-        public void OnGet()
+        public void OnGet(Guid id)
         {
         }
     }

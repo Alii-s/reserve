@@ -13,11 +13,11 @@
             <form method="post">
                 <div class="mb-3">
                     <label for="Name" class="form-label">Your Name*</label>
-                    <input type="text" class="form-control" name="Name" required />
+                    <input type="text" class="form-control" name="Name" asp-for="NewQueueTicket.CustomerName" required />
                 </div>
                 <div class="mb-3">
                     <label for="Phone" class="form-label">Phone No*</label>
-                    <input type="text" class="form-control" name="Phone" required />
+                    <input type="text" class="form-control" name="Phone" asp-for="NewQueueTicket.CustomerPhoneNumber"  required />
                 </div>
 
                 <div class="text-center">
