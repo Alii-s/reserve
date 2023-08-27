@@ -12,19 +12,19 @@ namespace Reserve.Pages.Event;
 [BindProperties]
 public class CreateEventModel : PageModel
 {
-    public CasualEvent NewEvent { get; set; }
+    public CasualEvent? NewEvent { get; set; }
     [Required]
     [Display(Name = "Start Date")]
-    public string StartDate { get; set; }
+    public string? StartDate { get; set; }
     [Required]
     [Display(Name = "Start Time")]
-    public string StartTime { get; set; }
+    public string? StartTime { get; set; }
     [Required]
     [Display(Name = "End Date")]
-    public string EndDate { get; set; }
+    public string? EndDate { get; set; }
     [Required]
     [Display(Name = "End Time")]
-    public string EndTime { get; set; }
+    public string? EndTime { get; set; }
     private readonly IEventRepository _eventRepository;
     private readonly IWebHostEnvironment _webHostEnvironment;
     public CreateEventModel(IEventRepository eventRepository, IWebHostEnvironment webHostEnvironment)
@@ -54,7 +54,7 @@ public class CreateEventModel : PageModel
         }
         if (ModelState.IsValid)
         {
-            NewEvent = await _eventRepository.Create(NewEvent);
+            NewEvent = await _eventRepository.CreateAsync(NewEvent);
             return RedirectToPage("CreationNotification", new {id = NewEvent.Id});
         }
         return Page();

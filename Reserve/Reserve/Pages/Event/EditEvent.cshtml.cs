@@ -25,7 +25,7 @@ public class EditEventModel : PageModel
     }
     public async Task OnGet()
     {
-        EditEvent = await _eventRepository.GetById(Id!);
+        EditEvent = await _eventRepository.GetByIdAsync(Id!);
     }
     public async Task<IActionResult> OnPost()
     {
@@ -48,7 +48,7 @@ public class EditEventModel : PageModel
         }
         if (ModelState.IsValid)
         {
-            await _eventRepository.Update(EditEvent);
+            await _eventRepository.UpdateAsync(EditEvent);
             return RedirectToPage("ViewAttendees", new { id = Id });
         }
         return Page();

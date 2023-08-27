@@ -19,7 +19,7 @@ public class ReserveEventModel : PageModel
     }
     public async Task OnGet()
     {
-        Event = await _eventRepository.GetById(Id);
+        Event = await _eventRepository.GetByIdAsync(Id!);
     }
     public async Task<IActionResult> OnPost()
     {
@@ -40,8 +40,15 @@ public class ReserveEventModel : PageModel
             }
             if (ModelState.IsValid)
             {
-                await _eventRepository.AddReserver(Ticket);
-                return RedirectToPage("EventDetails", new { id = Ticket.CasualEvent.Id });
+                Ticket = (await _eventRepository.AddReserverAsync(Ticket))!;
+                if (Ticket is not null)
+                {
+                    return RedirectToPage("ReservationNotification", new { id = Ticket.Id });
+                }
+                else
+                {
+                    return RedirectToPage("./Error");
+                }
             }
         }
         return Page();

@@ -12,7 +12,7 @@ public class EventRepository : IEventRepository
         _client = client;     
     }
 
-    public async Task<CasualEvent?> Create(CasualEvent newEvent)
+    public async Task<CasualEvent?> CreateAsync(CasualEvent? newEvent)
     {
         var query = @"With Inserted := (
                         INSERT CasualEvent {
@@ -49,7 +49,7 @@ public class EventRepository : IEventRepository
         return result;
     }
 
-    public async Task<CasualEvent?> GetById(string id)
+    public async Task<CasualEvent?> GetByIdAsync(string id)
     {
         Guid guidId = Guid.Parse(id);
         var query = @"SELECT CasualEvent {*} FILTER .id = <uuid>$id;";
@@ -60,27 +60,10 @@ public class EventRepository : IEventRepository
         return result;
     }
 
-    public async Task AddReserver(CasualTicket? newTicket)
+    public async Task<CasualTicket?> AddReserverAsync(CasualTicket? newTicket)
     {
-        await _client.TransactionAsync(async (tx) =>
+        var result = await _client.TransactionAsync(async (tx) =>
         {
-            await tx.ExecuteAsync(@"INSERT CasualTicket {
-                reserver_name:= <str>$reserver_name,
-                reserver_email:= <str>$reserver_email,
-                reserver_phone_number:= <str>$reserver_phone_number,
-                casual_event:= (
-                    SELECT CasualEvent
-                    FILTER .id = <uuid>$casual_event
-                    limit 1
-                )   
-            };", new Dictionary<string, object?>
-            {
-                {"reserver_name", newTicket.ReserverName },
-                {"reserver_email", newTicket.ReserverEmail },
-                {"reserver_phone_number", newTicket.ReserverPhoneNumber },
-                {"casual_event", newTicket.CasualEvent!.Id }
-            });
-
             await tx.ExecuteAsync(@"UPDATE CasualEvent
                 FILTER .id = <uuid>$casual_event
                 SET {
@@ -89,9 +72,30 @@ public class EventRepository : IEventRepository
             {
                 {"casual_event", newTicket.CasualEvent.Id }
             });
+
+            return await tx.QuerySingleAsync<CasualTicket?>(@"with inserted :=(
+                INSERT CasualTicket {
+                    reserver_name:= <str>$reserver_name,
+                    reserver_email:= <str>$reserver_email,
+                    reserver_phone_number:= <str>$reserver_phone_number,
+                    casual_event:= (
+                        SELECT CasualEvent
+                        FILTER .id = <uuid>$casual_event
+                        limit 1
+                    )   
+                }
+            )
+            Select inserted{*};", new Dictionary<string, object?>
+            {
+                {"reserver_name", newTicket.ReserverName },
+                {"reserver_email", newTicket.ReserverEmail },
+                {"reserver_phone_number", newTicket.ReserverPhoneNumber },
+                {"casual_event", newTicket.CasualEvent!.Id }
+            });
         });
+        return result;
     }
-    public async Task<List<CasualTicket?>> GetAttendees(string id)
+    public async Task<List<CasualTicket?>> GetAttendeesAsync(string id)
     {
         Guid guidId = Guid.Parse(id);
         var query = @"SELECT CasualTicket {
@@ -104,7 +108,7 @@ public class EventRepository : IEventRepository
             {"id", guidId }
         })).ToList();
     }
-    public async Task Update(CasualEvent? editEvent)
+    public async Task UpdateAsync(CasualEvent? editEvent)
     {
         var query = @"UPDATE CasualEvent
             FILTER .id = <uuid>$id
@@ -135,6 +139,86 @@ public class EventRepository : IEventRepository
             {"current_capacity",editEvent.CurrentCapacity },
             {"description",editEvent.Description },
             {"image_url",editEvent.ImageUrl }
+        });
+    }
+
+    public async Task CloseReservationAsync(string id)
+    {
+        Guid guidId = Guid.Parse(id);
+        var query = @"UPDATE CasualEvent
+            FILTER .id = <uuid>$id
+            SET {
+                opened:= false
+            };";
+        await _client.ExecuteAsync(query, new Dictionary<string, object?>
+        {
+            {"id", guidId }
+        });
+    }
+
+    public async Task<CasualEvent?> GetEventFromTicketAsync(string id)
+    {
+        Guid guidId = Guid.Parse(id);
+        var query = @"SELECT CasualTicket {
+                        casual_event: {*}
+                    }
+                    FILTER .id = <uuid>$id;";
+        var result = await _client.QuerySingleAsync<CasualEvent?>(query, new Dictionary<string, object?>
+        {
+            {"id", guidId }
+        });
+        return result;
+    }
+
+    public async Task<CasualTicket?> GetTicketByIdAsync(string id)
+    {
+        Guid guidId = Guid.Parse(id);
+        var query = @"SELECT CasualTicket {
+                        reserver_name,
+                        reserver_email,
+                        reserver_phone_number,
+                        casual_event: {
+                            id,
+                            title,
+                            organizer_name,
+                            organizer_email,
+                            maximum_capacity,
+                            location,
+                            start_date,
+                            end_date,
+                            tags,
+                            current_capacity,
+                            description,
+                            opened,
+                            image_url
+                        }
+                    } FILTER CasualTicket.id = <uuid>$id;";
+        var result = await _client.QuerySingleAsync<CasualTicket?>(query, new Dictionary<string, object?>
+        {
+            {"id", guidId }
+        });
+        return result;
+    }
+
+    public async Task CancelReservationAsync(Guid? deletedTicketId, Guid? eventId)
+    {
+        await _client.TransactionAsync(async (tx) =>
+        {
+            var query = @"DELETE CasualTicket
+                        FILTER .id = <uuid>$id;";
+            await _client.ExecuteAsync(query, new Dictionary<string, object?>
+            {
+                {"id", deletedTicketId }
+            });
+
+            await tx.ExecuteAsync(@"UPDATE CasualEvent
+                FILTER .id = <uuid>$casual_event
+                SET {
+                    current_capacity := .current_capacity - 1
+                };", new Dictionary<string, object?>
+                {
+                    {"casual_event", eventId}
+                });
         });
     }
 }
