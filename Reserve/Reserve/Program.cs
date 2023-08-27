@@ -1,4 +1,5 @@
 using EdgeDB;
+using Reserve.Endpoints;
 using Reserve.Helpers;
 using Reserve.Repositories;
 using Reserve.Services;
@@ -12,6 +13,7 @@ builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("reserve"), config 
     config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
 });
 builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,5 +32,5 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
-
+app.MapGroup("/").MapEventsApi();
 app.Run();

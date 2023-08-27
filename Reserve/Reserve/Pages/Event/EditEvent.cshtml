@@ -74,7 +74,7 @@
     </div>
     <div class="d-flex justify-content-around mt-3">
         <button class="reserve-blue-button btn btn-custom" type="submit">Edit Event</button>
-        <a class="reserve-red-button btn btn-custom">Back to Attendees List</a>
+        <a href="@Url.Page("ViewAttendees", new {id = Model.Id})" class="reserve-red-button btn btn-custom">Back to Attendees List</a>
     </div>
 </form>
 

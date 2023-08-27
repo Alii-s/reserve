@@ -1,12 +1,4 @@
-﻿.body-image {
-    background-image: url('https://source.unsplash.com/bwOAixLG0uc')!important;
-    background-size: cover!important;
-    background-repeat: no-repeat!important;
-    background-attachment: fixed!important;
-    opacity: 0.9!important;
-}
-
-.main-content {
+﻿.main-content {
     text-align: center;
     padding: 100px;
 }

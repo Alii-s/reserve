@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Reserve.Pages.Event;
 
-public class CreationNotificationModel : PageModel
+public class ReservationNotificationModel : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public string? Id { get; set; }

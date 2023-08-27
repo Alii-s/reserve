@@ -65,8 +65,10 @@ body {
 
 .notification-text {
     font-family: 'Source Sans 3', sans-serif;
-    font-size: 1.2rem;
+    font-size: 1.2em;
 }
+
+
 
 .notification-border {
     border: 1px solid #d7dfef;
@@ -76,6 +78,13 @@ body {
     padding-top: 30px;
     padding-bottom: 30px;
     width:60%;
+}
+
+.page-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1.75rem;
+    display: flex;
+    justify-content: center;
 }
 
 
