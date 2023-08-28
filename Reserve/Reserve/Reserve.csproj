@@ -15,4 +15,8 @@
     <Folder Include="wwwroot\images\event\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Reserve.Core\Reserve.Core.csproj" />
+  </ItemGroup>
+
 </Project>

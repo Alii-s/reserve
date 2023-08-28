@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Reserve.Models.Queue;
-using Reserve.Repositories;
+using Reserve.Core.Features.Queue;
 using System.ComponentModel.DataAnnotations;
 
 namespace Reserve.Pages.Queue;

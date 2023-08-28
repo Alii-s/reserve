@@ -1,7 +1,4 @@
-﻿using Reserve.Models.Event;
-using Reserve.Models.Queue;
-
-namespace Reserve.Repositories;
+﻿namespace Reserve.Core.Features.Queue;
 
 public interface IQueueRepository
 {

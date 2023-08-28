@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
-namespace Reserve.Models.Queue;
-
+namespace Reserve.Core.Features.Queue;
 public class QueueEvent
 {
     public Guid Id { get; set; }

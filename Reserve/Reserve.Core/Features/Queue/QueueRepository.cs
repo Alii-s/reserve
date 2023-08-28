@@ -1,9 +1,6 @@
-﻿using Reserve.Repositories;
-using EdgeDB;
-using Reserve.Models.Queue;
-using Reserve.Models.Event;
+﻿using EdgeDB;
 
-namespace Reserve.Services;
+namespace Reserve.Core.Features.Queue;
 
 public class QueueRepository : IQueueRepository
 {
