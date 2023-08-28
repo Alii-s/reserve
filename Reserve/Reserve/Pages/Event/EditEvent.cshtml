@@ -1,0 +1,86 @@
+﻿@page "{id}"
+@model Reserve.Pages.Event.EditEventModel
+<h1 class="event-title">Edit Event</h1>
+<form method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input asp-for="EditEvent.Id" type="hidden" />
+    <input asp-for="EditEvent.CurrentCapacity" type="hidden" />
+    <input asp-for="EditEvent.ImageUrl" type="hidden" />
+    <div class="title-icon mb-lg-3 subtitle-font">
+        <svg class="svg-creation" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+        </svg>
+        <h2>Basic Info</h2>
+    </div>
+    <div class="row col-md-8 mt-3 body-font">
+        <label class="form-label" asp-for="EditEvent.Title">Event Title</label>
+        <input class="form-control" type="text" asp-for="EditEvent.Title" name="EditEvent.Title" placeholder="Be clear and descriptive" />
+        <span asp-validation-for="EditEvent.Title" class="text-danger"></span>
+    </div>
+    <div class="row col-md-8 mt-3 body-font">
+        <label class="form-label" asp-for="EditEvent.OrganizerName">Organizer's Name</label>
+        <input class="form-control" type="text" asp-for="EditEvent.OrganizerName" name="EditEvent.OrganizerName" placeholder="Tell attendees who is organizing this event" />
+        <span asp-validation-for="EditEvent.OrganizerName" class="text-danger"></span>
+    </div>
+    <div class="row col-md-8 mt-3 body-font">
+        <label class="form-label" asp-for="EditEvent.OrganizerEmail">Organizer's Email</label>
+        <input class="form-control" asp-for="EditEvent.OrganizerEmail" name="EditEvent.OrganizerEmail" type="text" placeholder="Provide email for the attendees to contact organizer" />
+        <span asp-validation-for="EditEvent.OrganizerEmail" class="text-danger"></span>
+    </div>
+    <div class="row col-md-8 mt-3 body-font">
+        <label class="form-label" asp-for="EditEvent.Description">Description</label>
+        <textarea class="form-control" asp-for="EditEvent.Description" name="EditEvent.Description" type="text" placeholder="Provide description for your event"></textarea>
+        <span asp-validation-for="EditEvent.Description" class="text-danger"></span>
+    </div>
+    <div class="row col-md-8 mt-3 body-font">
+        <label class="form-label" asp-for="EditEvent.MaximumCapacity">Maximum Capacity</label>
+        <input class="form-control" asp-for="EditEvent.MaximumCapacity" name="EditEvent.MaximumCapacity" type="number" placeholder="Enter the maximum capacity for this event" />
+        <span asp-validation-for="EditEvent.MaximumCapacity" class="text-danger"></span>
+    </div>
+    <div class="row col-md-8 mt-3 body-font">
+        <label class="form-label" asp-for="EditEvent.Tags">Tags</label>
+        <input class="form-control" asp-for="EditEvent.Tags" name="EditEvent.Tags" id="Tags" type="text" placeholder="Improve discoverability by adding relevant tags" />
+        <span asp-validation-for="EditEvent.Tags" class="text-danger"></span>
+    </div>
+    <div class="row col-md-8 mt-3 body-font">
+        <label class="form-label" asp-for="EditEvent.Location">Location</label>
+        <input class="form-control" asp-for="EditEvent.Location" name="EditEvent.Location" type="text" placeholder="Add Venue Address" />
+        <span asp-validation-for="EditEvent.Location" class="text-danger"></span>
+    </div>
+    <div class="row col-md-8 mt-3 mb-lg-5 body-font">
+        <label class="form-label" for="ImageUrl">Attach an image that shows the venue or what the event is about (optional)</label>
+        <input class="form-control" name="ImageUrl" type="file" placeholder="Add an image that shows the venue or what the event is about" />
+        <span asp-validation-for="EditEvent.ImageUrl" class="text-danger"></span>
+    </div>
+    <div class="title-icon mt-3 mb-lg-3 subtitle-font">
+        <svg class="svg-creation" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
+            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+        </svg>
+        <h2>Date and Time</h2>
+    </div>
+    <div class="d-flex justify-content-between body-font">
+        <div class="row col-sm-3 mt-3">
+            <label class="form-label" asp-for="EditEvent.StartDate">Event Starts</label>
+            <input class="form-control" asp-for="EditEvent.StartDate" name="EditEvent.StartDate" type="datetime-local" />
+            <span asp-validation-for="EditEvent.StartDate" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between body-font mb-lg-5">
+        <div class="row col-sm-3 mt-3">
+            <label class="form-label" asp-for="EditEvent.EndDate">Event Ends</label>
+            <input class="form-control" asp-for="EditEvent.EndDate" name="EditEvent.EndDate" type="datetime-local" />
+            <span asp-validation-for="EditEvent.EndDate" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="d-flex justify-content-around mt-3">
+        <button class="reserve-blue-button btn btn-custom" type="submit">Edit Event</button>
+        <a href="@Url.Page("ViewAttendees", new {id = Model.Id})" class="reserve-red-button btn btn-custom">Back to Attendees List</a>
+    </div>
+</form>
+
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

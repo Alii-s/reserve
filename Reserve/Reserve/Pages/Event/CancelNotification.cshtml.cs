@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Reserve.Pages;
+namespace Reserve.Pages.Event;
 
-public class LandingPageModel : PageModel
+public class CancelNotificationModel : PageModel
 {
     public void OnGet()
     {

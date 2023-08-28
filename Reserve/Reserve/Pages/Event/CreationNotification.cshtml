@@ -1,0 +1,23 @@
+﻿@page "{id}"
+@model Reserve.Pages.Event.CreationNotificationModel
+<h1 class="notification-title mb-lg-5">Event Created Successfully!</h1>
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="notification-border mb-lg-5">
+        <div>
+            <p class="notification-text d-flex justify-content-center mb-1">You can now share your Event on the following link:</p>
+            <a class="d-flex justify-content-center mb-md-2 " href="@Url.Page("EventDetails", new {id = Model.Id})">www.reserve.com/event/@Model.Id</a>
+        </div>
+        <div>
+            <p class="notification-text d-flex justify-content-center mb-1">If you don’t have an account, you can still edit your event at
+                the following link:
+            </p>
+            <a class="d-flex justify-content-center mb-md-2" href="@Url.Page("ViewAttendees", new {id = Model.Id})">www.reserve.com/event/edit-event/@Model.Id</a>     
+        </div>
+        <div>
+            <p class="notification-text d-flex justify-content-center align-content-center">An email has been sent with both links.</p>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <a href="@Url.Page("ViewAttendees", new {id=Model.Id})" class="btn btn-custom reserve-blue-button">View and Edit Event details</a>
+    </div>
+</div>

@@ -1,0 +1,69 @@
+﻿@page "{id}"
+@model Reserve.Pages.Event.ViewAttendeesModel
+
+
+@Html.AntiForgeryToken()
+
+
+<div class="modal fade" id="closeReservation" tabindex="-1" aria-labelledby="closeReservationLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex flex-column align-items-center m-3">
+                <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="closeReservationLabel">Close Reservation!</h1>
+                <div class="notification-border d-flex justify-content-center">
+                    <p class="notification-text p-3">Are you sure you want to close the reservation? No more people will be able to reserve!</p>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-around border-0">
+                <button type="button" hx-post="/close-reservation/@Model.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' hx-target="#reservation" class="btn reserve-red-button" data-bs-dismiss="modal">Yes</button>
+                <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-around">
+    <h1 class="event-title mb-lg-5 me-lg-auto">Attendees List</h1>
+    <div class="d-flex justify-content-end" id="reservation">
+        @if (Model.Event.Opened is true)
+        {
+            <button class="btn reserve-red-button" style="height:40px!important;" type="button" data-bs-toggle="modal" data-bs-target="#closeReservation">End Reservation</button>
+        }
+        else
+        {
+            <p class="notification-text m-3">Reservation closed!</p>
+        }
+    </div>
+</div>
+<div class="d-flex justify-content-between mb-lg-5 event-buttons">
+    <h2 class="notification-title m-3">@Model.Event!.Title</h2>
+    <h3 class="notification-title m-3">Location: @Model.Event.Location</h3>
+    <div class="d-flex w-25 justify-content-end">
+        <a href="@Url.Page("EditEvent", new {id = Model.Id})" class="btn reserve-blue-button m-3">Edit Event</a>        
+    </div>
+</div>
+<table class="table">
+    <thead class="table-light">
+        <tr class="notification-text">
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone Number</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for(int i = 0;i < Model.Attendees.Count;i++){
+            <tr class="notification-text box-shadow shadow-sm">
+                <td>@(i+1)</td>
+                <td>@Model.Attendees[i]!.ReserverName</td>
+                <td>@Model.Attendees[i]!.ReserverEmail</td>
+                <td>@Model.Attendees[i]!.ReserverPhoneNumber</td>
+            </tr>
+        }        
+    </tbody>
+</table>
+
+

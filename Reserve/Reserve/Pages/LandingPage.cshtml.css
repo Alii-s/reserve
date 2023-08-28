@@ -1,11 +1,4 @@
-﻿body {
-    background-image: url('https://source.unsplash.com/bwOAixLG0uc');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-
-.main-content {
+﻿.main-content {
     text-align: center;
     padding: 100px;
 }
@@ -31,6 +24,22 @@
     .reserve-blue-button:hover {
         background-color: #20a3d7;
     }
+
+.reserve-red-button {
+    color: #ffffff !important;
+    background-color: #ff3259;
+    font-size: 0.9rem;
+    border-radius: 40px;
+    font-family: 'Source Sans 3', sans-serif;
+}
+
+.reserve-red-button:hover {
+    background-color: #fa1414;
+}
+
+.body-font {
+    font-family: 'Mulish', sans-serif;
+}
 
 @media (max-width: 1000px) {
     .main-content {

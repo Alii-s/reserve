@@ -1,0 +1,98 @@
+﻿@page "{id}"
+@model Reserve.Pages.Event.ReserverDetailsModel
+
+@Html.AntiForgeryToken()
+<div class="modal fade" id="cancelReservation" tabindex="-1" aria-labelledby="cancelReservationLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex flex-column align-items-center m-3">
+                <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="cancelReservationLabel">Cancel Reservation?</h1>
+                <div class="notification-border d-flex justify-content-center">
+                    <p class="notification-text p-3">Are you sure you want to cancel the reservation?</p>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-around border-0">
+                <form method="post" asp-route-deletedTicketId="@Model.Ticket.Id" asp-route-eventId="@Model.Ticket.CasualEvent.Id">
+                    <button type="submit" class="btn reserve-red-button">Yes</button>
+                </form>
+                <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<h1 class="d-flex justify-content-center font-event-details mb-lg-5">Hello @Model.Ticket.ReserverName!</h1>
+<div class="row d-flex justify-content-center">
+    <div class="col-sm-8">
+        <div class="card mb-3">
+            <img class="card-img-top event-details-image" src="@Model.Ticket.CasualEvent.ImageUrl" alt="Card image cap">
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-lg-3">
+                    <h5 class="card-title event-fields">@Model.Ticket.CasualEvent.Title</h5>
+                    <div class="justify-content-end">
+                        <button data-bs-toggle="modal" data-bs-target="#cancelReservation" class="btn btn-custom reserve-red-button">Cancel Reservation</button>
+                    </div>
+                </div>
+                <p class="card-text">@Model.Ticket.CasualEvent.Description</p>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="d-flex">
+                            <svg class="m-sm-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
+                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                            </svg>
+                            <h6 class="event-fields">Date and Time</h6>
+                        </div>
+                        <p class="text-muted event-fields-details mb-0 d-flex justify-content-center">Starts at: @Model.Ticket.CasualEvent.StartDate.ToString("M/d/yyyy h:mm tt")</p>
+                        <p class="text-muted event-fields-details">Ends at: @Model.Ticket.CasualEvent.EndDate.ToString("M/d/yyyy h:mm tt")</p>
+                    </div>
+                    <div>
+                        <div class="d-flex">
+                            <svg class="m-sm-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+                            </svg>
+                            <h6 class="event-fields">Location</h6>
+                        </div>
+                        <p class="text-muted event-fields-details d-flex justify-content-center">@Model.Ticket.CasualEvent.Location</p>
+                    </div>
+                    <div>
+                        <div class="d-flex">
+                            <svg class="m-sm-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                            </svg>
+                            <h6 class="event-fields">Status</h6>
+                        </div>
+                        <p class="text-muted event-fields-details d-flex justify-content-center">Open</p>
+                    </div>
+                    <div>
+                        <div class="d-flex">
+                            <svg class="m-sm-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                            </svg>
+                            <h6 class="event-fields">Capacity</h6>
+                        </div>
+                        <p class="text-muted event-fields-details d-flex justify-content-center">@Model.Ticket.CasualEvent.CurrentCapacity/@Model.Ticket.CasualEvent.MaximumCapacity</p>
+                    </div>
+                </div>
+                <p class="card-text">
+                    <small class="text-muted">
+                        @foreach (var tag in Model.Ticket.CasualEvent.Tags)
+                        {
+                            <span class="badge bg-warning font-event-details">@tag</span>
+                        }
+                    </small>
+                </p>
+                <div class="d-flex flex-column justify-content-end align-items-end">
+                    <p class="text-muted event-fields-details m-0">Organized by: @Model.Ticket.CasualEvent.OrganizerName</p>
+                    <p class="text-muted event-fields-details">Organizer's Email: @Model.Ticket.CasualEvent.OrganizerEmail</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

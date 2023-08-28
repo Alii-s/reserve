@@ -2,75 +2,80 @@
 @model Reserve.Pages.Event.CreateEventModel
 
 <h1 class="event-title">Create Event</h1>
-
-<form method="post">
+<form method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="title-icon mb-lg-3 subtitle-font">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+        <svg class="svg-creation" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
             <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
         </svg>
         <h2>Basic Info</h2>
     </div>
     <div class="row col-md-8 mt-3 body-font">
-        <label class="form-label" for="Title">Event Title</label>
+        <label class="form-label" asp-for="NewEvent.Title">Event Title</label>
         <input class="form-control" type="text" asp-for="NewEvent.Title" name="NewEvent.Title" placeholder="Be clear and descriptive"/>
         <span asp-validation-for="NewEvent.Title" class="text-danger"></span>
     </div>
     <div class="row col-md-8 mt-3 body-font">
-        <label class="form-label" for="OrganizerName">Organizer's Name</label>
+        <label class="form-label" asp-for="NewEvent.OrganizerName">Organizer's Name</label>
         <input class="form-control" type="text" asp-for="NewEvent.OrganizerName" name="NewEvent.OrganizerName" placeholder="Tell attendees who is organizing this event" />
         <span asp-validation-for="NewEvent.OrganizerName" class="text-danger"></span>
     </div>
     <div class="row col-md-8 mt-3 body-font">
-        <label class="form-label" for="OrganizerEmail">Organizer's Email</label>
+        <label class="form-label" asp-for="NewEvent.OrganizerEmail">Organizer's Email</label>
         <input class="form-control" asp-for="NewEvent.OrganizerEmail" name="NewEvent.OrganizerEmail" type="text" placeholder="Provide email for the attendees to contact organizer" />
         <span asp-validation-for="NewEvent.OrganizerEmail" class="text-danger"></span>
     </div>
     <div class="row col-md-8 mt-3 body-font">
-        <label class="form-label" for="Description">Description</label>
+        <label class="form-label" asp-for="NewEvent.Description">Description</label>
         <textarea class="form-control" asp-for="NewEvent.Description" name="NewEvent.Description" type="text" placeholder="Provide description for your event"></textarea>
         <span asp-validation-for="NewEvent.Description" class="text-danger"></span>
     </div>
     <div class="row col-md-8 mt-3 body-font">
-        <label class="form-label" for="MaximumCapacity">Maximum Capacity</label>
+        <label class="form-label" asp-for="NewEvent.MaximumCapacity">Maximum Capacity</label>
         <input class="form-control" asp-for="NewEvent.MaximumCapacity" name="NewEvent.MaximumCapacity" type="number" placeholder="Enter the maximum capacity for this event" />
         <span asp-validation-for="NewEvent.MaximumCapacity" class="text-danger"></span>
     </div>
     <div class="row col-md-8 mt-3 body-font">
-        <label class="form-label" for="Tags">Tags</label>
-        <input class="form-control" asp-for="NewEvent.Tags" name="NewEvent.Tags" type="text" placeholder="Improve discoverability by adding relevant tags" />
+        <label class="form-label" asp-for="NewEvent.Tags">Tags</label>
+        <input class="form-control" asp-for="NewEvent.Tags" name="NewEvent.Tags" id="Tags" type="text" placeholder="Improve discoverability by adding relevant tags" />
         <span asp-validation-for="NewEvent.Tags" class="text-danger"></span>
     </div>
-    <div class="row col-md-8 mt-3 mb-lg-5 body-font">
-        <label class="form-label" for="Location">Location</label>
+    <div class="row col-md-8 mt-3 body-font">
+        <label class="form-label" asp-for="NewEvent.Location">Location</label>
         <input class="form-control" asp-for="NewEvent.Location" name="NewEvent.Location" type="text" placeholder="Add Venue Address" />
         <span asp-validation-for="NewEvent.Location" class="text-danger"></span>
     </div>
+    <div class="row col-md-8 mt-3 mb-lg-5 body-font">
+        <label class="form-label" for="ImageUrl">Attach an image that shows the venue or what the event is about (optional)</label>
+        <input class="form-control" name="ImageUrl" type="file" placeholder="Add an image that shows the venue or what the event is about" />
+        <span asp-validation-for="NewEvent.ImageUrl" class="text-danger"></span>
+    </div>
     <div class="title-icon mt-3 mb-lg-3 subtitle-font">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
+        <svg class="svg-creation" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
             <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
         </svg>
         <h2>Date and Time</h2>
     </div>
     <div class="d-flex justify-content-between body-font">
         <div class="row col-sm-3 mt-3">
-            <label class="form-label" for="StartDate">Event Starts</label>
+            <label class="form-label" asp-for="StartDate">Event Starts</label>
             <input class="form-control" asp-for="StartDate" name="StartDate" type="date" />
             <span asp-validation-for="StartDate" class="text-danger"></span>
         </div>
         <div class="row col-sm-3 mt-3">
-            <label class="form-label" for="StartTime">Start Time</label>
+            <label class="form-label" asp-for="StartTime">Start Time</label>
             <input class="form-control" asp-for="StartTime" name="StartTime" type="time" />
             <span asp-validation-for="StartTime" class="text-danger"></span>
         </div>
     </div>
     <div class="d-flex justify-content-between body-font">
         <div class="row col-sm-3 mt-3">
-            <label class="form-label" for="EndDate">Event Ends</label>
+            <label class="form-label" asp-for="EndDate">Event Ends</label>
             <input class="form-control" asp-for="EndDate" name="EndDate" type="date" />
             <span asp-validation-for="EndDate" class="text-danger"></span>
         </div>
         <div class="row col-sm-3 mt-3">
-            <label class="form-label" for="EndTime">End Time</label>
+            <label class="form-label" asp-for="EndTime">End Time</label>
             <input class="form-control" asp-for="EndTime" name="EndTime" type="time" />
             <span asp-validation-for="EndTime" class="text-danger"></span>
         </div>
