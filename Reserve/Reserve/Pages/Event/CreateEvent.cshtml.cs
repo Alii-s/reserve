@@ -1,11 +1,13 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Reserve.Models.Event;
+using Reserve.Core.Features.Event;
 using Reserve.Repositories;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using static Reserve.Helpers.DateTimeHelper;
 using static Reserve.Helpers.ImageHelper;
 
 namespace Reserve.Pages.Event;
@@ -13,49 +15,38 @@ namespace Reserve.Pages.Event;
 public class CreateEventModel : PageModel
 {
     public CasualEvent? NewEvent { get; set; }
-    [Required]
-    [Display(Name = "Start Date")]
-    public string? StartDate { get; set; }
-    [Required]
-    [Display(Name = "Start Time")]
-    public string? StartTime { get; set; }
-    [Required]
-    [Display(Name = "End Date")]
-    public string? EndDate { get; set; }
-    [Required]
-    [Display(Name = "End Time")]
-    public string? EndTime { get; set; }
     private readonly IEventRepository _eventRepository;
+    private readonly IValidator<CasualEvent> _validator;
     private readonly IWebHostEnvironment _webHostEnvironment;
-    public CreateEventModel(IEventRepository eventRepository, IWebHostEnvironment webHostEnvironment)
+    public CreateEventModel(IEventRepository eventRepository, IWebHostEnvironment webHostEnvironment, IValidator<CasualEvent> validator)
     {
         _eventRepository = eventRepository;
         _webHostEnvironment = webHostEnvironment;
+        _validator = validator;
     }
     public void OnGet()
     {
     }
     public async Task<IActionResult> OnPost()
     {
-        NewEvent.StartDate = DateTimeBuilder(StartDate, StartTime);
-        NewEvent.EndDate = DateTimeBuilder(EndDate, EndTime);
         IFormFile? imageFile = Request.Form.Files.FirstOrDefault();
-        if (imageFile is not null)
+        ValidationResult result = await _validator.ValidateAsync(NewEvent);
+        if(imageFile is not null)
         {
-            string imageExtension = Path.GetExtension(imageFile.FileName);
-            if (imageExtension == ".jpg" || imageExtension == ".png" || imageExtension == ".jpeg")
+            NewEvent.ImageUrl = @"\images\event\" + imageFile.FileName;
+        }
+        if (result.IsValid)
+        {
+            if (imageFile is not null)
             {
                 NewEvent.ImageUrl = SaveImage(imageFile, _webHostEnvironment);
             }
-            else
-            {
-                ModelState.AddModelError("NewEvent.ImageUrl", "Image must be in .jpg, .png, or .jpeg format");
-            }
-        }
-        if (ModelState.IsValid)
-        {
             NewEvent = await _eventRepository.CreateAsync(NewEvent);
-            return RedirectToPage("CreationNotification", new {id = NewEvent.Id});
+            return RedirectToPage("CreationNotification", new { id = NewEvent.Id });
+        }
+        else
+        {
+            result.AddToModelState(this.ModelState, "NewEvent");
         }
         return Page();
     }

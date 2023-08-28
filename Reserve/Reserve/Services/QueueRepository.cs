@@ -1,7 +1,7 @@
 ﻿using Reserve.Repositories;
 using EdgeDB;
 using Reserve.Models.Queue;
-using Reserve.Models.Event;
+
 
 namespace Reserve.Services;
 
