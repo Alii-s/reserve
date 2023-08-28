@@ -57,18 +57,12 @@ module default {
     }
     type QueueEvent{
         required title: str;
-        required organizer_name: str;
         required organizer_email: str;
-        required maximum_capacity: int32;
-        required location: str;
-        required start_date: datetime;
-        required end_date: datetime;
-        tags: array<str>;
-        required current_capacity: int32;
+        required description: str;
+        required current_number_served: int32;
     }
     type QueueTicket{
         required customer_name: str;
-        required customer_email: str;
         required customer_phone_number: str;
         required queue_event: QueueEvent{
             on target delete delete source;

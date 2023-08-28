@@ -13,6 +13,7 @@ builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("reserve"), config 
     config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
 });
 builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IQueueRepository, QueueRepository>();
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
 var app = builder.Build();
 

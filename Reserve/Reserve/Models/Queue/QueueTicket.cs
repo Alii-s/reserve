@@ -8,8 +8,6 @@ public class QueueTicket
     [Required]
     public string CustomerName { get; set; }
     [Required]
-    public string CustomerEmail { get; set; }
-    [Required]
     public string CustomerPhoneNumber { get; set; }
     [Required]
     public int QueueNumber { get; set; }
