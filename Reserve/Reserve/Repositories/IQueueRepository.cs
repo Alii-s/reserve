@@ -1,5 +1,4 @@
-﻿using Reserve.Models.Event;
-using Reserve.Models.Queue;
+﻿using Reserve.Models.Queue;
 
 namespace Reserve.Repositories;
 

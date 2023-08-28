@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Reserve.Models.Event;
+using Reserve.Core.Features.Event;
 using Reserve.Repositories;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;

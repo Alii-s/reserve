@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Reserve.Models.Event;
+using Reserve.Core.Features.Event;
 using Reserve.Repositories;
 
 namespace Reserve.Endpoints;

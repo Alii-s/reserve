@@ -1,15 +1,19 @@
-﻿using Reserve.Repositories;
-using EdgeDB;
-using Reserve.Models.Event;
+﻿using EdgeDB;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Reserve.Services;
+
+namespace Reserve.Core.Features.Event;
 
 public class EventRepository : IEventRepository
 {
     private readonly EdgeDBClient _client;
     public EventRepository(EdgeDBClient client)
     {
-        _client = client;     
+        _client = client;
     }
 
     public async Task<CasualEvent?> CreateAsync(CasualEvent? newEvent)
@@ -33,18 +37,18 @@ public class EventRepository : IEventRepository
                     Select Inserted{*};";
         var result = await _client.QuerySingleAsync<CasualEvent?>(query, new Dictionary<string, object?>
         {
-            {"title", newEvent.Title },
-            {"organizer_name", newEvent.OrganizerName },
-            {"organizer_email", newEvent.OrganizerEmail },
-            {"maximum_capacity", newEvent.MaximumCapacity },
-            {"location", newEvent.Location },
-            {"start_date", newEvent.StartDate },
-            {"end_date", newEvent.EndDate },
-            {"tags", newEvent.Tags },
-            {"current_capacity", newEvent.CurrentCapacity },
-            {"description", newEvent.Description },
+            {"title", newEvent?.Title },
+            {"organizer_name", newEvent?.OrganizerName },
+            {"organizer_email", newEvent?.OrganizerEmail },
+            {"maximum_capacity", newEvent?.MaximumCapacity },
+            {"location", newEvent?.Location },
+            {"start_date", newEvent?.StartDate },
+            {"end_date", newEvent?.EndDate },
+            {"tags", newEvent?.Tags ?? new string[0].Append("") },
+            {"current_capacity", newEvent?.CurrentCapacity },
+            {"description", newEvent?.Description },
             {"opened", true },
-            {"image_url", newEvent.ImageUrl }
+            {"image_url", newEvent?.ImageUrl ?? "" }
         });
         return result;
     }
