@@ -1,6 +1,7 @@
 using EdgeDB;
 using FluentValidation;
 using Reserve.Core.Features.Event;
+using Reserve.Core.Features.MailService;
 using Reserve.Endpoints;
 using Reserve.Helpers;
 using Reserve.Repositories;
@@ -19,6 +20,8 @@ builder.Services.AddScoped<IQueueRepository, QueueRepository>();
 builder.Services.AddScoped<IValidator<CasualEvent>, CasualEventValidator>();
 builder.Services.AddScoped<IValidator<CasualTicket>, CasualTicketValidator>();
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

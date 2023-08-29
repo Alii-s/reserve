@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-around border-0">
-                <form method="post" asp-route-deletedTicketId="@Model.Ticket.Id" asp-route-eventId="@Model.Ticket.CasualEvent.Id">
+                <form method="post" asp-route-deletedTicketId="@Model.Ticket!.Id" asp-route-eventId="@Model.Ticket.CasualEvent!.Id">
                     <button type="submit" class="btn reserve-red-button">Yes</button>
                 </form>
                 <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>

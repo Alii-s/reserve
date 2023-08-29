@@ -15,9 +15,14 @@ public class ReserverDetailsModel : PageModel
     {
         _eventRepository = eventRepository;
     }
-    public async Task OnGet()
+    public async Task<IActionResult> OnGet()
     {
         Ticket = await _eventRepository.GetTicketByIdAsync(Id!);
+        if(Ticket is null)
+        {
+            return RedirectToPage("EventError");
+        }
+        return Page();
     }
     public async Task<IActionResult> OnPost(Guid? deletedTicketId, Guid? eventId)
     {

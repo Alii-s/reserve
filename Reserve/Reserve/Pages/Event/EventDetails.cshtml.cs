@@ -13,8 +13,13 @@ public class EventDetailsModel : PageModel
     {
         _eventRepository = eventRepository;
     }
-    public async Task OnGet(string id)
+    public async Task<IActionResult> OnGet(string id)
     {
         DetailedEvent = await _eventRepository.GetByIdAsync(id);
+        if(DetailedEvent is null)
+        {
+            return RedirectToPage("EventError");
+        }
+        return Page();
     }
 }

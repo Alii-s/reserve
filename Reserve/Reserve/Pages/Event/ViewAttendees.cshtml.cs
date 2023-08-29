@@ -18,9 +18,14 @@ public class ViewAttendeesModel : PageModel
     {
         _eventRepository = eventRepository;
     }
-    public async Task OnGet()
+    public async Task<IActionResult> OnGet()
     {
-        Event = await _eventRepository.GetByIdAsync(Id!);
-        Attendees = await _eventRepository.GetAttendeesAsync(Id!);
+        Event = await _eventRepository.GetByIdAsync(Id);
+        Attendees = await _eventRepository.GetAttendeesAsync(Id);
+        if(Event is null)
+        {
+            return RedirectToPage("EventError");
+        }
+        return Page();
     }
 }

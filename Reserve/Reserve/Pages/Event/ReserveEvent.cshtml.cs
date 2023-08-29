@@ -1,7 +1,11 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Event;
 using Reserve.Repositories;
+
 
 namespace Reserve.Pages.Event;
 [BindProperties]
@@ -13,43 +17,38 @@ public class ReserveEventModel : PageModel
     public CasualEvent? Event { get; set; }
     public CasualTicket Ticket { get; set; } = new();
     private readonly IEventRepository _eventRepository;
-    public ReserveEventModel(IEventRepository eventRepository)
+    private readonly IValidator<CasualTicket> _validator;
+    public ReserveEventModel(IEventRepository eventRepository, IValidator<CasualTicket> validator)
     {
         _eventRepository = eventRepository;
+        _validator = validator;
     }
-    public async Task OnGet()
+    public async Task<IActionResult> OnGet()
     {
         Event = await _eventRepository.GetByIdAsync(Id!);
+        if(Event is null)
+        {
+            return RedirectToPage("EventError");
+        }
+        return Page();
     }
     public async Task<IActionResult> OnPost()
     {
-        if (Event == null)
+        Event = await _eventRepository.GetByIdAsync(Id!);
+        if(Event is null)
         {
-            return NotFound();
+            return RedirectToPage("EventError");
+        }
+        Ticket.CasualEvent = Event;
+        ValidationResult result = await _validator.ValidateAsync(Ticket);
+        if (result.IsValid)
+        {
+            Ticket = (await _eventRepository.AddReserverAsync(Ticket))!;
+            return RedirectToPage("ReservationNotification", new { id = Ticket.Id });
         }
         else
         {
-            Ticket.CasualEvent = Event;
-            if (Event.CurrentCapacity >= Event.MaximumCapacity)
-            {
-                ModelState.AddModelError("Event.CurrentCapacity", "This event is full");
-            }
-            if (Event.Opened == false)
-            {
-                ModelState.AddModelError("Event.Opened", "This event's reservation is closed");
-            }
-            if (ModelState.IsValid)
-            {
-                Ticket = (await _eventRepository.AddReserverAsync(Ticket))!;
-                if (Ticket is not null)
-                {
-                    return RedirectToPage("ReservationNotification", new { id = Ticket.Id });
-                }
-                else
-                {
-                    return RedirectToPage("./Error");
-                }
-            }
+            result.AddToModelState(this.ModelState, "Ticket");
         }
         return Page();
     }
