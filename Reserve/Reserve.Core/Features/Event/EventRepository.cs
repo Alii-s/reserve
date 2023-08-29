@@ -18,6 +18,7 @@ public class EventRepository : IEventRepository
 
     public async Task<CasualEvent?> CreateAsync(CasualEvent? newEvent)
     {
+        ArgumentNullException.ThrowIfNull(newEvent);
         var query = @"With Inserted := (
                         INSERT CasualEvent {
                             title:= <str>$title,
@@ -44,8 +45,8 @@ public class EventRepository : IEventRepository
             {"location", newEvent?.Location },
             {"start_date", newEvent?.StartDate },
             {"end_date", newEvent?.EndDate },
-            {"tags", newEvent?.Tags ?? new string[0].Append("") },
-            {"current_capacity", newEvent?.CurrentCapacity },
+            {"tags", newEvent?.Tags ?? new string[0] },
+            {"current_capacity", 0 },
             {"description", newEvent?.Description },
             {"opened", true },
             {"image_url", newEvent?.ImageUrl ?? "" }
@@ -53,19 +54,29 @@ public class EventRepository : IEventRepository
         return result;
     }
 
-    public async Task<CasualEvent?> GetByIdAsync(string id)
+    public async Task<CasualEvent?> GetByIdAsync(string? id)
     {
-        Guid guidId = Guid.Parse(id);
-        var query = @"SELECT CasualEvent {*} FILTER .id = <uuid>$id;";
-        var result = await _client.QuerySingleAsync<CasualEvent?>(query, new Dictionary<string, object?>
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"SELECT CasualEvent {*} FILTER .id = <uuid>$id;";
+            var result = await _client.QuerySingleAsync<CasualEvent?>(query, new Dictionary<string, object?>
         {
             {"id", guidId }
         });
-        return result;
+            return result;
+        }
+        catch (FormatException e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
     }
 
     public async Task<CasualTicket?> AddReserverAsync(CasualTicket? newTicket)
     {
+        ArgumentNullException.ThrowIfNull(newTicket);
         var result = await _client.TransactionAsync(async (tx) =>
         {
             await tx.ExecuteAsync(@"UPDATE CasualEvent
@@ -99,21 +110,31 @@ public class EventRepository : IEventRepository
         });
         return result;
     }
-    public async Task<List<CasualTicket?>> GetAttendeesAsync(string id)
+    public async Task<List<CasualTicket?>> GetAttendeesAsync(string? id)
     {
-        Guid guidId = Guid.Parse(id);
-        var query = @"SELECT CasualTicket {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"SELECT CasualTicket {
             reserver_name,
             reserver_email,
             reserver_phone_number
-        } FILTER .casual_event.id = <uuid>$id;";
-        return (await _client.QueryAsync<CasualTicket?>(query, new Dictionary<string, object?>
+            } FILTER .casual_event.id = <uuid>$id;";
+            return (await _client.QueryAsync<CasualTicket?>(query, new Dictionary<string, object?>
+                {
+                    {"id", guidId }
+                })).ToList();
+        }
+        catch(FormatException e)
         {
-            {"id", guidId }
-        })).ToList();
+            Console.WriteLine(e.Message);
+            return null;
+        }
     }
     public async Task UpdateAsync(CasualEvent? editEvent)
     {
+        ArgumentNullException.ThrowIfNull(editEvent);
         var query = @"UPDATE CasualEvent
             FILTER .id = <uuid>$id
             SET {
@@ -146,38 +167,58 @@ public class EventRepository : IEventRepository
         });
     }
 
-    public async Task CloseReservationAsync(string id)
+    public async Task CloseReservationAsync(string? id)
     {
-        Guid guidId = Guid.Parse(id);
-        var query = @"UPDATE CasualEvent
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"UPDATE CasualEvent
             FILTER .id = <uuid>$id
             SET {
                 opened:= false
             };";
-        await _client.ExecuteAsync(query, new Dictionary<string, object?>
+            await _client.ExecuteAsync(query, new Dictionary<string, object?>
+            {
+                {"id", guidId }
+            });
+        }
+        catch(FormatException e)
         {
-            {"id", guidId }
-        });
+            Console.WriteLine(e.Message);
+        }
     }
 
-    public async Task<CasualEvent?> GetEventFromTicketAsync(string id)
+    public async Task<CasualEvent?> GetEventFromTicketAsync(string? id)
     {
-        Guid guidId = Guid.Parse(id);
-        var query = @"SELECT CasualTicket {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"SELECT CasualTicket {
                         casual_event: {*}
                     }
                     FILTER .id = <uuid>$id;";
-        var result = await _client.QuerySingleAsync<CasualEvent?>(query, new Dictionary<string, object?>
+            var result = await _client.QuerySingleAsync<CasualEvent?>(query, new Dictionary<string, object?>
+            {
+                {"id", guidId }
+            });
+            return result;
+        }
+        catch(FormatException e)
         {
-            {"id", guidId }
-        });
-        return result;
+            Console.WriteLine(e.Message);
+            return null;
+        }
     }
 
-    public async Task<CasualTicket?> GetTicketByIdAsync(string id)
+    public async Task<CasualTicket?> GetTicketByIdAsync(string? id)
     {
-        Guid guidId = Guid.Parse(id);
-        var query = @"SELECT CasualTicket {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"SELECT CasualTicket {
                         reserver_name,
                         reserver_email,
                         reserver_phone_number,
@@ -197,11 +238,17 @@ public class EventRepository : IEventRepository
                             image_url
                         }
                     } FILTER CasualTicket.id = <uuid>$id;";
-        var result = await _client.QuerySingleAsync<CasualTicket?>(query, new Dictionary<string, object?>
+            var result = await _client.QuerySingleAsync<CasualTicket?>(query, new Dictionary<string, object?>
+            {
+                {"id", guidId }
+            });
+            return result;
+        }
+        catch(FormatException e)
         {
-            {"id", guidId }
-        });
-        return result;
+            Console.WriteLine(e.Message);
+            return null;
+        }
     }
 
     public async Task CancelReservationAsync(Guid? deletedTicketId, Guid? eventId)

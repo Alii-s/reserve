@@ -23,7 +23,9 @@ public class CasualTicketValidator : AbstractValidator<CasualTicket>
     public CasualTicketValidator()
     {
         RuleFor(x => x.ReserverName).NotEmpty().WithMessage("Reserver Name is required");
-        RuleFor(x => x.ReserverEmail).EmailAddress().WithMessage("Correct Email Address format is required");
+        RuleFor(x => x.ReserverEmail).NotEmpty().WithMessage("Email Address required").EmailAddress().WithMessage("Correct Email Address format is required");
         RuleFor(x => x.ReserverPhoneNumber).NotEmpty().WithMessage("Reserver Phone Number is required");
+        RuleFor(x => x.CasualEvent).NotNull().Must(eventObj => eventObj?.Opened == true).WithMessage("Event is closed");
+        RuleFor(x => x.CasualEvent).NotNull().Must(eventObj => eventObj?.CurrentCapacity < eventObj?.MaximumCapacity).WithMessage("Event is full");
     }
 }

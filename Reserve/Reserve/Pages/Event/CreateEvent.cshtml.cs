@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Event;
+using Reserve.Core.Features.MailService;
 using Reserve.Repositories;
 using System;
 using System.Globalization;
 using static Reserve.Helpers.ImageHelper;
+using static Reserve.Core.Features.MailService.MailFormats;
 
 namespace Reserve.Pages.Event;
 [BindProperties]
@@ -18,17 +20,23 @@ public class CreateEventModel : PageModel
     private readonly IEventRepository _eventRepository;
     private readonly IValidator<CasualEvent> _validator;
     private readonly IWebHostEnvironment _webHostEnvironment;
-    public CreateEventModel(IEventRepository eventRepository, IWebHostEnvironment webHostEnvironment, IValidator<CasualEvent> validator)
+    private readonly IEmailService _emailService;
+    public CreateEventModel(IEventRepository eventRepository, IWebHostEnvironment webHostEnvironment, IValidator<CasualEvent> validator, IEmailService emailService)
     {
         _eventRepository = eventRepository;
         _webHostEnvironment = webHostEnvironment;
         _validator = validator;
+        _emailService = emailService;
     }
     public void OnGet()
     {
     }
     public async Task<IActionResult> OnPost()
     {
+        if(NewEvent is null)
+        {
+            return RedirectToPage("EventError");
+        }
         IFormFile? imageFile = Request.Form.Files.FirstOrDefault();
         ValidationResult result = await _validator.ValidateAsync(NewEvent);
         if(imageFile is not null)
@@ -42,7 +50,20 @@ public class CreateEventModel : PageModel
                 NewEvent.ImageUrl = SaveImage(imageFile, _webHostEnvironment);
             }
             NewEvent = await _eventRepository.CreateAsync(NewEvent);
-            return RedirectToPage("CreationNotification", new { id = NewEvent.Id });
+            if (NewEvent is not null) {
+                MailRequest mailRequest = new MailRequest
+                {
+                    ToEmail = NewEvent.OrganizerEmail,
+                    Subject = "Event Created",
+                    Body = EventCreationNotification(NewEvent.Id.ToString())
+                };
+                await _emailService.SendEmailAsync(mailRequest);
+                return RedirectToPage("CreationNotification", new { id = NewEvent.Id });
+            }
+            else
+            {
+                return RedirectToPage("EventError");
+            }
         }
         else
         {

@@ -23,12 +23,21 @@ public class EditEventModel : PageModel
         _webHostEnvironment = webHostEnvironment;
 
     }
-    public async Task OnGet()
+    public async Task<IActionResult> OnGet()
     {
         EditEvent = await _eventRepository.GetByIdAsync(Id!);
+        if(EditEvent is null)
+        {
+            return RedirectToPage("EventError");
+        }
+        return Page();
     }
     public async Task<IActionResult> OnPost()
     {
+        if(EditEvent is null)
+        {
+            return RedirectToPage("EventError");
+        }
         if(EditEvent.MaximumCapacity < EditEvent.CurrentCapacity)
         {
             ModelState.AddModelError("EditEvent.MaximumCapacity", "Maximum capacity cannot be less than Current Capacity");
