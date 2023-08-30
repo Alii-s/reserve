@@ -10,10 +10,10 @@
             </a>
         </div>
         <div>
-            <p class="notification-text d-flex justify-content-center align-content-center">An email has been sent with both links.</p>
+            <p class="notification-text d-flex justify-content-center align-content-center">An email has been sent with the link.</p>
         </div>
     </div>
     <div class="d-flex justify-content-center">
-        <button class="btn btn-custom reserve-blue-button">Your Details</button>
+        <a href="@Url.Page("ReserverDetails", new {id = Model.Id})" class="btn btn-custom reserve-blue-button">Your Details</a>
     </div>
 </div>

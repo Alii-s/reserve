@@ -22,7 +22,6 @@ module default {
         image_url: str;
         required start_date: datetime;
         required end_date: datetime;
-        tags: array<str>;
         required current_capacity: int32;
     }
     type CasualTicket{
@@ -32,9 +31,7 @@ module default {
         required casual_event: CasualEvent{
             on target delete delete source;
         }
-        constraint expression on (
-            .casual_event.current_capacity < .casual_event.maximum_capacity and .casual_event.opened = true
-        );
+        constraint exclusive on ((.reserver_email, .casual_event));
     }
     type Availability {
         required day: Days;
