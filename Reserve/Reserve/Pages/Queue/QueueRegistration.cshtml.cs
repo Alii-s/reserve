@@ -27,12 +27,14 @@ public class QueueRegistrationModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        if(ModelState.IsValid)
+        var validationResult = await _validator.ValidateAsync(NewQueueTicket);
+
+        if (!validationResult.IsValid)
         {
-            NewQueueTicket.QueueNumber = await _queueRepository.GetNextQueueNumber(NewQueueTicket.QueueEventId.ToString());
-            await _queueRepository.RegisterCustomer(NewQueueTicket);
-            return RedirectToPage("QueueTicket", new { id = NewQueueTicket.Id });
+            return Page();
         }
-        return Page();
+        NewQueueTicket.QueueNumber = await _queueRepository.GetNextQueueNumber(NewQueueTicket.QueueEventId.ToString());
+        await _queueRepository.RegisterCustomer(NewQueueTicket);
+        return RedirectToPage("QueueTicket", new { id = NewQueueTicket.Id });
     }
 }
