@@ -24,12 +24,18 @@ public static class EventEndpoints
                 return Results.BadRequest(e.Message);
             }
         });
-        group.MapDelete("cancel-reservation", async(HttpContext context, IEventRepository _eventRepository, IAntiforgery antiforgery) =>
+        group.MapDelete("cancel-reservation/{id}", async([FromRoute] string id, HttpContext context, IEventRepository _eventRepository, IAntiforgery antiforgery) =>
         {
             try
             {
                 await antiforgery.ValidateRequestAsync(context);
-                return Results.RedirectToRoute("/Event/CancelNotification");
+                CasualTicket? casualTicket = await _eventRepository.GetTicketByIdAsync(id);
+                ArgumentNullException.ThrowIfNull(casualTicket);
+                ArgumentNullException.ThrowIfNull(casualTicket.CasualEvent);
+                Guid guidTicketId = Guid.Parse(id);
+                await _eventRepository.CancelReservationAsync(guidTicketId, casualTicket.CasualEvent.Id);
+                context.Response.Headers["HX-Redirect"] = "/Event/CancelNotification";
+                return Results.Ok();
             }
             catch (Exception e)
             {

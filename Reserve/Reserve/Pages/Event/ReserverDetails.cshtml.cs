@@ -24,10 +24,4 @@ public class ReserverDetailsModel : PageModel
         }
         return Page();
     }
-    public async Task<IActionResult> OnPost(Guid? deletedTicketId, Guid? eventId)
-    {
-        await _eventRepository.CancelReservationAsync(deletedTicketId, eventId);
-        return RedirectToPage("CancelNotification");
-    }
-
 }

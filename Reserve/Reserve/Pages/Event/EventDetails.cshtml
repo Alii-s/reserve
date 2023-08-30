@@ -6,7 +6,7 @@
 <div class="row d-flex justify-content-center">
     <div class="col-sm-8">
         <div class="card mb-3">
-            <img class="card-img-top event-details-image" src="@Model.DetailedEvent.ImageUrl" alt="Card image cap">
+            <img class="card-img-top event-details-image" src="@Model.DetailedEvent!.ImageUrl" alt="Card image cap">
             <div class="card-body">
                 <div class="d-flex justify-content-between mb-lg-3">
                     <h5 class="card-title event-fields">@Model.DetailedEvent.Title</h5>
@@ -61,12 +61,6 @@
                         <p class="text-muted event-fields-details d-flex justify-content-center">@Model.DetailedEvent.CurrentCapacity/@Model.DetailedEvent.MaximumCapacity</p>
                     </div>
                 </div>
-                <p class="card-text"><small class="text-muted">
-                    @foreach(var tag in Model.DetailedEvent.Tags)
-                    {
-                        <span class="badge bg-warning font-event-details">@tag</span>
-                    }
-                </small></p>
                 <div class="d-flex flex-column justify-content-end align-items-end">
                     <p class="text-muted event-fields-details m-0">Organized by: @Model.DetailedEvent.OrganizerName</p>
                     <p class="text-muted event-fields-details">Organizer's Email: @Model.DetailedEvent.OrganizerEmail</p>

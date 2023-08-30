@@ -15,9 +15,7 @@
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-around border-0">
-                <form method="post" asp-route-deletedTicketId="@Model.Ticket!.Id" asp-route-eventId="@Model.Ticket.CasualEvent!.Id">
-                    <button type="submit" class="btn reserve-red-button">Yes</button>
-                </form>
+                <button type="button" hx-delete="/cancel-reservation/@Model.Ticket.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' class="btn reserve-red-button">Yes</button>
                 <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>
             </div>
         </div>
@@ -78,14 +76,6 @@
                         <p class="text-muted event-fields-details d-flex justify-content-center">@Model.Ticket.CasualEvent.CurrentCapacity/@Model.Ticket.CasualEvent.MaximumCapacity</p>
                     </div>
                 </div>
-                <p class="card-text">
-                    <small class="text-muted">
-                        @foreach (var tag in Model.Ticket.CasualEvent.Tags)
-                        {
-                            <span class="badge bg-warning font-event-details">@tag</span>
-                        }
-                    </small>
-                </p>
                 <div class="d-flex flex-column justify-content-end align-items-end">
                     <p class="text-muted event-fields-details m-0">Organized by: @Model.Ticket.CasualEvent.OrganizerName</p>
                     <p class="text-muted event-fields-details">Organizer's Email: @Model.Ticket.CasualEvent.OrganizerEmail</p>

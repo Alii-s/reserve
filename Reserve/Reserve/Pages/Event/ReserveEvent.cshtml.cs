@@ -4,7 +4,8 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Event;
-using Reserve.Repositories;
+using Reserve.Core.Features.MailService;
+using static Reserve.Core.Features.MailService.MailFormats;
 
 
 namespace Reserve.Pages.Event;
@@ -18,10 +19,12 @@ public class ReserveEventModel : PageModel
     public CasualTicket Ticket { get; set; } = new();
     private readonly IEventRepository _eventRepository;
     private readonly IValidator<CasualTicket> _validator;
-    public ReserveEventModel(IEventRepository eventRepository, IValidator<CasualTicket> validator)
+    private readonly IEmailService _emailService;
+    public ReserveEventModel(IEventRepository eventRepository, IValidator<CasualTicket> validator, IEmailService emailService)
     {
         _eventRepository = eventRepository;
         _validator = validator;
+        _emailService = emailService;
     }
     public async Task<IActionResult> OnGet()
     {
@@ -41,10 +44,29 @@ public class ReserveEventModel : PageModel
         }
         Ticket.CasualEvent = Event;
         ValidationResult result = await _validator.ValidateAsync(Ticket);
-        if (result.IsValid)
+        var alreadyReserved = (await _eventRepository.CheckIfAlreadyReserved(Ticket)).ToList();
+        if (alreadyReserved.Count != 0)
+        {
+            ModelState.AddModelError("Ticket.ReserverEmail", "This email is already reserved");
+        }
+        if (result.IsValid && ModelState.IsValid)
         {
             Ticket = (await _eventRepository.AddReserverAsync(Ticket))!;
-            return RedirectToPage("ReservationNotification", new { id = Ticket.Id });
+            if(Ticket is not null)
+            {
+                MailRequest mailRequest = new MailRequest
+                {
+                    ToEmail = Ticket.ReserverEmail,
+                    Subject = "Reservation Successful",
+                    Body = ReservationSuccessfulNotification(Ticket.Id.ToString())
+                };
+                await _emailService.SendEmailAsync(mailRequest);
+                return RedirectToPage("ReservationNotification", new { id = Ticket.Id });
+            }
+            else
+            {
+                return RedirectToPage("EventError");
+            }
         }
         else
         {

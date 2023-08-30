@@ -17,4 +17,5 @@ public interface IEventRepository
     Task<CasualEvent?> GetEventFromTicketAsync(string id);
     Task<CasualTicket?> GetTicketByIdAsync(string id);
     Task CancelReservationAsync(Guid? deletedTicketId, Guid? eventId);
+    Task<List<CasualTicket?>> CheckIfAlreadyReserved(CasualTicket? newTicket);
 }

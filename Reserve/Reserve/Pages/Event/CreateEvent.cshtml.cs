@@ -43,6 +43,10 @@ public class CreateEventModel : PageModel
         {
             NewEvent.ImageUrl = @"\images\event\" + imageFile.FileName;
         }
+        else
+        {
+            NewEvent.ImageUrl = @"\images\generic.jpeg";
+        }
         if (result.IsValid)
         {
             if (imageFile is not null)
