@@ -1,4 +1,5 @@
 using EdgeDB;
+using Reserve.Core.Features.Queue;
 using Reserve.Endpoints;
 using Reserve.Helpers;
 using Reserve.Repositories;

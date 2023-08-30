@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Queue;
@@ -9,8 +10,15 @@ namespace Reserve.Pages.Queue;
 public class QueueRegistrationModel : PageModel
 {
     private readonly IQueueRepository _queueRepository;
+    private readonly IValidator<QueueTicket> _validator;
     [Required]
     public QueueTicket NewQueueTicket { get; set; }
+
+    public QueueRegistrationModel(IQueueRepository queueRepository, IValidator<QueueTicket> validator)
+    {
+        _queueRepository = queueRepository;
+        _validator = validator;
+    }
 
     public void OnGet(Guid id)
     {
