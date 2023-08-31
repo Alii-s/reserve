@@ -10,15 +10,19 @@ using Reserve.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages().AddMvcOptions(options =>
+{
+    options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
+               _ => "This field is required.");
+});
 builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("reserve"), config =>
 {
     config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
 });
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
-builder.Services.AddScoped<IValidator<CasualEvent>, CasualEventValidator>();
-builder.Services.AddScoped<IValidator<CasualTicket>, CasualTicketValidator>();
+builder.Services.AddScoped<IValidator<CasualEventInput>, CasualEventInputValidator>();
+builder.Services.AddScoped<IValidator<CasualTicketInput>, CasualTicketInputValidator>();
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailService, EmailService>();

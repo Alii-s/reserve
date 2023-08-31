@@ -15,12 +15,12 @@ public class ReserveEventModel : PageModel
     [BindProperty(SupportsGet = true)]
     public string? Id { get; set; }
 
-    public CasualEvent? Event { get; set; }
-    public CasualTicket Ticket { get; set; } = new();
+    public CasualEventView? Event { get; set; }
+    public CasualTicketInput Ticket { get; set; } = new();
     private readonly IEventRepository _eventRepository;
-    private readonly IValidator<CasualTicket> _validator;
+    private readonly IValidator<CasualTicketInput> _validator;
     private readonly IEmailService _emailService;
-    public ReserveEventModel(IEventRepository eventRepository, IValidator<CasualTicket> validator, IEmailService emailService)
+    public ReserveEventModel(IEventRepository eventRepository, IValidator<CasualTicketInput> validator, IEmailService emailService)
     {
         _eventRepository = eventRepository;
         _validator = validator;
@@ -44,33 +44,36 @@ public class ReserveEventModel : PageModel
         }
         Ticket.CasualEvent = Event;
         ValidationResult result = await _validator.ValidateAsync(Ticket);
-        var alreadyReserved = (await _eventRepository.CheckIfAlreadyReserved(Ticket)).ToList();
-        if (alreadyReserved.Count != 0)
+        if (!result.IsValid)
         {
-            ModelState.AddModelError("Ticket.ReserverEmail", "This email is already reserved");
-        }
-        if (result.IsValid && ModelState.IsValid)
-        {
-            Ticket = (await _eventRepository.AddReserverAsync(Ticket))!;
-            if(Ticket is not null)
-            {
-                MailRequest mailRequest = new MailRequest
-                {
-                    ToEmail = Ticket.ReserverEmail,
-                    Subject = "Reservation Successful",
-                    Body = ReservationSuccessfulNotification(Ticket.Id.ToString())
-                };
-                await _emailService.SendEmailAsync(mailRequest);
-                return RedirectToPage("ReservationNotification", new { id = Ticket.Id });
-            }
-            else
-            {
-                return RedirectToPage("EventError");
-            }
+            result.AddToModelState(this.ModelState, "Ticket");
         }
         else
         {
-            result.AddToModelState(this.ModelState, "Ticket");
+            var alreadyReserved = (await _eventRepository.CheckIfAlreadyReserved(Ticket)).ToList();
+            if (alreadyReserved.Count != 0)
+            {
+                ModelState.AddModelError("Ticket.ReserverEmail", "This email is already reserved");
+            }
+            if (ModelState.IsValid)
+            {
+                Ticket = (await _eventRepository.AddReserverAsync(Ticket))!;
+                if (Ticket is not null)
+                {
+                    MailRequest mailRequest = new MailRequest
+                    {
+                        ToEmail = Ticket.ReserverEmail,
+                        Subject = "Reservation Successful",
+                        Body = ReservationSuccessfulNotification(Ticket.Id.ToString())
+                    };
+                    await _emailService.SendEmailAsync(mailRequest);
+                    return RedirectToPage("ReservationNotification", new { id = Ticket.Id });
+                }
+                else
+                {
+                    return RedirectToPage("EventError");
+                }
+            }
         }
         return Page();
     }

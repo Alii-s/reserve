@@ -29,7 +29,7 @@ public static class EventEndpoints
             try
             {
                 await antiforgery.ValidateRequestAsync(context);
-                CasualTicket? casualTicket = await _eventRepository.GetTicketByIdAsync(id);
+                CasualTicketView? casualTicket = await _eventRepository.GetTicketByIdAsync(id);
                 ArgumentNullException.ThrowIfNull(casualTicket);
                 ArgumentNullException.ThrowIfNull(casualTicket.CasualEvent);
                 Guid guidTicketId = Guid.Parse(id);

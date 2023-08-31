@@ -10,8 +10,8 @@ public class ViewAttendeesModel : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public string? Id { get; set; }
-    public List<CasualTicket?> Attendees { get; set; } = new();
-    public CasualEvent? Event { get; set; }
+    public List<CasualTicketView?> Attendees { get; set; } = new();
+    public CasualEventView? Event { get; set; }
     private readonly IEventRepository _eventRepository;
 
     public ViewAttendeesModel(IEventRepository eventRepository)
