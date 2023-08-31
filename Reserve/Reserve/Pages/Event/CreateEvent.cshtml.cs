@@ -16,12 +16,12 @@ namespace Reserve.Pages.Event;
 [BindProperties]
 public class CreateEventModel : PageModel
 {
-    public CasualEvent? NewEvent { get; set; }
+    public CasualEventInput? NewEvent { get; set; }
     private readonly IEventRepository _eventRepository;
-    private readonly IValidator<CasualEvent> _validator;
+    private readonly IValidator<CasualEventInput> _validator;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IEmailService _emailService;
-    public CreateEventModel(IEventRepository eventRepository, IWebHostEnvironment webHostEnvironment, IValidator<CasualEvent> validator, IEmailService emailService)
+    public CreateEventModel(IEventRepository eventRepository, IWebHostEnvironment webHostEnvironment, IValidator<CasualEventInput> validator, IEmailService emailService)
     {
         _eventRepository = eventRepository;
         _webHostEnvironment = webHostEnvironment;
@@ -31,6 +31,7 @@ public class CreateEventModel : PageModel
     public void OnGet()
     {
     }
+
     public async Task<IActionResult> OnPost()
     {
         if(NewEvent is null)

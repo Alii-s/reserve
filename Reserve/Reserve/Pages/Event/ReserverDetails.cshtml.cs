@@ -9,7 +9,7 @@ public class ReserverDetailsModel : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public string? Id { get; set; }
-    public CasualTicket? Ticket { get; set; }
+    public CasualTicketView? Ticket { get; set; }
     private readonly IEventRepository _eventRepository;
     public ReserverDetailsModel(IEventRepository eventRepository)
     {
