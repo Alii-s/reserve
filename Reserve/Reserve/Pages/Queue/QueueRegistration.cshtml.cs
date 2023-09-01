@@ -18,6 +18,7 @@ public class QueueRegistrationModel : PageModel
     {
         _queueRepository = queueRepository;
         _validator = validator;
+        NewQueueTicket = new QueueTicket();
     }
 
     public void OnGet(Guid id)

@@ -1,4 +1,5 @@
 using EdgeDB;
+using FluentValidation;
 using Reserve.Core.Features.Queue;
 using Reserve.Endpoints;
 using Reserve.Helpers;
@@ -15,6 +16,8 @@ builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("reserve"), config 
 });
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
+builder.Services.AddScoped<IValidator<QueueEvent>, QueueEventValidator>();
+builder.Services.AddScoped<IValidator<QueueTicket>, QueueTicketValidator>();
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
 var app = builder.Build();
 
