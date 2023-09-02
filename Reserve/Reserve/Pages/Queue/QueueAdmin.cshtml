@@ -23,6 +23,14 @@
             </tr>
         </thead>
         <tbody>
-              </tbody>
+            @foreach (var attendee in Model.Attendees)
+            {
+                <tr>
+                    <td>@attendee.QueueNumber</td>
+                    <td>@attendee.CustomerName</td>
+                    <td>@attendee.CustomerPhoneNumber</td>
+                </tr>
+            }
+         </tbody>
           </table>
       </div>
