@@ -1,5 +1,6 @@
 ﻿using EdgeDB;
 
+
 namespace Reserve.Core.Features.Queue;
 
 public class QueueRepository : IQueueRepository
@@ -115,6 +116,25 @@ public class QueueRepository : IQueueRepository
     {
         {"queueEventId", guidId }
     });
+    }
+
+    public async Task<List<QueueTicket>> GetAttendees(string queueEventId)
+    {
+        Guid guidId = Guid.Parse(queueEventId);
+        var query = @"
+    WITH
+        QueueEvent := (SELECT QueueEvent FILTER .id = <uuid>$queueEventId)
+    SELECT QueueTicket {
+        queue_number,
+        customer_name,
+        customer_phone_number
+    } FILTER .queue_event = QueueEvent;
+    ";
+        var result = await _client.QueryAsync<QueueTicket>(query, new Dictionary<string, object?>
+    {
+        {"queueEventId", guidId }
+    });
+        return result.ToList();
     }
 
 }

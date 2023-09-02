@@ -8,4 +8,5 @@ public interface IQueueRepository
     Task<QueueTicket> RegisterCustomer(QueueTicket queueTicket);
     Task ServeCurrentCustomer(string queueEventId);
     Task ResetQueue(string queueEventId);
+    Task<List<QueueTicket>> GetAttendees(string queueEventId);
 }
