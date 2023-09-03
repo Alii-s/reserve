@@ -1,7 +1,7 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Reserve.Models.Queue;
-using Reserve.Repositories;
+using Reserve.Core.Features.Queue;
 using System.ComponentModel.DataAnnotations;
 
 namespace Reserve.Pages.Queue;
@@ -10,11 +10,19 @@ namespace Reserve.Pages.Queue;
 public class QueueRegistrationModel : PageModel
 {
     private readonly IQueueRepository _queueRepository;
+    private readonly IValidator<QueueTicket> _validator;
     [Required]
     public QueueTicket NewQueueTicket { get; set; }
     public QueueRegistrationModel(IQueueRepository queueRepository)
     {
         _queueRepository = queueRepository;
+    }
+
+    public QueueRegistrationModel(IQueueRepository queueRepository, IValidator<QueueTicket> validator)
+    {
+        _queueRepository = queueRepository;
+        _validator = validator;
+        NewQueueTicket = new QueueTicket();
     }
 
     public void OnGet(Guid id)
@@ -24,12 +32,14 @@ public class QueueRegistrationModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        if(ModelState.IsValid)
+        var validationResult = await _validator.ValidateAsync(NewQueueTicket);
+
+        if (!validationResult.IsValid)
         {
-            NewQueueTicket.QueueNumber = await _queueRepository.GetNextQueueNumber(NewQueueTicket.QueueEventId.ToString());
-            await _queueRepository.RegisterCustomer(NewQueueTicket);
-            return RedirectToPage("QueueTicket", new { id = NewQueueTicket.Id });
+            return Page();
         }
-        return Page();
+        NewQueueTicket.QueueNumber = await _queueRepository.GetNextQueueNumber(NewQueueTicket.QueueEventId.ToString());
+        await _queueRepository.RegisterCustomer(NewQueueTicket);
+        return RedirectToPage("QueueTicket", new { id = NewQueueTicket.Id });
     }
 }
