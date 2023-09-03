@@ -31,7 +31,7 @@ module default {
         required casual_event: CasualEvent{
             on target delete delete source;
         }
-        constraint exclusive on ((.reserver_email, .casual_event));
+    constraint exclusive on ((.reserver_email, .casual_event));
     }
     type Availability {
         required day: Days;
