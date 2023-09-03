@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Event;
-using Reserve.Repositories;
 using System.Globalization;
 using static Reserve.Helpers.DateTimeHelper;
 using static Reserve.Helpers.ImageHelper;
