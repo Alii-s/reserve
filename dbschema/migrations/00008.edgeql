@@ -1,6 +1,9 @@
-CREATE MIGRATION m1wxvxuyxd6sdu5r5n4dbepucgka5ryhutdrv63cwfgoijkum7aaia
+CREATE MIGRATION m1eigwduaknxc3bd3x3aakhmaq344ilmqyudqfvvoqg2e5a2tpvpsa
     ONTO m1x4rdit4vuioqq3uhoyeamu6763qjtup4otssou4wanfp6ticelqa
 {
+  ALTER TYPE default::CasualEvent {
+      DROP PROPERTY tags;
+  };
   ALTER TYPE default::CasualTicket {
       CREATE CONSTRAINT std::exclusive ON ((.reserver_email, .casual_event));
   };
@@ -13,18 +16,13 @@ CREATE MIGRATION m1wxvxuyxd6sdu5r5n4dbepucgka5ryhutdrv63cwfgoijkum7aaia
       DROP PROPERTY end_date;
   };
   ALTER TYPE default::QueueEvent {
-      DROP PROPERTY location;
+      ALTER PROPERTY location {
+          RENAME TO description;
+      };
   };
   ALTER TYPE default::QueueEvent {
       DROP PROPERTY maximum_capacity;
-  };
-  ALTER TYPE default::QueueEvent {
-      CREATE REQUIRED PROPERTY description: std::str {
-          SET REQUIRED USING (<std::str>{});
-      };
       DROP PROPERTY organizer_name;
-  };
-  ALTER TYPE default::QueueEvent {
       DROP PROPERTY start_date;
       DROP PROPERTY tags;
   };

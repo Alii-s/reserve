@@ -22,7 +22,6 @@ module default {
         image_url: str;
         required start_date: datetime;
         required end_date: datetime;
-        tags: array<str>;
         required current_capacity: int32;
     }
     type CasualTicket{

@@ -3,38 +3,30 @@
 <h1 class="notification-title mb-lg-5">Reserve Now!</h1>
 <div class="d-flex flex-column justify-content-center align-items-center">
     <div class="notification-border mb-lg-5">
-        <h2 class="font-event-details d-flex justify-content-center mb-lg-5">@Model.Event.Title</h2>
+        <h2 class="font-event-details d-flex justify-content-center mb-lg-5">@Model.Event!.Title</h2>
         <form method="post" class="p-3">
-            <input class="form-control" type="hidden" asp-for="Event.Title" name="Event.Title" />
-            <input class="form-control" type="hidden" asp-for="Event.Id" name="Event.Id" />
-            <input class="form-control" type="hidden" asp-for="Event.OrganizerName" name="Event.OrganizerName" />
-            <input class="form-control" type="hidden" asp-for="Event.OrganizerEmail" name="Event.OrganizerEmail" />
-            <input class="form-control" type="hidden" asp-for="Event.StartDate" name="Event.StartDate" />
-            <input class="form-control" type="hidden" asp-for="Event.EndDate" name="Event.EndDate" />
-            <input class="form-control" type="hidden" asp-for="Event.Location" name="Event.Location" />
-            <input class="form-control" type="hidden" asp-for="Event.Tags" name="Event.Tags" />
-            <input class="form-control" type="hidden" asp-for="Event.Opened" name="Event.Opened" />
-            <span asp-validation-for="Event.Opened" class="text-danger"></span>
-            <input class="form-control" type="hidden" asp-for="Event.MaximumCapacity" name="Event.MaximumCapacity" />
-            <input class="form-control" type="hidden" asp-for="Event.CurrentCapacity" name="Event.CurrentCapacity" />
-            <span asp-validation-for="Event.CurrentCapacity" class="text-danger"></span>
-            <input class="form-control" type="hidden" asp-for="Event.Description" name="Event.Description" />
-            <input class="form-control" type="hidden" asp-for="Event.ImageUrl" name="Event.ImageUrl" />
-            <div class="d-flex justify-content-evenly m-3">
-                <label class="form-label">Your Name</label>
-                <input type="text" asp-for="Ticket.ReserverName" name="Ticket.ReserverName" class="form-control w-50 h-25" />              
+            <span asp-validation-for="Ticket.CasualEvent" class="text-danger"></span>
+            <div class="d-flex flex-column">
+                <div class="d-flex justify-content-evenly">
+                    <label asp-for="Ticket.ReserverName" class="form-label">Your Name</label>
+                    <input type="text" asp-for="Ticket.ReserverName" name="Ticket.ReserverName" class="form-control w-50" />            
+                </div>
+                <span asp-validation-for="Ticket.ReserverName" class="text-danger justify-content-center d-flex p-3"></span>
             </div>
-            <span asp-validation-for="Ticket.ReserverName" class="text-danger d-flex mt-0 p-3"></span>
-            <div class="d-flex justify-content-evenly m-3">
-                <label class="form-label">Email</label>
-                <input type="text" asp-for="Ticket.ReserverEmail" name="Ticket.ReserverEmail" class="form-control w-50 h-25" />              
+            <div class="d-flex flex-column">
+                <div class="d-flex justify-content-evenly">
+                    <label asp-for="Ticket.ReserverEmail" class="form-label">Email</label>
+                    <input type="text" asp-for="Ticket.ReserverEmail" name="Ticket.ReserverEmail" class="form-control w-50" />          
+                </div>
+                <span asp-validation-for="Ticket.ReserverEmail" class="text-danger d-flex justify-content-center p-3"></span>
             </div>
-            <span asp-validation-for="Ticket.ReserverEmail" class="text-danger d-flex p-3 mt-0"></span>
-            <div class="d-flex justify-content-evenly m-3">
-                <label class="form-label">Phone Number</label>
-                <input type="text" asp-for="Ticket.ReserverPhoneNumber" name="Ticket.ReserverPhoneNumber" class="form-control w-50 h-25" />
+            <div class="d-flex flex-column">
+                <div class="d-flex justify-content-evenly">
+                    <label asp-for="Ticket.ReserverPhoneNumber" class="form-label">Phone Number</label>
+                    <input type="text" asp-for="Ticket.ReserverPhoneNumber" name="Ticket.ReserverPhoneNumber" class="form-control w-50" />
+                </div>
+                <span asp-validation-for="Ticket.ReserverPhoneNumber" class="text-danger d-flex justify-content-center p-3 mb-3"></span>
             </div>
-            <span asp-validation-for="Ticket.ReserverPhoneNumber" class="text-danger d-flex mt-0 p-3 mb-3"></span>
             <div class="d-flex justify-content-center">
                 <button type="submit" class="btn btn-custom reserve-blue-button">Reserve Now</button>
             </div>

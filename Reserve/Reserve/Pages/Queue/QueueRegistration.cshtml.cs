@@ -13,6 +13,10 @@ public class QueueRegistrationModel : PageModel
     private readonly IValidator<QueueTicket> _validator;
     [Required]
     public QueueTicket NewQueueTicket { get; set; }
+    public QueueRegistrationModel(IQueueRepository queueRepository)
+    {
+        _queueRepository = queueRepository;
+    }
 
     public QueueRegistrationModel(IQueueRepository queueRepository, IValidator<QueueTicket> validator)
     {

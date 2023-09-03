@@ -1,9 +1,10 @@
 ﻿@page
 @model Reserve.Pages.Event.CreateEventModel
 
+
 <h1 class="event-title">Create Event</h1>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <form method="post" enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="title-icon mb-lg-3 subtitle-font">
         <svg class="svg-creation" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
             <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
@@ -36,11 +37,6 @@
         <span asp-validation-for="NewEvent.MaximumCapacity" class="text-danger"></span>
     </div>
     <div class="row col-md-8 mt-3 body-font">
-        <label class="form-label" asp-for="NewEvent.Tags">Tags</label>
-        <input class="form-control" asp-for="NewEvent.Tags" name="NewEvent.Tags" id="Tags" type="text" placeholder="Improve discoverability by adding relevant tags" />
-        <span asp-validation-for="NewEvent.Tags" class="text-danger"></span>
-    </div>
-    <div class="row col-md-8 mt-3 body-font">
         <label class="form-label" asp-for="NewEvent.Location">Location</label>
         <input class="form-control" asp-for="NewEvent.Location" name="NewEvent.Location" type="text" placeholder="Add Venue Address" />
         <span asp-validation-for="NewEvent.Location" class="text-danger"></span>
@@ -58,26 +54,16 @@
     </div>
     <div class="d-flex justify-content-between body-font">
         <div class="row col-sm-3 mt-3">
-            <label class="form-label" asp-for="StartDate">Event Starts</label>
-            <input class="form-control" asp-for="StartDate" name="StartDate" type="date" />
-            <span asp-validation-for="StartDate" class="text-danger"></span>
-        </div>
-        <div class="row col-sm-3 mt-3">
-            <label class="form-label" asp-for="StartTime">Start Time</label>
-            <input class="form-control" asp-for="StartTime" name="StartTime" type="time" />
-            <span asp-validation-for="StartTime" class="text-danger"></span>
+            <label class="form-label" asp-for="NewEvent.StartDate">Event Starts</label>
+            <input class="form-control" asp-for="NewEvent.StartDate" name="NewEvent.StartDate" type="datetime-local" />
+            <span asp-validation-for="NewEvent.StartDate" class="text-danger"></span>
         </div>
     </div>
-    <div class="d-flex justify-content-between body-font">
+    <div class="d-flex justify-content-between body-font mb-lg-5">
         <div class="row col-sm-3 mt-3">
-            <label class="form-label" asp-for="EndDate">Event Ends</label>
-            <input class="form-control" asp-for="EndDate" name="EndDate" type="date" />
-            <span asp-validation-for="EndDate" class="text-danger"></span>
-        </div>
-        <div class="row col-sm-3 mt-3">
-            <label class="form-label" asp-for="EndTime">End Time</label>
-            <input class="form-control" asp-for="EndTime" name="EndTime" type="time" />
-            <span asp-validation-for="EndTime" class="text-danger"></span>
+            <label class="form-label" asp-for="NewEvent.EndDate">Event Ends</label>
+            <input class="form-control" asp-for="NewEvent.EndDate" name="NewEvent.EndDate" type="datetime-local" />
+            <span asp-validation-for="NewEvent.EndDate" class="text-danger"></span>
         </div>
     </div>
     <div class="d-flex justify-content-center mt-3">
@@ -86,8 +72,3 @@
 </form>
 
 
-@section Scripts{
-    @{
-        <partial name="_ValidationScriptsPartial" />
-    }
-}
