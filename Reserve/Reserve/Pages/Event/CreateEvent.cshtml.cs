@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Event;
 using Reserve.Core.Features.MailService;
-using Reserve.Repositories;
 using System;
 using System.Globalization;
 using static Reserve.Helpers.ImageHelper;
