@@ -66,4 +66,11 @@ module default {
         }
         required queue_number: int32;
     }
-}
+    type AppointmentCalendar{
+        required name: str;
+        required email: str{
+            constraint exclusive;
+        };
+        required description: str;
+        multi availability_slots: Availability;
+    }
