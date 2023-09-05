@@ -9,12 +9,12 @@
             <h3 class="card-title text-center">Welcome to @Model.CurrentQueue.Title, you are currently in queue</h3>
             <br />
             <div class="text-center">
-                <p class="card-text" style="font-size: 2rem; font-weight: bold;">Your Number:</p>
+                <p class="card-text" style="font-size: 2rem; font-weight: bold;">Your Number: @Model.QueueTicket.QueueNumber</p>
                 <p class="card-text text-center" style="font-size: 3rem; font-weight: bold;"></p>
             </div>
 
             <p class="card-text text-center mt-3">
-                Use this link to monitor your progress: <a href="#">https://reserve/queue-ticket/@Model.QueueId-@Model.QueueTicketId</a>
+                Use this link to monitor your progress: <a href="#">https://reserve/queue-ticket</a>
             </p>
         </div>
 

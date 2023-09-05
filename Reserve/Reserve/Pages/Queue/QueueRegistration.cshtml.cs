@@ -13,10 +13,7 @@ public class QueueRegistrationModel : PageModel
     private readonly IValidator<QueueTicket> _validator;
     [Required]
     public QueueTicket NewQueueTicket { get; set; }
-    public QueueRegistrationModel(IQueueRepository queueRepository)
-    {
-        _queueRepository = queueRepository;
-    }
+    public Guid QueueEventId { get; set; }
 
     public QueueRegistrationModel(IQueueRepository queueRepository, IValidator<QueueTicket> validator)
     {
@@ -32,6 +29,7 @@ public class QueueRegistrationModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
+        QueueEventId = NewQueueTicket.QueueEventId;
         var validationResult = await _validator.ValidateAsync(NewQueueTicket);
 
         if (!validationResult.IsValid)
@@ -39,7 +37,10 @@ public class QueueRegistrationModel : PageModel
             return Page();
         }
         NewQueueTicket.QueueNumber = await _queueRepository.GetNextQueueNumber(NewQueueTicket.QueueEventId.ToString());
-        await _queueRepository.RegisterCustomer(NewQueueTicket);
-        return RedirectToPage("QueueTicket", new { id = NewQueueTicket.Id });
+        await _queueRepository.IncrementTicketCounter(NewQueueTicket.QueueEventId.ToString());
+        NewQueueTicket = await _queueRepository.RegisterCustomer(NewQueueTicket);
+        NewQueueTicket.QueueEventId = QueueEventId;
+        return RedirectToPage("QueueTicket", new { QueueTicketId = NewQueueTicket.Id, QueueId = NewQueueTicket.QueueEventId });
     }
+
 }

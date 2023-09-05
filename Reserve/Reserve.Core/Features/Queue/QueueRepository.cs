@@ -18,7 +18,8 @@ public class QueueRepository : IQueueRepository
                         title := <str>$title,
                         organizer_email := <str>$organizer_email,
                         description := <str>$description,
-                        current_number_served := <int32>$current_number_served
+                        current_number_served := <int32>$current_number_served,
+                        ticket_counter := <int32>$ticket_counter
                     }
                   )
                   SELECT Inserted{*};";
@@ -27,48 +28,81 @@ public class QueueRepository : IQueueRepository
             {"title", queueEvent.Title },
             {"organizer_email", queueEvent.OrganizerEmail },
             {"description", queueEvent.Description },
-            {"current_number_served", queueEvent.CurrentNumberServed }
+            {"current_number_served", queueEvent.CurrentNumberServed },
+            {"ticket_counter", queueEvent.TicketCounter }
         });
         return result;
     }
 
-    public async Task<QueueEvent> GetByID(string id)
+    public async Task<QueueEvent> GetQueueEventByID(string id)
     {
         Guid guidId = Guid.Parse(id);
         var query = @"SELECT QueueEvent {*} FILTER .id = <uuid>$id;";
-        var result = await _client.QuerySingleAsync<QueueEvent>(query, new Dictionary<string, object?>
+        var results = await _client.QueryAsync<QueueEvent>(query, new Dictionary<string, object?>
         {
             {"id", guidId }
         });
+        var result = results.FirstOrDefault();
         return result;
     }
+
+    public async Task<QueueTicket> GetQueueTicketByID(string id)
+    {
+        Guid guidId = Guid.Parse(id);
+        var query = @"SELECT QueueTicket {*} FILTER .id = <uuid>$id;";
+        var results = await _client.QueryAsync<QueueTicket>(query, new Dictionary<string, object?>
+        {
+            {"id", guidId }
+        });
+        var result = results.FirstOrDefault();
+        return result;
+    }
+
 
     public async Task<int> GetNextQueueNumber(string queueId)
     {
         Guid guidId = Guid.Parse(queueId);
-        var query = @"WITH QueueEvent := (
-                    SELECT QueueEvent FILTER .id = <uuid>$id
-                  )
-                  SELECT std::sequence_next(introspect QueueNumber);";
-        var result = await _client.QuerySingleAsync<int>(query, new Dictionary<string, object?>
-        {
-            {"id", guidId }
-        });
+        var query = @"SELECT QueueEvent.ticket_counter + 1
+                    FILTER QueueEvent.id = <uuid>$id;";
+        var results = await _client.QueryAsync<int>(query, new Dictionary<string, object?>
+    {
+        {"id", guidId }
+    });
+        var result = results.FirstOrDefault();
         return result;
     }
+    public async Task IncrementTicketCounter(string queueId)
+    {
+        Guid guidId = Guid.Parse(queueId);
+        var query = @"UPDATE QueueEvent
+                  FILTER .id = <uuid>$id
+                  SET { ticket_counter := .ticket_counter + 1 };";
+        await _client.ExecuteAsync(query, new Dictionary<string, object?>
+    {
+        {"id", guidId }
+    });
+    }
+
 
     public async Task<QueueTicket> RegisterCustomer(QueueTicket queueTicket)
     {
         Guid guidId = queueTicket.QueueEventId;
         var query = @"WITH Inserted := (
-                    INSERT QueueTicket {
-                        customer_name := <str>$customer_name,
-                        customer_phone_number := <str>$customer_phone_number,
-                        queue_number := <int32>$queue_number,
-                        queue_event := (SELECT QueueEvent FILTER .id = <uuid>$queueId)
-                    }
-                  )
-                  SELECT Inserted{*};";
+                INSERT QueueTicket {
+                    customer_name := <str>$customer_name,
+                    customer_phone_number := <str>$customer_phone_number,
+                    queue_number := <int32>$queue_number,
+                    queue_event := (SELECT QueueEvent FILTER .id = <uuid>$queueId)
+                }
+              )
+              SELECT Inserted {
+                  id,
+                  customer_name,
+                  customer_phone_number,
+                  queue_number,
+                  queue_event: {id}
+              };";
+
         var result = await _client.QuerySingleAsync<QueueTicket>(query, new Dictionary<string, object?>
         {
             {"customer_name", queueTicket.CustomerName },

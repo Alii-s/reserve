@@ -29,6 +29,7 @@ public class CreateQueueModel : PageModel
             return Page();
         }
         NewQueue.CurrentNumberServed = 1;
+        NewQueue.TicketCounter = 0;
         NewQueue = await _queueRepository.Create(NewQueue);
         return RedirectToPage("QueueURL", new { id = NewQueue.Id });
     }

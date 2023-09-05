@@ -5,8 +5,6 @@ using Reserve.Core.Features.Event;
 using Reserve.Core.Features.MailService;
 using Reserve.Endpoints;
 using Reserve.Helpers;
-using Reserve.Repositories;
-using Reserve.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

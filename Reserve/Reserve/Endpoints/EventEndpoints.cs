@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Reserve.Core.Features.Event;
-using Reserve.Repositories;
 
 namespace Reserve.Endpoints;
 

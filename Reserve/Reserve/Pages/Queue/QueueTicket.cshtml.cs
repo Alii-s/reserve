@@ -1,4 +1,3 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Queue;
@@ -9,33 +8,19 @@ namespace Reserve.Pages.Queue;
 public class QueueTicketModel : PageModel
 {
     private readonly IQueueRepository _queueRepository;
-    private readonly IValidator<QueueTicketModel> _validator;
 
+    public QueueEvent CurrentQueue { get; set; }
+    public QueueTicket QueueTicket { get; set; }
     public QueueTicketModel(IQueueRepository queueRepository)
     {
         _queueRepository = queueRepository;
     }
-    public Guid QueueId { get; set; } 
-    public Guid QueueTicketId { get; set; }
-    public QueueEvent CurrentQueue { get; set; }
 
-    public QueueTicketModel(IQueueRepository queueRepository, IValidator<QueueTicketModel> validator)
+
+    public async Task<IActionResult> OnGet(Guid QueueTicketId, Guid QueueId)
     {
-        _queueRepository = queueRepository;
-        _validator = validator;
-    }
-
-
-    public async Task<IActionResult> OnGet()
-    {
-        var validationResult = await _validator.ValidateAsync(this);
-
-        if (!validationResult.IsValid)
-        {
-            return Page();
-        }
-
-        CurrentQueue = await _queueRepository.GetByID(QueueId.ToString());
+        CurrentQueue = await _queueRepository.GetQueueEventByID(QueueId.ToString());
+        QueueTicket = await _queueRepository.GetQueueTicketByID(QueueTicketId.ToString());
         return Page();
     }
 }
