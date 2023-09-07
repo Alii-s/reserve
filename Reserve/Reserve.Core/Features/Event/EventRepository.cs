@@ -130,10 +130,10 @@ public class EventRepository : IEventRepository
             )
             Select inserted{*};", new Dictionary<string, object?>
                 {
-                {"reserver_name", newTicket.ReserverName },
-                {"reserver_email", newTicket.ReserverEmail },
-                {"reserver_phone_number", newTicket.ReserverPhoneNumber },
-                {"casual_event", newTicket.CasualEvent!.Id }
+                    {"reserver_name", newTicket.ReserverName },
+                    {"reserver_email", newTicket.ReserverEmail },
+                    {"reserver_phone_number", newTicket.ReserverPhoneNumber },
+                    {"casual_event", newTicket.CasualEvent!.Id }
                 });
             });
             return result;

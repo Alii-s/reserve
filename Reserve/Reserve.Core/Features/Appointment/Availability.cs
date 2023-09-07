@@ -10,9 +10,11 @@ namespace Reserve.Core.Features.Appointment;
 
 public class Availability
 {
-    public Days Day { get; set; }
-    public LocalTime StartTime { get; set; }
-    public LocalTime EndTime { get; set; }
+    public Guid Id { get; set; }
+    public string Day { get; set; }
+    public string StartTime { get; set; }
+    public string EndTime { get; set; }
+    public AppointmentCalendar AppointmentCalendar { get; set; }
 }
 
 public enum Days

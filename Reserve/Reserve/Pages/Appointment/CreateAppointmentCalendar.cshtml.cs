@@ -7,13 +7,21 @@ namespace Reserve.Pages.Appointment;
 public class CreateAppointmentCalendarModel : PageModel
 {
     public AppointmentCalendar NewAppointmentCalendar { get; set; }
-    public List<Availability> AvailabilitySlots { get; set; } = new List<Availability>();
-    public Availability NewAvailabilitySlot { get; set; }
-    public List<Days> DaysList { get; set; } = new List<Days>();
-    public Days SelectedDay { get; set; }
-
-    public void OnGet()
+    private readonly IAppointmentRepository _appointmentRepository;
+    public CreateAppointmentCalendarModel(IAppointmentRepository appointmentRepository)
     {
-        DaysList = Enum.GetValues(typeof(Days)).Cast<Days>().ToList();
+        _appointmentRepository = appointmentRepository;
+    }
+    public void OnGet()
+    {        
+    }
+    public async Task<IActionResult> OnPost()
+    {
+        if(ModelState.IsValid)
+        {
+            NewAppointmentCalendar = await _appointmentRepository.CreateAppointmentInfo(NewAppointmentCalendar);
+            return RedirectToPage("/Appointment/CreateCalendar", new {id = NewAppointmentCalendar.Id});
+        }
+        return Page();
     }
 }

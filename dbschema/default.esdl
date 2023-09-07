@@ -1,13 +1,11 @@
 module default {
-    scalar type Gender extending enum<Male, Female>;
-    scalar type Days extending enum<Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday>;
     type User{
         required name: str;
         required phone_number: str;
         required email: str{
             constraint exclusive;
         };
-        required gender: Gender;
+        required gender: str;
         required date_of_birth: datetime;
         required password: str;
     }
@@ -34,9 +32,12 @@ module default {
     constraint exclusive on ((.reserver_email, .casual_event));
     }
     type Availability {
-        required day: Days;
-        required start_time: cal::local_time;
-        required end_time: cal::local_time;
+        required day: str;
+        required start_time: str;
+        required end_time: str;
+        required appointment_calendar: AppointmentCalendar{
+            on target delete delete source;
+        }
     }
     type Business{
         required name: str;
@@ -72,5 +73,6 @@ module default {
             constraint exclusive;
         };
         required description: str;
-        multi availability_slots: Availability;
+        multi availability_slots: Availability
     }
+}
