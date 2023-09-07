@@ -1,0 +1,154 @@
+﻿@page "{id}"
+@model Reserve.Pages.Appointment.CreateCalendarModel
+
+@Html.AntiForgeryToken()
+
+    <h1 class="notification-title mb-lg-5">Upload Your schedule!</h1>
+        <div class="row">
+            <div class="d-flex flex-column justify-content-center align-items-center col-12">
+                <div class="notification-border mb-lg-5">
+                    <div class="d-flex flex-column align-items-center justify-content-center">
+                        <div class="d-flex justify-content-around mb-lg-5">
+                            <div class="col-1">
+                                <label asp-for="NewAvailabilitySlot" class="form-label">Slot</label>
+                            </div>
+                            @Html.DropDownListFor(m => m.SelectedDay, new SelectList(Model.DaysList), new { @class = "form-control w-25", @id = "SelectedDay" })
+                            <input asp-for="NewAvailabilitySlot.StartTime" type="time" name="NewAvailabilitySlot.StartTime" id="NewAvailabilitySlot_StartTime" class="form-control w-25" />
+                            <input asp-for="NewAvailabilitySlot.EndTime" type="time" name="NewAvailabilitySlot.EndTime" id="NewAvailabilitySlot_EndTime" class="form-control w-25" />
+                            <button class="btn reserve-blue-button" id="Add" type="button">Add</button>
+                        </div>
+                        <table class="table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center">
+            <button type="submit" onclick="postDataToServer('@Model.NewAppointmentCalendar.Id.ToString()','@Model.NewAppointmentCalendar.Name', '@Model.NewAppointmentCalendar.Email','@Model.NewAppointmentCalendar.Description')" class="btn btn-custom reserve-blue-button">Continue</button>
+        </div>
+
+
+
+<script>
+    function formatTimeTo12Hour(time) {
+        const date = new Date();
+        const [hours, minutes] = time.split(":").map(Number);
+
+        date.setHours(hours);
+        date.setMinutes(minutes);
+
+        const formattedTime = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
+
+        return formattedTime;
+    }
+
+    
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var addButton = document.getElementById("Add");
+        var tableBody = document.getElementById("table-body");
+        var dayInput = document.getElementById("SelectedDay");
+        var startTimeInput = document.getElementById("NewAvailabilitySlot_StartTime");
+        var endTimeInput = document.getElementById("NewAvailabilitySlot_EndTime");
+        addButton.addEventListener("click", function () {
+            var day = dayInput.value;
+            var startTime = startTimeInput.value;
+            var endTime = endTimeInput.value;
+            if (!day || !startTime || !endTime) {
+                alert("Please fill in all fields (Day, Start Time, End Time) before adding.");
+                return;
+            }
+            var newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                    <td>${day}</td>
+                        <td>${formatTimeTo12Hour(startTime)}</td>
+                    <td>${formatTimeTo12Hour(endTime)}</td>
+                    <td><button type="button" class="btn reserve-red-button">Remove</button></td>
+                `;
+
+            tableBody.appendChild(newRow);
+
+
+            dayInput.value = "";
+            startTimeInput.value = "";
+            endTimeInput.value = "";
+        });
+
+        tableBody.addEventListener("click", function (event) {
+            if (event.target && event.target.classList.contains("reserve-red-button")) {
+                var row = event.target.closest("tr");
+                if (row) {
+                    row.remove();
+                }
+            }
+        });
+    }); 
+</script>
+
+<script>
+    async function postDataToServer(id, name, email, description) {
+        const url = "/create-calendar";
+
+        const tableRows = document.querySelectorAll("#table-body tr");
+        const tableData = [];
+        tableRows.forEach((row) => {
+            const cells = row.querySelectorAll("td");
+            if (cells.length === 4) {
+                const day = cells[0].textContent;
+                const startTime = cells[1].textContent;
+                const endTime = cells[2].textContent;
+
+                tableData.push({ day, startTime, endTime });
+            }
+        });
+
+        const data = {
+            id: id,
+            name: name,
+            email: email,
+            description: description,
+            availabilitySlots: tableData
+        }
+        var options = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                "X-CSRF-TOKEN": document.querySelector('[name="__RequestVerificationToken"]').value,
+                "Content-Type": "application/json"
+            },
+            redirect: 'follow', 
+            body: JSON.stringify(data)
+        };
+
+        try {
+            var response = await fetch(url, options);
+            if (response.ok) {
+                console.log('Request succeeded');
+                const successHeader = response.headers.get('X-Success-Redirect');
+                console.log(successHeader);
+                if (successHeader) {
+                    window.location.href = successHeader;
+                } else {
+                    console.error('Request failed');
+                }
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+</script>

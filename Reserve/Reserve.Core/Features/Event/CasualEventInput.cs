@@ -38,6 +38,7 @@ public class CasualEventInputValidator : AbstractValidator<CasualEventInput>
         RuleFor(x => x.EndDate).NotNull().WithMessage("End Date is required");
         RuleFor(x => x.Description).NotEmpty().WithMessage("Description is required");
         RuleFor(x => x.ImageUrl).Must(HaveValidImageExtension).WithMessage("Image must be a jpeg, jpg or png.");
+        RuleFor(x => x.StartDate).NotNull().WithMessage("Start Date is required").LessThan(x => x.EndDate).WithMessage("Start Date must be before End Date");
     }
     private bool HaveValidImageExtension(string? imageUrl)
     {
