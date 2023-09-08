@@ -24,23 +24,22 @@ public class QueueRegistrationModel : PageModel
 
     public void OnGet(Guid id)
     {
-        NewQueueTicket.QueueEventId = id;
+        QueueEventId = id;
     }
 
     public async Task<IActionResult> OnPost()
     {
-        QueueEventId = NewQueueTicket.QueueEventId;
+        NewQueueTicket.QueueEvent = await _queueRepository.GetQueueEventByID(QueueEventId.ToString());
         var validationResult = await _validator.ValidateAsync(NewQueueTicket);
 
         if (!validationResult.IsValid)
         {
             return Page();
         }
-        NewQueueTicket.QueueNumber = await _queueRepository.GetNextQueueNumber(NewQueueTicket.QueueEventId.ToString());
-        await _queueRepository.IncrementTicketCounter(NewQueueTicket.QueueEventId.ToString());
+        NewQueueTicket.QueueNumber = await _queueRepository.GetNextQueueNumber(QueueEventId.ToString());
+        await _queueRepository.IncrementTicketCounter(QueueEventId.ToString());
         NewQueueTicket = await _queueRepository.RegisterCustomer(NewQueueTicket);
-        NewQueueTicket.QueueEventId = QueueEventId;
-        return RedirectToPage("QueueTicket", new { QueueTicketId = NewQueueTicket.Id, QueueId = NewQueueTicket.QueueEventId });
+        return RedirectToPage("QueueTicket", new { QueueTicketId = NewQueueTicket.Id, QueueId = QueueEventId });
     }
 
 }

@@ -1,4 +1,5 @@
 ﻿using EdgeDB;
+using System;
 
 
 namespace Reserve.Core.Features.Queue;
@@ -86,7 +87,7 @@ public class QueueRepository : IQueueRepository
 
     public async Task<QueueTicket> RegisterCustomer(QueueTicket queueTicket)
     {
-        Guid guidId = queueTicket.QueueEventId;
+        Guid guidId = queueTicket.QueueEvent.Id;
         var query = @"WITH Inserted := (
                 INSERT QueueTicket {
                     customer_name := <str>$customer_name,
@@ -100,7 +101,7 @@ public class QueueRepository : IQueueRepository
                   customer_name,
                   customer_phone_number,
                   queue_number,
-                  queue_event: {id}
+                  queue_event: {*}
               };";
 
         var result = await _client.QuerySingleAsync<QueueTicket>(query, new Dictionary<string, object?>
@@ -156,19 +157,70 @@ public class QueueRepository : IQueueRepository
     {
         Guid guidId = Guid.Parse(queueEventId);
         var query = @"
-    WITH
-        QueueEvent := (SELECT QueueEvent FILTER .id = <uuid>$queueEventId)
-    SELECT QueueTicket {
-        queue_number,
-        customer_name,
-        customer_phone_number
-    } FILTER .queue_event = QueueEvent;
-    ";
+                    WITH
+                        QueueEvent := (SELECT QueueEvent FILTER .id = <uuid>$queueEventId)
+                    SELECT QueueTicket {  id,
+                 customer_name,
+                 customer_phone_number,
+                 queue_number,
+                 queue_event: {*}
+                    } FILTER .queue_event = QueueEvent;";
         var result = await _client.QueryAsync<QueueTicket>(query, new Dictionary<string, object?>
     {
         {"queueEventId", guidId }
     });
         return result.ToList();
     }
+
+    public async Task MarkAsReserved(QueueTicket ticket, int queueNumber)
+    {
+        var query = @"WITH Updated := (
+                    UPDATE QueueEvent
+                    FILTER .id = <uuid>$eventId
+                    SET {
+                        current_number_served := .current_number_served + 1
+                    }
+                ),
+                Deleted := (
+                    DELETE QueueTicket
+                    FILTER .queue_number = <int32>$queueNumber AND .queue_event.id = <uuid>$eventId
+                )
+                SELECT Updated {
+                    id,
+                    title,
+                    organizer_email,
+                    description,
+                    current_number_served,
+                    ticket_counter
+                };";
+
+        var result = await _client.QuerySingleAsync<QueueEvent>(query, new Dictionary<string, object?>
+    {
+        {"queueNumber", queueNumber },
+        {"eventId", ticket.QueueEvent.Id }
+    });
+    }
+
+    public async Task Reset(string queueEventId)
+    {
+        var query = @"WITH Updated := (
+                    UPDATE QueueEvent
+                    FILTER .id = <uuid>$eventId
+                    SET {
+                        current_number_served := 1,
+                        ticket_counter := 0
+                    }
+                ),
+                Deleted := (
+                    DELETE QueueTicket
+                    FILTER .queue_event.id = <uuid>$eventId
+                );";
+
+        var result = await _client.QuerySingleAsync<QueueEvent>(query, new Dictionary<string, object?>
+    {
+        {"eventId", queueEventId}
+    });
+    }
+
 
 }

@@ -11,4 +11,6 @@ public interface IQueueRepository
     Task IncrementTicketCounter(string queueId);
     Task<QueueEvent> GetQueueEventByID(string id);
     Task<QueueTicket> GetQueueTicketByID(string id);
+    Task MarkAsReserved(QueueTicket ticket, int queueNumber);
+    Task Reset(string queueEventId);
 }
