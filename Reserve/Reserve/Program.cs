@@ -5,6 +5,7 @@ using Reserve.Core.Features.Event;
 using Reserve.Core.Features.MailService;
 using Reserve.Endpoints;
 using Reserve.Helpers;
+using Reserve.Core.Features.Appointment;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("reserve"), config 
 });
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IValidator<QueueEvent>, QueueEventValidator>();
 builder.Services.AddScoped<IValidator<QueueTicket>, QueueTicketValidator>();
 builder.Services.AddScoped<IValidator<CasualEventInput>, CasualEventInputValidator>();
@@ -45,5 +47,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
 app.MapGroup("/").MapEventsApi();
+app.MapGroup("/").MapAppointmentsApi();
 app.Run();

@@ -1,0 +1,36 @@
+﻿@page "{id}"
+@model Reserve.Pages.Appointment.EditSlotsModel
+
+@Html.AntiForgeryToken()
+<style>
+    tr.htmx-swapping td {
+        opacity: 0;
+        transition: opacity 1s ease-out;
+    }
+</style>
+<h1 class="notification-title mb-lg-5">Update Schedule!</h1>
+<div class="d-flex justify-content-between">
+    <h2 class="notification-title">Add new Slot</h2>
+</div>
+<table class="table">
+    <thead class="table-light">
+        <tr>
+            <th>Day</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var slot in Model.AvailabilitySlots)
+        {
+            <tr>
+                <td>@slot.Day</td>
+                <td>@slot.StartTime</td>
+                <td>@slot.EndTime</td>
+                <td><button hx-delete="/delete-slot/@slot.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' hx-target="closest tr" hx-swap="outerHTML swap:1s" class="btn reserve-red-button">Delete Slot</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+

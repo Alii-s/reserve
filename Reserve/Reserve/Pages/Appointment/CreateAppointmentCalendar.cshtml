@@ -1,0 +1,41 @@
+﻿@page
+@model Reserve.Pages.Appointment.CreateAppointmentCalendarModel
+
+<form method="post" class="p-3">
+    <h1 class="notification-title mb-lg-5">Create Your Appointments!</h1>
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            <div class="notification-border mb-lg-5">
+                <div class="d-flex flex-column">
+                    <div class="d-flex justify-content-evenly">
+                        <div class="col-3">
+                            <label asp-for="NewAppointmentCalendar.Name" class="form-label">Your Name</label>
+                        </div>
+                        <input type="text" id="name" asp-for="NewAppointmentCalendar.Name" name="NewAppointmentCalendar.Name" class="form-control w-50" />
+                    </div>
+                    <span asp-validation-for="NewAppointmentCalendar.Name" class="text-danger d-flex justify-content-center p-3"></span>
+                </div>
+                <div class="d-flex flex-column">
+                    <div class="d-flex justify-content-evenly">
+                        <div class="col-3">
+                            <label asp-for="NewAppointmentCalendar.Email" class="form-label">Email</label>
+                        </div>
+                        <input type="text" id="email" asp-for="NewAppointmentCalendar.Email" name="NewAppointmentCalendar.Email" class="form-control w-50" />
+                    </div>
+                    <span asp-validation-for="NewAppointmentCalendar.Email" class="text-danger d-flex justify-content-center p-3"></span>
+                </div>
+                <div class="d-flex flex-column">
+                    <div class="d-flex justify-content-evenly">
+                        <div class="col-3">
+                            <label asp-for="NewAppointmentCalendar.Description" class="form-label">Description</label>
+                        </div>
+                        <input type="text" id="description" asp-for="NewAppointmentCalendar.Description" name="NewAppointmentCalendar.Description" class="form-control w-50" />
+                    </div>
+                    <span asp-validation-for="NewAppointmentCalendar.Description" class="text-danger d-flex justify-content-center p-3 mb-3"></span>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-custom reserve-blue-button">Continue</button>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </div>
+        </div>
+</form>
