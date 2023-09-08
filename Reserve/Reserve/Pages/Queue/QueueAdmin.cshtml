@@ -4,13 +4,37 @@
 <div class="container mt-5">
     <h1 class="display-4 text-center">Attendee's List</h1>
 
+    <div class="modal fade" id="resetQueueModal" tabindex="-1" aria-labelledby="resetQueueModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                     <form method="post" asp-page-handler="Reset">
+                        <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </form>
+                </div>
+                <div class="d-flex flex-column align-items-center m-3">
+                    <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="resetQueueModalLabel">Reset Queue!</h1>
+                    <div class="notification-border d-flex justify-content-center">
+                        <p class="notification-text p-3">Are you sure you want to reset the queue? All waiting customers will be removed!</p>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-around border-0">
+                    <button type="button" class="btn reserve-red-button" data-bs-dismiss="modal">Yes</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div class="d-flex justify-content-between mt-4">
         <div>
             <h2>Organization X Customer Service Queue</h2>
             <p class="text-muted">Last Reset: 8/10/2023 12:00 PM</p>
         </div>
         <div>
-            <button class="reserve-blue-button btn btn-custom">Reset Queue</button>
+            <button class="reserve-blue-button btn" data-bs-toggle="modal" data-bs-target="#resetQueueModal">Reset Queue</button>
+
         </div>
     </div>
 
@@ -20,15 +44,44 @@
                 <th>Queue Number</th>
                 <th>Name</th>
                 <th>Phone Number</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var attendee in Model.Attendees)
             {
-                <tr>
+                <tr class="notification-text box-shadow shadow-sm">
                     <td>@attendee.QueueNumber</td>
                     <td>@attendee.CustomerName</td>
                     <td>@attendee.CustomerPhoneNumber</td>
+                    <td>
+                        <form method="post" id="markAsReservedForm" asp-page-handler="MarkAsReserved">
+                            <input type="hidden" asp-for="Id" />
+                            <input type="hidden" asp-for="@attendee.QueueNumber" name="queueNumber" />
+                            <button type="button" class="btn reserve-blue-button" data-bs-toggle="modal" data-bs-target="#markAsReservedModal">Mark as reserved</button>
+                            <div class="modal fade" id="markAsReservedModal" tabindex="-1" aria-labelledby="markAsReservedModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header border-0">
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center m-3">
+                                            <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="markAsReservedModalLabel">Mark as Reserved!</h1>
+                                            <div class="notification-border d-flex justify-content-center">
+                                                <p class="notification-text p-3">Are you sure you want to mark this attendee as reserved?</p>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer d-flex justify-content-around border-0">
+                                            <button type="submit" class="btn reserve-red-button">Yes</button>
+                                            <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+
+                    </td>
                 </tr>
             }
          </tbody>

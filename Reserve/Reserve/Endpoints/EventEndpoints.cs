@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Reserve.Core.Features.Event;
-
-
 namespace Reserve.Endpoints;
 
 public static class EventEndpoints

@@ -12,6 +12,8 @@ public class QueueEvent
     public string Description { get; set; }
     [Required]
     public int CurrentNumberServed { get; set; }
+    [Required]
+    public int TicketCounter { get; set; }
 }
 
 public class QueueEventValidator : AbstractValidator<QueueEvent>
@@ -24,5 +26,6 @@ public class QueueEventValidator : AbstractValidator<QueueEvent>
             .EmailAddress().WithMessage("Correct Email Address format is required");
         RuleFor(x => x.Description).NotEmpty().WithMessage("Description is required");
         RuleFor(x => x.CurrentNumberServed).NotNull().WithMessage("Current Number Served is required").GreaterThanOrEqualTo(0).WithMessage("Current Number Served must be 0 or greater");
+        RuleFor(x => x.TicketCounter).NotNull().WithMessage("Ticket Counter is required").GreaterThanOrEqualTo(0).WithMessage("Ticket Counter must be 0 or greater");
     }
 }

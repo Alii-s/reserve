@@ -13,10 +13,7 @@ public class QueueRegistrationModel : PageModel
     private readonly IValidator<QueueTicket> _validator;
     [Required]
     public QueueTicket NewQueueTicket { get; set; }
-    public QueueRegistrationModel(IQueueRepository queueRepository)
-    {
-        _queueRepository = queueRepository;
-    }
+    public Guid QueueEventId { get; set; }
 
     public QueueRegistrationModel(IQueueRepository queueRepository, IValidator<QueueTicket> validator)
     {
@@ -27,19 +24,22 @@ public class QueueRegistrationModel : PageModel
 
     public void OnGet(Guid id)
     {
-        NewQueueTicket.QueueEventId = id;
+        QueueEventId = id;
     }
 
     public async Task<IActionResult> OnPost()
     {
+        NewQueueTicket.QueueEvent = await _queueRepository.GetQueueEventByID(QueueEventId.ToString());
         var validationResult = await _validator.ValidateAsync(NewQueueTicket);
 
         if (!validationResult.IsValid)
         {
             return Page();
         }
-        NewQueueTicket.QueueNumber = await _queueRepository.GetNextQueueNumber(NewQueueTicket.QueueEventId.ToString());
-        await _queueRepository.RegisterCustomer(NewQueueTicket);
-        return RedirectToPage("QueueTicket", new { id = NewQueueTicket.Id });
+        NewQueueTicket.QueueNumber = await _queueRepository.GetNextQueueNumber(QueueEventId.ToString());
+        await _queueRepository.IncrementTicketCounter(QueueEventId.ToString());
+        NewQueueTicket = await _queueRepository.RegisterCustomer(NewQueueTicket);
+        return RedirectToPage("QueueTicket", new { QueueTicketId = NewQueueTicket.Id, QueueId = QueueEventId });
     }
+
 }

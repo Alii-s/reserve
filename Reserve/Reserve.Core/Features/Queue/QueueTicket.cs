@@ -12,7 +12,7 @@ public class QueueTicket
     [Required]
     public int QueueNumber { get; set; }
     [Required]
-    public Guid QueueEventId { get; set; }
+    public QueueEvent QueueEvent { get; set; }
 }
 
 public class QueueTicketValidator : AbstractValidator<QueueTicket>
@@ -22,6 +22,6 @@ public class QueueTicketValidator : AbstractValidator<QueueTicket>
         RuleFor(x => x.CustomerName).NotEmpty().WithMessage("Customer Name is required");
         RuleFor(x => x.CustomerPhoneNumber).NotEmpty().WithMessage("Customer Phone Number is required");
         RuleFor(x => x.QueueNumber).NotNull().WithMessage("Queue Number is required").GreaterThanOrEqualTo(0).WithMessage("Queue Number must be 0 or greater");
-        RuleFor(x => x.QueueEventId).NotEmpty().WithMessage("Queue Event Id is required");
+        RuleFor(x => x.QueueEvent).NotNull().WithMessage("Queue Event doesnt exist");
     }
 }

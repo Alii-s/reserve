@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Event;
-
 namespace Reserve.Pages.Event;
 
 public class ViewAttendeesModel : PageModel
