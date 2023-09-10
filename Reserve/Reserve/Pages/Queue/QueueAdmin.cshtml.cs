@@ -31,17 +31,17 @@ namespace Reserve.Pages.Queue
 
             if (!validationResult.IsValid)
             {
-                return Page();
+                return RedirectToPage("/Queue/QueueAdmin", new { id = Id });
             }
 
             await _queueRepository.MarkAsReserved(attendee, queueNumber);
-            return Page();
+            return RedirectToPage("/Queue/QueueAdmin", new { id = Id });
         }
 
         public async Task<IActionResult> OnPostResetAsync()
         {
-
-            return Page();
+            await _queueRepository.ResetQueue(Id.ToString());
+            return RedirectToPage("/Queue/QueueAdmin", new { id = Id });
         }
     }
 }

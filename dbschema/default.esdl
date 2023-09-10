@@ -59,6 +59,7 @@ module default {
         required description: str;
         required current_number_served: int32;
 	required ticket_counter: int32;
+        last_reset: datetime;
     }
     type QueueTicket{
         required customer_name: str;
