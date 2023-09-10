@@ -10,13 +10,17 @@ public class EditSlotsModel : PageModel
     public string Id { get; set; }
     public List<Availability> AvailabilitySlots { get; set; } = new();
     public AppointmentCalendar AppointmentCalendar { get; set; }
+    public List<Days> DaysList { get; set; } = new List<Days>();
+    public Days Day { get; set; }
     private readonly IAppointmentRepository _appointmentRepository;
+    public Availability NewAvailabilitySlot { get; set; }
     public EditSlotsModel(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
     }
     public async Task<IActionResult> OnGet()
     {
+        DaysList = Enum.GetValues(typeof(Days)).Cast<Days>().ToList();
         AppointmentCalendar = await _appointmentRepository.GetByIdAsync(Id);
         if(AppointmentCalendar is null)
         {
