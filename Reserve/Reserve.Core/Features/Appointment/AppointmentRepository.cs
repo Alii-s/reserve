@@ -40,11 +40,11 @@ public class AppointmentRepository: IAppointmentRepository
         });
 
     }
-    public async Task<AppointmentCalendar?> GetByIdAsync(string Id)
+    public async Task<AppointmentCalendar?> GetByIdAsync(string id)
     {
         try
         {
-            Guid guidId = Guid.Parse(Id);
+            Guid guidId = Guid.Parse(id);
             var query = @"select AppointmentCalendar{*}
                         filter .id = <uuid>$id;";
             return await _client.QuerySingleAsync<AppointmentCalendar?>(query, new Dictionary<string, object?>
@@ -58,11 +58,11 @@ public class AppointmentRepository: IAppointmentRepository
             return null;
         }
     }
-    public async Task<List<Availability>> GetSlotsFromCalendarIdAsync(string Id)
+    public async Task<List<Availability>> GetSlotsFromCalendarIdAsync(string id)
     {
         try
         {
-            Guid guidId = Guid.Parse(Id);
+            Guid guidId = Guid.Parse(id);
             var query = @"select Availability{
                             id,
                             day,
@@ -129,6 +129,39 @@ public class AppointmentRepository: IAppointmentRepository
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
+        }
+    }
+    public async Task<Availability> AddAppointmentSlot(string id, Availability newSlot)
+    {
+        try
+        {
+            ArgumentNullException.ThrowIfNull(newSlot);
+            Guid guidId = Guid.Parse(id);
+            var query = @"with Inserted := (
+                            INSERT Availability {
+                                day := <str>$day,
+                                start_time := <str>$start_time,
+                                end_time := <str>$end_time,
+                                appointment_calendar := (
+                                    select AppointmentCalendar
+                                    filter .id = <uuid>$id
+                                    limit 1
+                                )
+                            }
+                        )
+                        Select Inserted{*};";
+            return await _client.QuerySingleAsync<Availability>(query, new Dictionary<string, object?>
+            {
+                {"day", newSlot.Day },
+                {"start_time", newSlot.StartTime },
+                {"end_time", newSlot.EndTime },
+                {"id", guidId }
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
         }
     }
 }
