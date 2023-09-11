@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -266,6 +267,172 @@ public class AppointmentRepository: IAppointmentRepository
         {
             Console.WriteLine(e.Message);
             return null;
+        }
+    }
+    public async Task<List<AppointmentDetails>> GetAppointmentDetailsForCalendarAsync(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"select AppointmentDetails {
+                            id,
+                            reserver_name,
+                            reserver_phone_number,
+                            reserver_email,
+                            slot: {
+                                id,
+                                start_time,
+                                end_time,
+                                available,
+                                appointment_calendar: {
+                                    id,
+                                    name,
+                                    email,
+                                    description
+                                }
+                            }
+                        } filter .slot.appointment_calendar.id = <uuid>$id and .slot.available = false;";
+            return (await _client.QueryAsync<AppointmentDetails>(query, new Dictionary<string, object?>
+            {
+                { "id", guidId },
+            })).ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
+    }
+    public async Task<AppointmentDetails> GetAppointmentDetailsByIdAsync(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"select AppointmentDetails {
+                        id,
+                        reserver_name,
+                        reserver_phone_number,
+                        reserver_email,
+                        slot: {
+                            id,
+                            start_time,
+                            end_time,
+                            available,
+                            appointment_calendar: {
+                                id,
+                                name,
+                                email,
+                                description
+                            }
+                        }
+                    } filter .id = <uuid>$id;";
+            return await _client.QuerySingleAsync<AppointmentDetails>(query, new Dictionary<string, object?>
+            {
+                {"id", guidId },
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
+
+    }
+    public async Task CancelAppointmentAsync(AppointmentDetails cancelledAppointment)
+    {
+        try
+        {
+            ArgumentNullException.ThrowIfNull(cancelledAppointment);
+            await _client.TransactionAsync(async (tx) =>
+            {
+                var query = @"delete AppointmentDetails
+                            filter.id = <uuid>$id;";
+                await tx.ExecuteAsync(query, new Dictionary<string, object?>
+                {
+                    {"id", cancelledAppointment.Id }
+                });
+                var query2 = @"UPDATE Availability
+                            FILTER .id = <uuid>$id
+                            SET {
+                                available := true
+                            };";
+                await tx.ExecuteAsync(query2, new Dictionary<string, object?>
+                {
+                    {"id", cancelledAppointment.Slot.Id }
+                });
+                var query3 = @"insert AppointerNotifications {
+                                    reserver_name := <str>$reserver_name,
+                                    reserver_phone_number := <str>$reserver_phone_number,
+                                    reserver_email := <str>$reserver_email,
+                                    notification_type := 'Cancellation',
+                                    slot := (select Availability filter .id = <uuid>$slotId),               
+                                    appointment_calendar := (select AppointmentCalendar filter .id = <uuid>$id)
+                                };";
+                await tx.ExecuteAsync(query3, new Dictionary<string, object?>
+                {
+                    {"reserver_name", cancelledAppointment.ReserverName },
+                    {"reserver_phone_number", cancelledAppointment.ReserverPhoneNumber },
+                    {"reserver_email", cancelledAppointment.ReserverEmail },
+                    {"id", cancelledAppointment.Slot.AppointmentCalendar.Id },
+                    {"slotId", cancelledAppointment.Slot.Id }
+                });
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+    public async Task<List<AppointerNotifications>> GetAppointmentNotificationsForCalendarAsync(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"select AppointerNotifications {
+                            id,
+                            reserver_name,
+                            reserver_phone_number,
+                            reserver_email,
+                            notification_type,
+                            slot: {
+                                id,
+                                start_time,
+                                end_time,
+                                available
+                            },
+                            appointment_calendar: {
+                                id,
+                                name,
+                                email,
+                                description
+                            }
+                        } filter .appointment_calendar.id = <uuid>$id;";
+            return (await _client.QueryAsync<AppointerNotifications>(query, new Dictionary<string, object?>
+            {
+                { "id", guidId }
+            })).ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
+    }
+    public async Task DeleteNotification(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"Delete AppointerNotifications
+                          filter .id = <uuid>$id";
+            await _client.ExecuteAsync(query, new Dictionary<string, object?>
+            {
+                {"id", guidId }
+            });
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
         }
     }
 }

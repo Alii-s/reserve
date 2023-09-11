@@ -17,4 +17,9 @@ public interface IAppointmentRepository
     Task<List<Availability>> GetOpenSlotsAsync(string id);
     Task<Availability> GetSlotByIdAsync(string id);
     Task<AppointmentDetails> CreateAppointmentMeetingAsync(AppointmentDetails appointmentDetails);
+    Task<List<AppointmentDetails>> GetAppointmentDetailsForCalendarAsync(string id);
+    Task<AppointmentDetails> GetAppointmentDetailsByIdAsync(string id);
+    Task CancelAppointmentAsync(AppointmentDetails cancelledAppointment);
+    Task<List<AppointerNotifications>> GetAppointmentNotificationsForCalendarAsync(string id);
+    Task DeleteNotification(string id);
 }

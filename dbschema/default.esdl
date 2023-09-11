@@ -79,4 +79,16 @@ module default {
         required description: str;
         multi availability_slots: Availability
     }
+    type AppointerNotifications{
+        required reserver_name: str;
+        required reserver_phone_number: str;
+        required reserver_email: str;
+        required notification_type: str;
+        required appointment_calendar: AppointmentCalendar{
+            on target delete delete source;
+        }
+        required slot: Availability{
+            on target delete delete source;
+        }
+    }
 }

@@ -4,24 +4,24 @@ using Reserve.Core.Features.Appointment;
 
 namespace Reserve.Pages.Appointment;
 
-public class UpcomingAppointmentsModel : PageModel
+public class AppointerNotificationsModel : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public string Id { get; set; }
-    public List<AppointmentDetails> Appointments { get; set; } = new();
     private readonly IAppointmentRepository _appointmentRepository;
-    public UpcomingAppointmentsModel(IAppointmentRepository appointmentRepository)
+    public List<AppointerNotifications> AppointerNotifications { get; set; }
+    public AppointerNotificationsModel(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
     }
     public async Task<IActionResult> OnGet()
     {
-        if(string.IsNullOrEmpty(Id))
+        if (string.IsNullOrEmpty(Id))
         {
             return RedirectToPage("/Appointment/AppointmentError");
         }
-        Appointments = await _appointmentRepository.GetAppointmentDetailsForCalendarAsync(Id);
-        if(Appointments is null)
+        AppointerNotifications = await _appointmentRepository.GetAppointmentNotificationsForCalendarAsync(Id);
+        if (AppointerNotifications is null)
         {
             return RedirectToPage("/Appointment/AppointmentError");
         }

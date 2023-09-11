@@ -4,24 +4,24 @@ using Reserve.Core.Features.Appointment;
 
 namespace Reserve.Pages.Appointment;
 
-public class UpcomingAppointmentsModel : PageModel
+public class UserAppointmentDashboardModel : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public string Id { get; set; }
-    public List<AppointmentDetails> Appointments { get; set; } = new();
+    public AppointmentDetails AppointmentDetails { get; set; }
     private readonly IAppointmentRepository _appointmentRepository;
-    public UpcomingAppointmentsModel(IAppointmentRepository appointmentRepository)
+    public UserAppointmentDashboardModel(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
     }
     public async Task<IActionResult> OnGet()
     {
-        if(string.IsNullOrEmpty(Id))
+        if (string.IsNullOrEmpty(Id))
         {
             return RedirectToPage("/Appointment/AppointmentError");
         }
-        Appointments = await _appointmentRepository.GetAppointmentDetailsForCalendarAsync(Id);
-        if(Appointments is null)
+        AppointmentDetails = await _appointmentRepository.GetAppointmentDetailsByIdAsync(Id);
+        if (AppointmentDetails is null)
         {
             return RedirectToPage("/Appointment/AppointmentError");
         }
