@@ -26,6 +26,7 @@ builder.Services.AddScoped<IValidator<QueueEvent>, QueueEventValidator>();
 builder.Services.AddScoped<IValidator<QueueTicket>, QueueTicketValidator>();
 builder.Services.AddScoped<IValidator<CasualEventInput>, CasualEventInputValidator>();
 builder.Services.AddScoped<IValidator<CasualTicketInput>, CasualTicketInputValidator>();
+builder.Services.AddScoped<IValidator<AppointmentDetails>, AppointmentDetailsValidator>();
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailService, EmailService>();

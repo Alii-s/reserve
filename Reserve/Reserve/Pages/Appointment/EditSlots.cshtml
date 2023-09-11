@@ -12,16 +12,14 @@
 <div class="d-flex justify-content-between mb-lg-5">
     <h2 class="notification-title">Add new Slot</h2>
     <form class="d-flex justify-content-between w-50">
-        @Html.DropDownListFor(m => m.Day, new SelectList(Model.DaysList), new { @class = "form-control w-25", @name = "NewAvailabilitySlot.Day", @id = "NewAvailabilitySlot.Day" })
-        <input asp-for="NewAvailabilitySlot.StartTime" type="time" name="StartTime" id="NewAvailabilitySlot_StartTime" class="form-control w-25" />
-        <input asp-for="NewAvailabilitySlot.EndTime" type="time" name="EndTime" id="NewAvailabilitySlot_EndTime" class="form-control w-25" />
+        <input asp-for="NewAvailabilitySlot.StartTime" type="datetime-local" name="StartTime" id="NewAvailabilitySlot_StartTime" class="form-control w-25" />
+        <input asp-for="NewAvailabilitySlot.EndTime" type="datetime-local" name="EndTime" id="NewAvailabilitySlot_EndTime" class="form-control w-25" />
         <button hx-post="/add-slot/@Model.AppointmentCalendar.Id" hx-target="#table-body" hx-swap="beforeend" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' class="btn reserve-blue-button" id="Add" type="submit">Add</button>
     </form>
 </div>
 <table class="table">
     <thead class="table-light">
         <tr>
-            <th>Day</th>
             <th>Start Time</th>
             <th>End Time</th>
             <th></th>
@@ -31,7 +29,6 @@
         @foreach (var slot in Model.AvailabilitySlots)
         {
             <tr>
-                <td>@slot.Day</td>
                 <td>@slot.StartTime</td>
                 <td>@slot.EndTime</td>
                 <td><button hx-delete="/delete-slot/@slot.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' hx-target="closest tr" hx-swap="outerHTML swap:1s" class="btn reserve-red-button">Delete Slot</button></td>
