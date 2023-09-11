@@ -20,7 +20,7 @@ public static class AppointmentEndpoints
             {
                 await antiforgery.ValidateRequestAsync(context);
                 string slots = JsonSerializer.Serialize(newCalendar.AvailabilitySlots);
-                await _appointmentRepository.CreateAppointmentCalendar(newCalendar, slots);
+                await _appointmentRepository.CreateAppointmentCalendarAsync(newCalendar, slots);
                 if (newCalendar is not null)
                 {
                     context.Response.Headers["X-Success-Redirect"] = $"/Appointment/CalendarNotification/{newCalendar.Id}";
@@ -41,7 +41,7 @@ public static class AppointmentEndpoints
             try
             {
                 await _antiforgery.ValidateRequestAsync(context);
-                await _appointmentRepository.DeleteAppointmentSlot(id);
+                await _appointmentRepository.DeleteAppointmentSlotAsync(id);
                 return Results.Ok();
             }
             catch (Exception e)
@@ -54,14 +54,12 @@ public static class AppointmentEndpoints
             try
             {
                 await _antiforgery.ValidateRequestAsync(context);
-                availabilitySlot.StartTime = ConvertFrom24To12(availabilitySlot.StartTime);
-                availabilitySlot.EndTime = ConvertFrom24To12(availabilitySlot.EndTime);
-                availabilitySlot = await _appointmentRepository.AddAppointmentSlot(id, availabilitySlot);
+                availabilitySlot = await _appointmentRepository.AddAppointmentSlotAsync(id, availabilitySlot);
                 if (availabilitySlot is null)
                 {
                     return Results.BadRequest();
                 }
-                return Results.Content($"<tr>\r\n                <td>{availabilitySlot.Day}</td>\r\n                <td>{availabilitySlot.StartTime}</td>\r\n                <td>{availabilitySlot.EndTime}</td>\r\n                <td><button hx-delete=\"/delete-slot/{availabilitySlot.Id}\" hx-headers='js:{{\"X-CSRF-TOKEN\": document.getElementsByName(\"__RequestVerificationToken\")[0].value}}' hx-target=\"closest tr\" hx-swap=\"outerHTML swap:1s\" class=\"btn reserve-red-button\">Delete Slot</button></td>\r\n            </tr>", "text/html");
+                return Results.Content($"<tr>\r\n                          <td>{availabilitySlot.StartTime}</td>\r\n                <td>{availabilitySlot.EndTime}</td>\r\n                <td><button hx-delete=\"/delete-slot/{availabilitySlot.Id}\" hx-headers='js:{{\"X-CSRF-TOKEN\": document.getElementsByName(\"__RequestVerificationToken\")[0].value}}' hx-target=\"closest tr\" hx-swap=\"outerHTML swap:1s\" class=\"btn reserve-red-button\">Delete Slot</button></td>\r\n            </tr>", "text/html");
             }
             catch (Exception e)
             {

@@ -15,7 +15,7 @@ public class AppointmentRepository: IAppointmentRepository
     {
         _client = client;
     }
-    public async Task CreateAppointmentCalendar(AppointmentCalendar appointmentCalendar, string availabilitySlots)
+    public async Task CreateAppointmentCalendarAsync(AppointmentCalendar appointmentCalendar, string availabilitySlots)
     {
         ArgumentNullException.ThrowIfNull(appointmentCalendar);
         EdgeDB.DataTypes.Json jsonAvailabilitySlots = new(availabilitySlots);
@@ -23,9 +23,9 @@ public class AppointmentRepository: IAppointmentRepository
                         raw_data := <json>$data,
                         for item in json_array_unpack(raw_data) union (
                         insert Availability { 
-                        day := <str>item['Day'],
-                        start_time := <str>item['StartTime'],
-                        end_time := <str>item['EndTime'],
+                        start_time := <datetime>item['StartTime'],
+                        end_time := <datetime>item['EndTime'],
+                        available := <bool>$available,
                         appointment_calendar := (
                             select AppointmentCalendar
                             filter .id = <uuid>$id
@@ -36,7 +36,8 @@ public class AppointmentRepository: IAppointmentRepository
         await _client.ExecuteAsync(query, new Dictionary<string, object?>
         {
             { "data", jsonAvailabilitySlots },
-            { "id", appointmentCalendar.Id }
+            { "id", appointmentCalendar.Id },
+            {"available", true }
         });
 
     }
@@ -65,9 +66,9 @@ public class AppointmentRepository: IAppointmentRepository
             Guid guidId = Guid.Parse(id);
             var query = @"select Availability{
                             id,
-                            day,
                             start_time,
                             end_time,
+                            available,
                             appointment_calendar: {
                                 id,
                                 name,
@@ -87,7 +88,7 @@ public class AppointmentRepository: IAppointmentRepository
             return null;
         }
     }
-    public async Task<AppointmentCalendar> CreateAppointmentInfo(AppointmentCalendar appointmentCalendar)
+    public async Task<AppointmentCalendar> CreateAppointmentInfoAsync(AppointmentCalendar appointmentCalendar)
     {
         try
         {
@@ -111,10 +112,10 @@ public class AppointmentRepository: IAppointmentRepository
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
-            return new AppointmentCalendar();
+            return null;
         }
     }
-    public async Task DeleteAppointmentSlot(string id)
+    public async Task DeleteAppointmentSlotAsync(string id)
     {
         try
         {
@@ -131,7 +132,7 @@ public class AppointmentRepository: IAppointmentRepository
             Console.WriteLine(e.Message);
         }
     }
-    public async Task<Availability> AddAppointmentSlot(string id, Availability newSlot)
+    public async Task<Availability> AddAppointmentSlotAsync(string id, Availability newSlot)
     {
         try
         {
@@ -139,9 +140,9 @@ public class AppointmentRepository: IAppointmentRepository
             Guid guidId = Guid.Parse(id);
             var query = @"with Inserted := (
                             INSERT Availability {
-                                day := <str>$day,
-                                start_time := <str>$start_time,
-                                end_time := <str>$end_time,
+                                start_time := <datetime>$start_time,
+                                end_time := <datetime>$end_time,
+                                available := <bool>$available,
                                 appointment_calendar := (
                                     select AppointmentCalendar
                                     filter .id = <uuid>$id
@@ -152,11 +153,114 @@ public class AppointmentRepository: IAppointmentRepository
                         Select Inserted{*};";
             return await _client.QuerySingleAsync<Availability>(query, new Dictionary<string, object?>
             {
-                {"day", newSlot.Day },
                 {"start_time", newSlot.StartTime },
                 {"end_time", newSlot.EndTime },
+                {"id", guidId },
+                {"available", true }
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
+    }
+
+    public async Task<List<Availability>> GetOpenSlotsAsync(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"SELECT Availability {
+                              start_time,
+                              end_time,
+                              available,
+                              appointment_calendar
+                            }
+                            FILTER
+                              .available = true AND
+                              .appointment_calendar.id = <uuid>$id;";
+            return (await _client.QueryAsync<Availability>(query, new Dictionary<string, object?>
+            {
+                {"id", guidId }
+            })).ToList();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
+    }
+    public async Task<Availability> GetSlotByIdAsync(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"SELECT Availability {
+                              id, 
+                              start_time,
+                              end_time,
+                              available,
+                              appointment_calendar : {
+                                id,
+                                name,
+                                email,
+                                description
+                              }
+                            }
+                            FILTER
+                              Availability.id = <uuid>$id;";
+            return await _client.QuerySingleAsync<Availability>(query, new Dictionary<string, object?>
+            {
                 {"id", guidId }
             });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
+    }
+
+    public async Task<AppointmentDetails> CreateAppointmentMeetingAsync(AppointmentDetails appointmentDetails)
+    {
+        ArgumentNullException.ThrowIfNull(appointmentDetails);
+        try
+        {
+            await _client.TransactionAsync(async (tx) =>
+            {
+                var query = @"UPDATE Availability
+                            FILTER .id = <uuid>$id
+                            SET {
+                                available := false
+                            };";
+                await tx.ExecuteAsync(query, new Dictionary<string, object?>
+                {
+                    {"id", appointmentDetails.Slot.Id }
+                });
+                var query2 = @"With Inserted := (
+                        INSERT AppointmentDetails {
+                            reserver_name:= <str>$name,
+                            reserver_email:= <str>$email,
+                            reserver_phone_number:= <str>$reserver_phone_number,
+                            slot := (
+                                select Availability
+                                filter .id = <uuid>$id
+                                limit 1
+                            )
+                        }
+                    )
+                    Select Inserted{*};";
+                appointmentDetails = await tx.QuerySingleAsync<AppointmentDetails>(query2, new Dictionary<string, object?>
+                {
+                    {"name", appointmentDetails.ReserverName },
+                    { "email", appointmentDetails.ReserverEmail },
+                    { "reserver_phone_number", appointmentDetails.ReserverPhoneNumber },
+                    { "id", appointmentDetails.Slot.Id }
+                });
+                
+            });
+            return appointmentDetails;
         }
         catch (Exception e)
         {

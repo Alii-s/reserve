@@ -1,0 +1,44 @@
+﻿@page "{id}"
+@model Reserve.Pages.Appointment.ReserverDetailsModel
+
+<h1 class="notification-title mb-lg-5">Reserve Now!</h1>
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="notification-border mb-lg-5">
+        <h2 class="font-event-details d-flex justify-content-center mb-lg-5">@Model.AvailabilitySlot.StartTime.ToShortTimeString() with @Model.AvailabilitySlot.AppointmentCalendar.Name</h2>
+        <form method="post" class="p-3">
+            <span asp-validation-for="Appointment.Slot.Available" class="text-danger d-flex justify-content-center mb-lg-5"></span>
+            <div class="d-flex flex-column">
+                <div class="d-flex justify-content-evenly">
+                    <div class="col-3">
+                        <label asp-for="Appointment.ReserverName" class="form-label">Your Name</label>
+                    </div>
+                    <input type="text" asp-for="Appointment.ReserverName" name="Appointment.ReserverName" class="form-control w-50" />
+                </div>
+                <span asp-validation-for="Appointment.ReserverName" class="text-danger d-flex justify-content-center p-3"></span>
+            </div>
+            <div class="d-flex flex-column">
+                <div class="d-flex justify-content-evenly">
+                    <div class="col-3">
+                        <label asp-for="Appointment.ReserverEmail" class="form-label">Email</label>
+                    </div>
+                    <input type="text" asp-for="Appointment.ReserverEmail" name="Appointment.ReserverEmail" class="form-control w-50" />
+                </div>
+                <span asp-validation-for="Appointment.ReserverEmail" class="text-danger d-flex justify-content-center p-3"></span>
+            </div>
+            <div class="d-flex flex-column">
+                <div class="d-flex justify-content-evenly">
+                    <div class="col-3">
+                        <label asp-for="Appointment.ReserverPhoneNumber" class="form-label">Phone Number</label>
+                    </div>
+                    <input type="text" asp-for="Appointment.ReserverPhoneNumber" name="Appointment.ReserverPhoneNumber" class="form-control w-50" />
+                </div>
+                <span asp-validation-for="Appointment.ReserverPhoneNumber" class="text-danger d-flex justify-content-center p-3 mb-3"></span>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-custom reserve-blue-button col-md-2 col-12">Reserve Now</button>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </form>
+    </div>
+
+</div>

@@ -4,15 +4,15 @@ using Reserve.Core.Features.Appointment;
 
 namespace Reserve.Pages.Appointment;
 
-public class EditSlotsModel : PageModel
+public class ReserveAppointmentModel : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public string Id { get; set; }
-    public List<Availability> AvailabilitySlots { get; set; } = new();
     public AppointmentCalendar AppointmentCalendar { get; set; }
+    
     private readonly IAppointmentRepository _appointmentRepository;
-    public Availability NewAvailabilitySlot { get; set; }
-    public EditSlotsModel(IAppointmentRepository appointmentRepository)
+    public List<Availability> AvailabilitySlots { get; set; } = new();  
+    public ReserveAppointmentModel(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
     }
@@ -23,7 +23,15 @@ public class EditSlotsModel : PageModel
             return RedirectToPage("/Appointment/AppointmentError");
         }
         AppointmentCalendar = await _appointmentRepository.GetByIdAsync(Id);
-        AvailabilitySlots = await _appointmentRepository.GetSlotsFromCalendarIdAsync(Id);
+        if(AppointmentCalendar is null)
+        {
+            return RedirectToPage("/Appointment/AppointmentError");
+        }
+        AvailabilitySlots = await _appointmentRepository.GetOpenSlotsAsync(Id);
+        if(AvailabilitySlots is null)
+        {
+            return RedirectToPage("/Appointment/AppointmentError");
+        }
         return Page();
     }
 }

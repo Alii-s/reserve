@@ -8,10 +8,13 @@ namespace Reserve.Core.Features.Appointment;
 
 public interface IAppointmentRepository
 {
-    Task CreateAppointmentCalendar(AppointmentCalendar appointmentCalendar, string availabilitySlots);
+    Task CreateAppointmentCalendarAsync(AppointmentCalendar appointmentCalendar, string availabilitySlots);
     Task<AppointmentCalendar?> GetByIdAsync(string id);
     Task<List<Availability>> GetSlotsFromCalendarIdAsync(string id);
-    Task<AppointmentCalendar> CreateAppointmentInfo(AppointmentCalendar appointmentCalendar);
-    Task DeleteAppointmentSlot(string id);
-    Task<Availability> AddAppointmentSlot(string id, Availability newSlot);
+    Task<AppointmentCalendar> CreateAppointmentInfoAsync(AppointmentCalendar appointmentCalendar);
+    Task DeleteAppointmentSlotAsync(string id);
+    Task<Availability> AddAppointmentSlotAsync(string id, Availability newSlot);
+    Task<List<Availability>> GetOpenSlotsAsync(string id);
+    Task<Availability> GetSlotByIdAsync(string id);
+    Task<AppointmentDetails> CreateAppointmentMeetingAsync(AppointmentDetails appointmentDetails);
 }
