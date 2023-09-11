@@ -1,0 +1,35 @@
+﻿@page "{id}"
+@model Reserve.Pages.Appointment.UserAppointmentDashboardModel
+
+@Html.AntiForgeryToken()
+<div class="modal fade" id="cancelAppointment" tabindex="-1" aria-labelledby="cancelAppointmentLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex flex-column align-items-center m-3">
+                <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="closeAppointmentLabel">Cancel Appointment!</h1>
+                <div class="notification-border d-flex justify-content-center">
+                    <p class="notification-text p-3">Are you sure you want to cancel the appointment?</p>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-around border-0">
+                <button type="button" hx-delete="/cancel-appointment/@Model.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' class="btn reserve-red-button" data-bs-dismiss="modal">Yes</button>
+                <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="d-flex justify-content-center align-items-center">
+    <div class="notification-border d-flex flex-column">
+        <h1 class="notification-title mb-lg-5">Appointment Details!</h1>
+        <div class="d-flex justify-content-evenly">
+            <a class="btn reserve-blue-button">Reschedule</a>
+            <a class="btn reserve-red-button" data-bs-toggle="modal" data-bs-target="#cancelAppointment">Cancel Appointment</a>
+        </div>
+    </div>
+</div>
+

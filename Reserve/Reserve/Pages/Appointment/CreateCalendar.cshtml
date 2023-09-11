@@ -73,7 +73,7 @@
             hours = 12;
         }
 
-        return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
+        return `${month}/${day}/${year} ${hours}:${minutes} ${ampm}`;
     }
 
 
@@ -81,7 +81,6 @@
     document.addEventListener("DOMContentLoaded", function () {
         var addButton = document.getElementById("Add");
         var tableBody = document.getElementById("table-body");
-        var dayInput = document.getElementById("SelectedDay");
         var startTimeInput = document.getElementById("NewAvailabilitySlot_StartTime");
         var endTimeInput = document.getElementById("NewAvailabilitySlot_EndTime");
         addButton.addEventListener("click", function () {
@@ -93,7 +92,7 @@
             }
             var newRow = document.createElement("tr");
             newRow.innerHTML = `
-                        <td>${formatLocalDateTime(startTime)}</td>
+                    <td>${formatLocalDateTime(startTime)}</td>
                     <td>${formatLocalDateTime(endTime)}</td>
                     <td><button type="button" class="btn reserve-red-button">Remove</button></td>
                 `;
