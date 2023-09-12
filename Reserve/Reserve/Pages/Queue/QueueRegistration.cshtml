@@ -7,7 +7,7 @@
 
     <div class="card border rounded mt-2">
         <div class="card-body">
-            <p class="card-text text-center"> <b>Welcome to the Organization X queue up page!</b> </p>
+            <p class="card-text text-center"> <b>Welcome to the @Model.QueueEvent.Title queue up page!</b> </p>
             <p class="card-text text-center">By pressing the button below, you will be added to our queue for the next available opportunity.</p>
             <form method="post">
                 <input type="hidden" asp-for="QueueEventId" />
@@ -30,8 +30,8 @@
         </div>
 
         <div class="card-footer">
-            <p class="text-muted" style="font-size: 0.85rem; display: inline-block;">Current Queue Number: 25</p>
-            <p class="text-muted" style="font-size: 0.85rem; display: inline-block; float: right;">Current Number Served: 21</p>
+            <p class="text-muted" style="font-size: 0.85rem; display: inline-block;">Current Queue Number: @Model.NextQueueNumber</p>
+            <p class="text-muted" style="font-size: 0.85rem; display: inline-block; float: right;">Current Number Served: @Model.QueueEvent.CurrentNumberServed</p>
         </div>
     </div>
 </div>

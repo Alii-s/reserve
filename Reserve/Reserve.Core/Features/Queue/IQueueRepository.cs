@@ -12,5 +12,4 @@ public interface IQueueRepository
     Task<QueueEvent> GetQueueEventByID(string id);
     Task<QueueTicket> GetQueueTicketByID(string id);
     Task MarkAsReserved(QueueTicket ticket, int queueNumber);
-    Task Reset(string queueEventId);
 }
