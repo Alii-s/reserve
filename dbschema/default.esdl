@@ -32,9 +32,9 @@ module default {
     constraint exclusive on ((.reserver_email, .casual_event));
     }
     type Availability {
-        required day: str;
-        required start_time: str;
-        required end_time: str;
+        required start_time: datetime;
+        required end_time: datetime;
+        required available: bool;
         required appointment_calendar: AppointmentCalendar{
             on target delete delete source;
         }
@@ -48,17 +48,20 @@ module default {
         required description: str;
         multi availability_slots: Availability
     }
-    type Appointment{
-        required customer: User;
-        required business: Business;
-        required appointment_slot: datetime;
+    type AppointmentDetails{
+        required reserver_name: str;
+        required reserver_phone_number: str;
+        required reserver_email: str;
+        required slot: Availability{
+            on target delete delete source;
+        }
     }
     type QueueEvent{
         required title: str;
         required organizer_email: str;
         required description: str;
         required current_number_served: int32;
-	required ticket_counter: int32;
+      	required ticket_counter: int32;
         last_reset: datetime;
     }
     type QueueTicket{
@@ -76,5 +79,17 @@ module default {
         };
         required description: str;
         multi availability_slots: Availability
+    }
+    type AppointerNotifications{
+        required reserver_name: str;
+        required reserver_phone_number: str;
+        required reserver_email: str;
+        required notification_type: str;
+        required appointment_calendar: AppointmentCalendar{
+            on target delete delete source;
+        }
+        required slot: Availability{
+            on target delete delete source;
+        }
     }
 }

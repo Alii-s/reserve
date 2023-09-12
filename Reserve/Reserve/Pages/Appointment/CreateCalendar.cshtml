@@ -12,15 +12,13 @@
                             <div class="col-1">
                                 <label asp-for="NewAvailabilitySlot" class="form-label">Slot</label>
                             </div>
-                            @Html.DropDownListFor(m => m.SelectedDay, new SelectList(Model.DaysList), new { @class = "form-control w-25", @id = "SelectedDay" })
-                            <input asp-for="NewAvailabilitySlot.StartTime" type="time" name="NewAvailabilitySlot.StartTime" id="NewAvailabilitySlot_StartTime" class="form-control w-25" />
-                            <input asp-for="NewAvailabilitySlot.EndTime" type="time" name="NewAvailabilitySlot.EndTime" id="NewAvailabilitySlot_EndTime" class="form-control w-25" />
+                            <input asp-for="NewAvailabilitySlot.StartTime" type="datetime-local" name="NewAvailabilitySlot.StartTime" id="NewAvailabilitySlot_StartTime" class="form-control w-25" />
+                            <input asp-for="NewAvailabilitySlot.EndTime" type="datetime-local" name="NewAvailabilitySlot.EndTime" id="NewAvailabilitySlot_EndTime" class="form-control w-25" />
                             <button class="btn reserve-blue-button" id="Add" type="button">Add</button>
                         </div>
                         <table class="table">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Day</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>
                                     <th></th>
@@ -53,36 +51,55 @@
         return formattedTime;
     }
 
-    
+    function formatLocalDateTime(inputValue) {
+        const inputDate = new Date(inputValue);
+
+        if (isNaN(inputDate.getTime())) {
+            return "Invalid Date";
+        }
+
+        const day = String(inputDate.getDate()).padStart(2, '0');
+        const month = String(inputDate.getMonth() + 1).padStart(2, '0');
+        const year = inputDate.getFullYear();
+        let hours = inputDate.getHours();
+        const minutes = String(inputDate.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+
+
+        if (hours > 12) {
+            hours -= 12;
+        } else if (hours === 0) {
+            hours = 12;
+        }
+
+        return `${month}/${day}/${year} ${hours}:${minutes} ${ampm}`;
+    }
 
 
 
     document.addEventListener("DOMContentLoaded", function () {
         var addButton = document.getElementById("Add");
         var tableBody = document.getElementById("table-body");
-        var dayInput = document.getElementById("SelectedDay");
         var startTimeInput = document.getElementById("NewAvailabilitySlot_StartTime");
         var endTimeInput = document.getElementById("NewAvailabilitySlot_EndTime");
         addButton.addEventListener("click", function () {
-            var day = dayInput.value;
             var startTime = startTimeInput.value;
             var endTime = endTimeInput.value;
-            if (!day || !startTime || !endTime) {
-                alert("Please fill in all fields (Day, Start Time, End Time) before adding.");
+            if (!startTime || !endTime) {
+                alert("Please fill in all fields (Start Time, End Time) before adding.");
                 return;
             }
             var newRow = document.createElement("tr");
             newRow.innerHTML = `
-                    <td>${day}</td>
-                        <td>${formatTimeTo12Hour(startTime)}</td>
-                    <td>${formatTimeTo12Hour(endTime)}</td>
+                    <td>${formatLocalDateTime(startTime)}</td>
+                    <td>${formatLocalDateTime(endTime)}</td>
                     <td><button type="button" class="btn reserve-red-button">Remove</button></td>
                 `;
 
             tableBody.appendChild(newRow);
 
 
-            dayInput.value = "";
+
             startTimeInput.value = "";
             endTimeInput.value = "";
         });
@@ -106,12 +123,13 @@
         const tableData = [];
         tableRows.forEach((row) => {
             const cells = row.querySelectorAll("td");
-            if (cells.length === 4) {
-                const day = cells[0].textContent;
-                const startTime = cells[1].textContent;
-                const endTime = cells[2].textContent;
+            if (cells.length === 3) {
+                var startTime = cells[0].textContent;
+                startTime = new Date(startTime).toISOString();
+                var endTime = cells[1].textContent;
+                endTime = new Date(endTime).toISOString();
 
-                tableData.push({ day, startTime, endTime });
+                tableData.push({startTime, endTime });
             }
         });
 

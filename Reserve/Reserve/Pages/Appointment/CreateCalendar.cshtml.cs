@@ -11,17 +11,23 @@ public class CreateCalendarModel : PageModel
     public string Id { get; set; }
     public AppointmentCalendar NewAppointmentCalendar { get; set; }
     public Availability NewAvailabilitySlot { get; set; }
-    public List<Days> DaysList { get; set; } = new List<Days>();
-    public Days SelectedDay { get; set; }
     private readonly IAppointmentRepository _appointmentRepository;
     public CreateCalendarModel(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
     }
-    public async Task OnGet(AppointmentCalendar appointmentCalendar)
+    public async Task<IActionResult> OnGet()
     {
+        if(string.IsNullOrEmpty(Id))
+        {
+            return RedirectToPage("/Appointment/AppointmentError");
+        }
         NewAppointmentCalendar = await _appointmentRepository.GetByIdAsync(Id);
-        DaysList = Enum.GetValues(typeof(Days)).Cast<Days>().ToList();
+        if(NewAppointmentCalendar is null)
+        {
+            return RedirectToPage("/Appointment/AppointmentError");
+        }
+        return Page();
     }
     
 }

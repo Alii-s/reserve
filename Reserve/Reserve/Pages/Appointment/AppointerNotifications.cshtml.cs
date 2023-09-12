@@ -4,26 +4,27 @@ using Reserve.Core.Features.Appointment;
 
 namespace Reserve.Pages.Appointment;
 
-public class EditSlotsModel : PageModel
+public class AppointerNotificationsModel : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public string Id { get; set; }
-    public List<Availability> AvailabilitySlots { get; set; } = new();
-    public AppointmentCalendar AppointmentCalendar { get; set; }
     private readonly IAppointmentRepository _appointmentRepository;
-    public Availability NewAvailabilitySlot { get; set; }
-    public EditSlotsModel(IAppointmentRepository appointmentRepository)
+    public List<AppointerNotifications> AppointerNotifications { get; set; }
+    public AppointerNotificationsModel(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
     }
     public async Task<IActionResult> OnGet()
     {
-        if(string.IsNullOrEmpty(Id))
+        if (string.IsNullOrEmpty(Id))
         {
             return RedirectToPage("/Appointment/AppointmentError");
         }
-        AppointmentCalendar = await _appointmentRepository.GetByIdAsync(Id);
-        AvailabilitySlots = await _appointmentRepository.GetSlotsFromCalendarIdAsync(Id);
+        AppointerNotifications = await _appointmentRepository.GetAppointmentNotificationsForCalendarAsync(Id);
+        if (AppointerNotifications is null)
+        {
+            return RedirectToPage("/Appointment/AppointmentError");
+        }
         return Page();
     }
 }

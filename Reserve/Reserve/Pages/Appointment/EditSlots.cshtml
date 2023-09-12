@@ -9,28 +9,40 @@
     }
 </style>
 <h1 class="notification-title mb-lg-5">Update Schedule!</h1>
-<div class="d-flex justify-content-between">
+<div class="d-flex justify-content-between mb-lg-5">
     <h2 class="notification-title">Add new Slot</h2>
+    <form class="d-flex justify-content-between w-50">
+        <input asp-for="NewAvailabilitySlot.StartTime" type="datetime-local" name="StartTime" id="NewAvailabilitySlot_StartTime" class="form-control w-25" />
+        <input asp-for="NewAvailabilitySlot.EndTime" type="datetime-local" name="EndTime" id="NewAvailabilitySlot_EndTime" class="form-control w-25" />
+        <button hx-post="/add-slot/@Model.AppointmentCalendar.Id" hx-target="#table-body" hx-swap="beforeend" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' class="btn reserve-blue-button" id="Add" type="submit">Add</button>
+    </form>
 </div>
-<table class="table">
+<table class="table mb-lg-5">
     <thead class="table-light">
         <tr>
-            <th>Day</th>
             <th>Start Time</th>
             <th>End Time</th>
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="table-body">
         @foreach (var slot in Model.AvailabilitySlots)
         {
             <tr>
-                <td>@slot.Day</td>
                 <td>@slot.StartTime</td>
                 <td>@slot.EndTime</td>
-                <td><button hx-delete="/delete-slot/@slot.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' hx-target="closest tr" hx-swap="outerHTML swap:1s" class="btn reserve-red-button">Delete Slot</button></td>
+                @if (slot.Available)
+                {
+                    <td><button hx-delete="/delete-slot/@slot.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' hx-target="closest tr" hx-swap="outerHTML swap:1s" class="btn reserve-red-button">Delete Slot</button></td>
+                } else
+                {
+                    <td><p class="notification-text">Slot is reserved. Can't delete</p></td>
+                }
             </tr>
         }
     </tbody>
 </table>
-
+<div class="d-flex justify-content-evenly">
+    <a href="@Url.Page("AppointerNotifications", new {id = Model.AppointmentCalendar.Id})" class="btn reserve-blue-button">View Notifications</a>
+    <a href="@Url.Page("UpcomingAppointments", new {id = Model.AppointmentCalendar.Id})" class="btn reserve-blue-button">View Upcoming appointments</a>
+</div>

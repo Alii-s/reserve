@@ -6,11 +6,11 @@
     <div class="notification-border mb-lg-5">
         <div>
             <p class="notification-text d-flex justify-content-center mb-1">You can now share your calendar on the following link:</p>
-            <a class="d-flex justify-content-center mb-md-2 ">www.reserve.com/appointment/@Model.Id</a>
+            <a class="d-flex justify-content-center mb-md-2" href="@Url.Page("ReserveAppointment", new {id = Model.Id})">www.reserve.com/appointment/@Model.Id</a>
         </div>
         <div>
             <p class="notification-text d-flex justify-content-center mb-1">
-                If you don’t have an account, you can still edit your appointment at
+                If you don’t have an account, you can still view appointments at
                 the following link:
             </p>
             <a class="d-flex justify-content-center mb-md-2" href="@Url.Page("EditSlots", new {id = Model.Id})">www.reserve.com/appointment/edit-appointment/@Model.Id</a>
