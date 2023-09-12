@@ -14,17 +14,22 @@ public class QueueRegistrationModel : PageModel
     [Required]
     public QueueTicket NewQueueTicket { get; set; }
     public Guid QueueEventId { get; set; }
+    public QueueEvent QueueEvent { get; set; }
+    public int NextQueueNumber { get; set; }
 
     public QueueRegistrationModel(IQueueRepository queueRepository, IValidator<QueueTicket> validator)
     {
         _queueRepository = queueRepository;
         _validator = validator;
         NewQueueTicket = new QueueTicket();
+        QueueEvent = new QueueEvent();
     }
 
-    public void OnGet(Guid id)
+    public async Task OnGet(Guid id)
     {
         QueueEventId = id;
+        QueueEvent = await _queueRepository.GetQueueEventByID(id.ToString());
+        NextQueueNumber = await _queueRepository.GetNextQueueNumber(id.ToString());
     }
 
     public async Task<IActionResult> OnPost()

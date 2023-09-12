@@ -129,30 +129,6 @@ public class QueueRepository : IQueueRepository
         });
     }
 
-    public async Task ResetQueue(string queueEventId)
-    {
-        Guid guidId = Guid.Parse(queueEventId);
-
-        var deleteQuery = @"
-        DELETE QueueTicket 
-        FILTER .queue_event.id = <uuid>$queueEventId;
-    ";
-        await _client.ExecuteAsync(deleteQuery, new Dictionary<string, object?>
-    {
-        {"queueEventId", guidId }
-    });
-
-        var updateQuery = @"
-        UPDATE QueueEvent 
-        SET { current_number_served := 1 } 
-        FILTER .id = <uuid>$queueEventId;
-    ";
-        await _client.ExecuteAsync(updateQuery, new Dictionary<string, object?>
-    {
-        {"queueEventId", guidId }
-    });
-    }
-
     public async Task<List<QueueTicket>> GetAttendees(string queueEventId)
     {
         Guid guidId = Guid.Parse(queueEventId);
@@ -201,26 +177,27 @@ public class QueueRepository : IQueueRepository
     });
     }
 
-    public async Task Reset(string queueEventId)
+    public async Task ResetQueue(string queueEventId)
     {
-        var query = @"WITH Updated := (
-                    UPDATE QueueEvent
-                    FILTER .id = <uuid>$eventId
-                    SET {
-                        current_number_served := 1,
-                        ticket_counter := 0
-                    }
-                ),
-                Deleted := (
-                    DELETE QueueTicket
-                    FILTER .queue_event.id = <uuid>$eventId
-                );";
+        Guid guidId = Guid.Parse(queueEventId);
+        var updatequery = @"    UPDATE QueueEvent
+                        FILTER .id = <uuid>$eventId
+                        SET {
+                            current_number_served := 1,
+                            ticket_counter := 0
+                        };";
 
-        var result = await _client.QuerySingleAsync<QueueEvent>(query, new Dictionary<string, object?>
-    {
-        {"eventId", queueEventId}
-    });
+        await _client.QueryAsync<QueueEvent>(updatequery, new Dictionary<string, object?>
+        {
+            {"eventId", guidId}
+        });
+        var deletequery = @"    DELETE QueueTicket
+               FILTER .queue_event.id = <uuid>$eventId;";
+        ;
+
+        await _client.QueryAsync<QueueEvent>(deletequery, new Dictionary<string, object?>
+        {
+            {"eventId", guidId}
+        });
     }
-
-
 }
