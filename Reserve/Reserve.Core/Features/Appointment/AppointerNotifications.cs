@@ -13,5 +13,6 @@ public class AppointerNotifications
     public string ReserverEmail { get; set; }
     public string ReserverPhoneNumber { get; set; }
     public string NotificationType { get; set; }
+    public DateTime NewSlot { get; set; }
     public Availability Slot { get; set; }
 }

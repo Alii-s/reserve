@@ -23,11 +23,72 @@
 </div>
 
 
+
+<div class="modal fade" id="rescheduleAppointment" tabindex="-1" aria-labelledby="rescheduleAppointmentLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post">
+                <div class="d-flex flex-column align-items-center m-3">
+                    <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="closeAppointmentLabel">Reschedule Appointment!</h1>
+                    <div class="container d-flex justify-content-center mb-lg-5">
+                        <div class="notification-border d-flex justify-content-center">
+                            <p class="notification-text p-3">Choose a free slot for rescheduling!</p>
+                        </div>
+                    </div>
+                    <div class="container form-group d-flex justify-content-evenly">
+                        <label asp-for="SelectedDate">New Date</label>
+                        @Html.DropDownListFor(model => model.SelectedDate, new SelectList(Model.FreeSlots), new {@class = "form-control w-50"})
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-around border-0">
+                    <button type="submit" class="btn reserve-red-button" data-bs-dismiss="modal">Send Request</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">Back</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="viewDetails" tabindex="-1" aria-labelledby="viewDetailsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex flex-column align-items-center">
+                <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="viewDetailsLabel">View Details!</h1>
+                <div class="notification-border col-10 d-flex flex-column justify-content-center mb-lg-5">
+                    <div class="container d-flex flex-column justify-content-evenly mb-lg-5">
+                        <label class="form-label" asp-for="AppointmentDetails.Slot.AppointmentCalendar.Name">Calendar Creator's Name:</label>
+                        <input class="form-control" asp-for="AppointmentDetails.Slot.AppointmentCalendar.Name" name="AppointmentDetails.Slot.AppointmentCalendar.Name" disabled />
+                    </div>
+                    <div class="container d-flex flex-column justify-content-evenly mb-lg-5">
+                        <label class="form-label" asp-for="AppointmentDetails.Slot.AppointmentCalendar.Email">Calendar Creator's Email:</label>
+                        <input class="form-control" asp-for="AppointmentDetails.Slot.AppointmentCalendar.Email" name="AppointmentDetails.Slot.AppointmentCalendar.Email" disabled/>
+                    </div>
+                    <div class="container d-flex flex-column justify-content-evenly mb-lg-5">
+                        <label class="form-label" asp-for="AppointmentDetails.Slot.StartTime">Appointment Start Time:</label>
+                        <input class="form-control" asp-for="AppointmentDetails.Slot.StartTime" name="AppointmentDetails.Slot.StartTime" disabled />
+                    </div>
+                    <div class="container d-flex flex-column justify-content-evenly">
+                        <label class="form-label" asp-for="AppointmentDetails.Slot.EndTime">Appointment End Time:</label>
+                        <input class="form-control" asp-for="AppointmentDetails.Slot.EndTime" name="AppointmentDetails.Slot.EndTime" disabled />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="d-flex justify-content-center align-items-center">
     <div class="notification-border d-flex flex-column">
         <h1 class="notification-title mb-lg-5">Appointment Details!</h1>
         <div class="d-flex justify-content-evenly">
-            <a class="btn reserve-blue-button">Reschedule</a>
+            <a class="btn reserve-blue-button" data-bs-toggle="modal" data-bs-target="#rescheduleAppointment">Reschedule</a>
+            <a class="btn reserve-blue-button" data-bs-toggle="modal" data-bs-target="#viewDetails">View Details</a>
             <a class="btn reserve-red-button" data-bs-toggle="modal" data-bs-target="#cancelAppointment">Cancel Appointment</a>
         </div>
     </div>

@@ -99,6 +99,19 @@ public static class AppointmentEndpoints
                 return Results.BadRequest(e.Message);
             }
         });
+        group.MapDelete("finish-appointment/{id}", async (string id, HttpContext context, IAntiforgery _antiforgery, IAppointmentRepository _appointmentRepository) =>
+        {
+            try
+            {
+                await _antiforgery.ValidateRequestAsync(context);
+                await _appointmentRepository.FinishAppointment(id);
+                return Results.Ok();
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        });
         return group;
     }
 }
