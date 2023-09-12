@@ -22,4 +22,7 @@ public interface IAppointmentRepository
     Task CancelAppointmentAsync(AppointmentDetails cancelledAppointment);
     Task<List<AppointerNotifications>> GetAppointmentNotificationsForCalendarAsync(string id);
     Task DeleteNotification(string id);
+    Task<List<Availability>> GetFreeSlotsOfCalendarByIdAsync(AppointmentDetails appointment);
+    Task Reschedule(AppointmentDetails appointment, DateTime newSlot);
+    Task FinishAppointment(string id);
 }

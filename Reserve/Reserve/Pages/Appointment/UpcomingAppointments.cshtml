@@ -1,5 +1,14 @@
 ﻿@page
 @model Reserve.Pages.Appointment.UpcomingAppointmentsModel
+
+@Html.AntiForgeryToken()
+
+<style>
+    tr.htmx-swapping td {
+        opacity: 0;
+        transition: opacity 1s ease-out;
+    }
+</style>
 <h1 class="notification-title mb-lg-5">Upcoming Appointments!</h1>
 
 <table class="table mb-lg-5">
@@ -8,7 +17,8 @@
             <th>Name</th>
             <th>Phone Number</th>
             <th>Email</th>
-            <th>Date and Time</th>
+            <th>Start Date and Time</th>
+            <th>End Date and Time</th>
             <th></th>
         </tr>
     </thead>
@@ -20,7 +30,8 @@
                 <td>@appointment.ReserverPhoneNumber</td>
                 <td>@appointment.ReserverEmail</td>
                 <td>@appointment.Slot.StartTime.ToLongDateString() @appointment.Slot.StartTime.ToShortTimeString()</td>
-                <td><a class="btn reserve-blue-button" href="@Url.Page("AppointmentDetails", new {id = appointment.Id})">View Details</a></td>
+                <td>@appointment.Slot.EndTime.ToLongDateString() @appointment.Slot.EndTime.ToShortTimeString()</td>
+                <td><a hx-delete="/finish-appointment/@appointment.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' hx-target="closest tr" hx-swap="outerHTML swap:1s" class="btn reserve-blue-button">Mark as done</a></td>
             </tr>
         }
     </tbody>
