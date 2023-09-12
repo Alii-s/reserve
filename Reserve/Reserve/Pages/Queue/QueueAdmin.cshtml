@@ -1,5 +1,6 @@
 ﻿@page
 @model Reserve.Pages.Queue.QueueAdminModel
+@Html.AntiForgeryToken()
 
 <div class="container mt-5">
     <h1 class="display-4 text-center">Attendee's List</h1>
@@ -39,7 +40,7 @@
         </div>
     </div>
 
-    <table class="table table-striped mt-4">
+    <table class="table table-striped mt-4 id="attendeesTable">
         <thead>
             <tr>
                 <th>Queue Number</th>
@@ -56,37 +57,44 @@
                     <td>@attendee.CustomerName</td>
                     <td>@attendee.CustomerPhoneNumber</td>
                     <td>
-                            <form method="post" id="markAsReservedForm" asp-page-handler="MarkAsReserved">
+                        <form method="post" id="markAsReservedForm-@attendee.QueueNumber">
                             <input type="hidden" asp-for="Id" />
                             <input type="hidden" asp-for="@attendee.QueueNumber" name="queueNumber" />
-                            <button type="button" class="btn reserve-blue-button" data-bs-toggle="modal" data-bs-target="#markAsReservedModal">Mark as reserved</button>
-                            <div class="modal fade" id="markAsReservedModal" tabindex="-1" aria-labelledby="markAsReservedModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header border-0">
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="d-flex flex-column align-items-center m-3">
-                                            <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="markAsReservedModalLabel">Mark as Reserved!</h1>
-                                            <div class="notification-border d-flex justify-content-center">
-                                                <p class="notification-text p-3">Are you sure you want to mark this attendee as reserved?</p>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer d-flex justify-content-around border-0">
-                                            <button type="submit" class="btn reserve-red-button">Yes</button>
-                                            <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <button type="button" class="btn reserve-blue-button" onclick="markAsReserved(@attendee.QueueNumber)">Mark as reserved</button>
                         </form>
-
-
-
-
                     </td>
                 </tr>
             }
          </tbody>
           </table>
       </div>
+
+<script>
+    function markAsReserved(queueNumber) {
+        $.ajax({
+            url: "/Queue/QueueAdmin?handler=MarkAsReserved",
+            type: "POST",
+            data: {
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
+                Id: "@Model.Id",
+                queueNumber: queueNumber
+            },
+            success: function (result) {
+                if (result.success) {
+                    console.log(result.html);
+                    $("tbody").html(result.html);
+                } else {
+                    console.error("Failed to mark attendee as reserved.");
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("AJAX request failed.");
+                console.error("Status: " + textStatus);
+                console.error("Error: " + errorThrown);
+                console.error("Response Text: " + xhr.responseText);
+            }
+        });
+    }
+
+
+</script>

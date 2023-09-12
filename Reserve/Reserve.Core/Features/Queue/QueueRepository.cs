@@ -193,13 +193,11 @@ public class QueueRepository : IQueueRepository
         });
         var deletequery = @"    DELETE QueueTicket
                FILTER .queue_event.id = <uuid>$eventId;";
-;
+        ;
 
         await _client.QueryAsync<QueueEvent>(deletequery, new Dictionary<string, object?>
         {
             {"eventId", guidId}
         });
     }
-
-
 }
