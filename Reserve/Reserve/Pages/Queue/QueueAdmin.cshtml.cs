@@ -79,5 +79,14 @@ namespace Reserve.Pages.Queue
             var updatedHtml = RenderAttendeesTableBody(Attendees);
             return new JsonResult(new { success = true, html = updatedHtml });
         }
+
+
+        public async Task<IActionResult> OnPostFetchNewDataAsync()
+        {
+            Attendees = await _queueRepository.GetAttendees(Id.ToString());
+            var updatedHtml = RenderAttendeesTableBody(Attendees);
+            return new JsonResult(new { success = true, html = updatedHtml });
+        }
+
     }
 }
