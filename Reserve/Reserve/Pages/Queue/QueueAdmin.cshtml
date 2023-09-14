@@ -122,6 +122,34 @@
         });
     }
 
+    function fetchNewData() {
+        $.ajax({
+            url: "/Queue/QueueAdmin?handler=FetchNewData",
+            type: "POST",
+            data: {
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
+                Id: "@Model.Id"
+            },
+            success: function (result) {
+                if (result.success) {
+                    console.log(result.html);
+                    $("tbody").html(result.html);
+                } else {
+                    console.error("Failed to fetch new data.");
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("AJAX request failed.");
+                console.error("Status: " + textStatus);
+                console.error("Error: " + errorThrown);
+                console.error("Response Text: " + xhr.responseText);
+            }
+        });
+
+    }
+
+    setInterval(fetchNewData, 5000);
+
 
 
 </script>
