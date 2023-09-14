@@ -86,6 +86,7 @@ module default {
         required reserver_phone_number: str;
         required reserver_email: str;
         required notification_type: str;
+        new_slot: datetime;
         required appointment_calendar: AppointmentCalendar{
             on target delete delete source;
         }

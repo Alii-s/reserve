@@ -435,5 +435,121 @@ public class AppointmentRepository: IAppointmentRepository
             Console.WriteLine(e.Message);
         }
     }
+    public async Task<List<Availability>> GetFreeSlotsOfCalendarByIdAsync(AppointmentDetails appointment)
+    {
+        try
+        {
+            ArgumentNullException.ThrowIfNull(appointment);
+            var query = @"select Availability {
+                            start_time
+                        } filter .appointment_calendar.id = <uuid>$id and .available = true;";
+            return (await _client.QueryAsync<Availability>(query, new Dictionary<string, object?>
+            {
+                {"id", appointment.Slot.AppointmentCalendar.Id }
+            })).ToList();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
+    }
+    public async Task Reschedule(AppointmentDetails appointmentDetails, DateTime newSlot)
+    {
+        try
+        {
+            ArgumentNullException.ThrowIfNull(appointmentDetails);
+            await _client.TransactionAsync(async (tx) =>
+            {
+                var query = @"insert AppointerNotifications {
+                                    reserver_name := <str>$reserver_name,
+                                    reserver_phone_number := <str>$reserver_phone_number,
+                                    reserver_email := <str>$reserver_email,
+                                    notification_type := 'Rescheduling',
+                                    new_slot := <datetime>$new_slot,
+                                    slot := (select Availability filter .id = <uuid>$slotId),               
+                                    appointment_calendar := (select AppointmentCalendar filter .id = <uuid>$id)
+                                };";
+                await tx.ExecuteAsync(query, new Dictionary<string, object?>
+                {
+                    {"reserver_name", appointmentDetails.ReserverName },
+                    {"reserver_phone_number", appointmentDetails.ReserverPhoneNumber },
+                    {"reserver_email", appointmentDetails.ReserverEmail },
+                    {"id", appointmentDetails.Slot.AppointmentCalendar.Id },
+                    {"slotId", appointmentDetails.Slot.Id },
+                    {"new_slot", newSlot }
+                });
+                var query2 = @"UPDATE Availability
+                            FILTER .id = <uuid>$id
+                            SET {
+                                available := true
+                            };";
+                await tx.ExecuteAsync(query2, new Dictionary<string, object?>
+                {
+                    {"id", appointmentDetails.Slot.Id }
+                });
+                var query3 = @"WITH first_to_update := (
+                                SELECT Availability
+                                FILTER .start_time = <datetime>$new_slot AND .appointment_calendar.id = <uuid>$id
+                                LIMIT 1
+                            ),
+                            updated := (
+                                UPDATE Availability
+                                FILTER .id = (SELECT first_to_update.id)
+                                SET {
+                                    available := false
+                                }
+                            )
+                            SELECT updated { * };";
+                Availability newDate = await tx.QuerySingleAsync<Availability>(query3, new Dictionary<string, object?>
+                {
+                    {"new_slot", newSlot },
+                    {"id", appointmentDetails.Slot.AppointmentCalendar.Id }
+                });
+                var query4 = @"UPDATE AppointmentDetails
+                                FILTER .id = <uuid>$id
+                                SET {
+                                    slot := (
+                                        SELECT Availability
+                                        FILTER .id = <uuid>$new_slot_id
+                                    )
+                                }";
+                await tx.ExecuteAsync(query4, new Dictionary<string, object?>
+                {
+                    {"id", appointmentDetails.Id },
+                    {"new_slot_id", newDate.Id }
+                });
+            });         
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+    public async Task FinishAppointment(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"WITH
+                            deleted_appointment := (
+                                DELETE AppointmentDetails
+                                FILTER .id = <uuid>$id
+                            ),
+                            deleted_availability := (
+                                DELETE Availability
+                                FILTER .id = (SELECT deleted_appointment.slot.id)
+                            )
+                            SELECT deleted_appointment { * }";
+            await _client.ExecuteAsync(query, new Dictionary<string, object?>
+            {
+                {"id", guidId }
+            });
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
 }
 
