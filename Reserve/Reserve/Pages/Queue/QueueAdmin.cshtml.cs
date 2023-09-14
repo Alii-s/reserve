@@ -13,6 +13,7 @@ namespace Reserve.Pages.Queue
         public Guid Id { get; set; }
         private readonly IQueueRepository _queueRepository;
         public List<QueueTicket> Attendees { get; set; } = new List<QueueTicket>();
+        public DateTime LastReset { get; set; }
         public QueueAdminModel(IQueueRepository queueRepository, IValidator<QueueTicket> validator)
         {
             _queueRepository = queueRepository;
@@ -22,11 +23,12 @@ namespace Reserve.Pages.Queue
         {
             Id = id;
             Attendees = await _queueRepository.GetAttendees(id.ToString());
+            QueueEvent queueEvent = await _queueRepository.GetQueueEventByID(id.ToString());
+            LastReset = queueEvent.LastReset;
             return Page();
         }
         public async Task<IActionResult> OnPostMarkAsReservedAsync(string Id, int queueNumber)
         {
-            // Fetch the updated attendees data
             Attendees = await _queueRepository.GetAttendees(Id.ToString());
             var attendee = Attendees.FirstOrDefault(a => a.QueueNumber == queueNumber);
             var validationResult = await _validator.ValidateAsync(attendee);
@@ -38,23 +40,18 @@ namespace Reserve.Pages.Queue
 
             await _queueRepository.MarkAsReserved(attendee, queueNumber);
 
-            // Get the updated attendees HTML content
             Attendees = await _queueRepository.GetAttendees(Id.ToString());
             var updatedHtml = RenderAttendeesTableBody(Attendees);
 
-            // Return a JSON result with success and updated HTML content
             return new JsonResult(new { success = true, html = updatedHtml });
         }
 
-
-        // Helper method to render the attendees table body
         private string RenderAttendeesTableBody(List<QueueTicket> attendees)
         {
             var sb = new StringBuilder();
 
             foreach (var attendee in attendees)
             {
-                // Render each table row here and append it to the StringBuilder
                 sb.Append("<tr>");
                 sb.Append("<td>").Append(attendee.QueueNumber).Append("</td>");
                 sb.Append("<td>").Append(attendee.CustomerName).Append("</td>");
