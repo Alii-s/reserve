@@ -1,5 +1,6 @@
 using EdgeDB;
 using FluentValidation;
+using Microsoft.AspNetCore.Antiforgery;
 using Reserve.Core.Features.Queue;
 using Reserve.Core.Features.Event;
 using Reserve.Core.Features.MailService;

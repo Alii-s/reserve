@@ -7,7 +7,7 @@
     <div class="modal fade" id="resetQueueModal" tabindex="-1" aria-labelledby="resetQueueModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form method="post" asp-page-handler="Reset">
+                <form method="post">
                     <input type="hidden" asp-for="Id" />
                     <div class="modal-header border-0">
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-around border-0">
-                        <button type="submit" class="btn reserve-red-button">Yes</button>
+                        <button class="reserve-blue-button btn" data-bs-toggle="modal" data-bs-target="#resetQueueModal" onclick="resetQueue(event)">Reset Queue</button>
                         <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>
                     </div>
                 </form>
@@ -32,7 +32,7 @@
     <div class="d-flex justify-content-between mt-4">
         <div>
             <h2>Organization X Customer Service Queue</h2>
-            <p class="text-muted">Last Reset: 8/10/2023 12:00 PM</p>
+            <p class="text-muted">Last Reseet: </p>
         </div>
         <div>
             <button class="reserve-blue-button btn" data-bs-toggle="modal" data-bs-target="#resetQueueModal">Reset Queue</button>
@@ -95,6 +95,33 @@
             }
         });
     }
+
+    function resetQueue(event) {
+        event.preventDefault();
+        $.ajax({
+            url: "/Queue/QueueAdmin?handler=Reset",
+            type: "POST",
+            data: {
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
+                Id: "@Model.Id"
+            },
+            success: function (result) {
+                if (result.success) {
+                    console.log(result.html);
+                    $("tbody").html(result.html);
+                } else {
+                    console.error("Failed to reset the queue.");
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("AJAX request failed.");
+                console.error("Status: " + textStatus);
+                console.error("Error: " + errorThrown);
+                console.error("Response Text: " + xhr.responseText);
+            }
+        });
+    }
+
 
 
 </script>

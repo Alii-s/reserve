@@ -3,24 +3,26 @@
 
 <div class="container mt-5">
     <h1 class="display-4 text-center">Queue Created Successfully!</h1>
-    
-    <div class="card border rounded mt-4">
-        <div class="card-body text-center">
-            <p class="card-text" style="font-size: 1.25rem;">You can now share your queue!</p>
-            <p class="card-text" style="font-size: 1.25rem;">
-                <a href="@Url.Page("QueueRegistration", new {id = Model.QueueId})">
-                    www.reserve.com/QueueRegistration/@Model.QueueId
-                </a>
-            </p>
-            <p class="card-text" style="font-size: 1.25rem;">If you don't have an account, you can still edit your queue at</p>
-            <p class="card-text" style="font-size: 1.25rem;">
-                <a href="@Url.Page("QueueAdmin", new { id = Model.QueueId })">www.reserve.com/QueueAdmin/@Model.QueueId</a>
-            </p>
-            <p class="card-text" style="font-size: 1.25rem;">An email has been sent with both links.</p>
+
+    <div class="d-flex justify-content-center">
+        <div class="card border rounded mt-4 col-8">
+            <div class="card-body text-center">
+                <p class="card-text" style="font-size: 1.25rem;">You can now share your queue!</p>
+                <p class="card-text" style="font-size: 1.25rem;">
+                    <a href="@Url.Page("QueueRegistration", new {id = Model.QueueId})">
+                        www.reserve.com/QueueRegistration/@Model.QueueId
+                    </a>
+                </p>
+                <p class="card-text" style="font-size: 1.25rem;">If you don't have an account, you can still edit your queue at</p>
+                <p class="card-text" style="font-size: 1.25rem;">
+                    <a href="@Url.Page("QueueAdmin", new { id = Model.QueueId })">www.reserve.com/QueueAdmin/@Model.QueueId</a>
+                </p>
+                <p class="card-text" style="font-size: 1.25rem;">An email has been sent with both links.</p>
+            </div>
         </div>
     </div>
-    
+
     <div class="text-center mt-4">
-        <a href="#" class="reserve-blue-button btn btn-custom">Home Page</a>
+        <a href="/" class="reserve-blue-button btn btn-custom">Home Page</a>
     </div>
 </div>

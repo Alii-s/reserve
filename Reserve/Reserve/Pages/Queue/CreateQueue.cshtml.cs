@@ -30,6 +30,7 @@ public class CreateQueueModel : PageModel
         }
         NewQueue.CurrentNumberServed = 1;
         NewQueue.TicketCounter = 0;
+        NewQueue.LastReset = DateTime.UtcNow;
         NewQueue = await _queueRepository.Create(NewQueue);
         return RedirectToPage("QueueURL", new { id = NewQueue.Id });
     }
