@@ -9,12 +9,16 @@
     }
 </style>
 <h1 class="notification-title mb-lg-5">Update Schedule!</h1>
-<div class="d-flex justify-content-between mb-lg-5">
+<div class="d-flex flex-lg-row edit-slots justify-content-between mb-5">
     <h2 class="notification-title">Add new Slot</h2>
     <form class="d-flex justify-content-between w-50">
-        <input asp-for="NewAvailabilitySlot.StartTime" type="datetime-local" name="StartTime" id="NewAvailabilitySlot_StartTime" class="form-control w-25" />
-        <input asp-for="NewAvailabilitySlot.EndTime" type="datetime-local" name="EndTime" id="NewAvailabilitySlot_EndTime" class="form-control w-25" />
-        <button hx-post="/add-slot/@Model.AppointmentCalendar.Id" hx-target="#table-body" hx-swap="beforeend" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' class="btn reserve-blue-button" id="Add" type="submit">Add</button>
+        <div class="d-flex justify-content-between edit-slots">
+            <label asp-for="NewAvailabilitySlot.StartTime" class="form-label mb-3">From:</label>
+            <input asp-for="NewAvailabilitySlot.StartTime" type="datetime-local" name="StartTime" id="NewAvailabilitySlot_StartTime" class="mb-3 date-edit-slots form-control w-25" />
+            <label asp-for="NewAvailabilitySlot.EndTime" class="form-label" mb-3>To:</label>
+            <input asp-for="NewAvailabilitySlot.EndTime" type="datetime-local" name="EndTime" id="NewAvailabilitySlot_EndTime" class="mb-3 date-edit-slots form-control w-25" />
+            <button hx-post="/add-slot/@Model.AppointmentCalendar.Id" hx-target="#table-body" hx-swap="beforeend" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' style="height:40px!important;" class="btn reserve-blue-button mb-3" id="Add" type="submit">Add</button>
+        </div>
     </form>
 </div>
 <table class="table mb-lg-5">
