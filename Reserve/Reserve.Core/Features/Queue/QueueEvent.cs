@@ -14,6 +14,7 @@ public class QueueEvent
     public int CurrentNumberServed { get; set; }
     [Required]
     public int TicketCounter { get; set; }
+    public DateTime LastReset { get; set; }
 }
 
 public class QueueEventValidator : AbstractValidator<QueueEvent>

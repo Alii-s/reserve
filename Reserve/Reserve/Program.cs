@@ -1,11 +1,12 @@
 using EdgeDB;
 using FluentValidation;
+using Microsoft.AspNetCore.Antiforgery;
 using Reserve.Core.Features.Queue;
 using Reserve.Core.Features.Event;
 using Reserve.Core.Features.MailService;
-using Reserve.Endpoints;
+//using Reserve.Endpoints;
 using Reserve.Helpers;
-using Reserve.Core.Features.Appointment;
+//using Reserve.Core.Features.Appointment;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,12 +22,12 @@ builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("reserve"), config 
 });
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
-builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+//builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IValidator<QueueEvent>, QueueEventValidator>();
 builder.Services.AddScoped<IValidator<QueueTicket>, QueueTicketValidator>();
 builder.Services.AddScoped<IValidator<CasualEventInput>, CasualEventInputValidator>();
 builder.Services.AddScoped<IValidator<CasualTicketInput>, CasualTicketInputValidator>();
-builder.Services.AddScoped<IValidator<AppointmentDetails>, AppointmentDetailsValidator>();
+//builder.Services.AddScoped<IValidator<AppointmentDetails>, AppointmentDetailsValidator>();
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailService, EmailService>();
@@ -46,9 +47,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-app.UseAntiforgery();
+//app.UseAntiforgery();
 app.MapRazorPages();
 
-app.MapGroup("/").MapEventsApi();
-app.MapGroup("/").MapAppointmentsApi();
+//app.MapGroup("/").MapEventsApi();
+//app.MapGroup("/").MapAppointmentsApi();
 app.Run();

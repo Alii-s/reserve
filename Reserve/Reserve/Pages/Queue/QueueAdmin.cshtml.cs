@@ -78,7 +78,9 @@ namespace Reserve.Pages.Queue
         public async Task<IActionResult> OnPostResetAsync()
         {
             await _queueRepository.ResetQueue(Id.ToString());
-            return RedirectToPage("/Queue/QueueAdmin", new { id = Id });
+            Attendees = await _queueRepository.GetAttendees(Id.ToString());
+            var updatedHtml = RenderAttendeesTableBody(Attendees);
+            return new JsonResult(new { success = true, html = updatedHtml });
         }
     }
 }

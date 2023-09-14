@@ -13,6 +13,7 @@ public class QueueTicket
     public int QueueNumber { get; set; }
     [Required]
     public QueueEvent QueueEvent { get; set; }
+    public string? Status { get; set; }
 }
 
 public class QueueTicketValidator : AbstractValidator<QueueTicket>
