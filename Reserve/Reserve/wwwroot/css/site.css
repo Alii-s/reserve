@@ -87,4 +87,53 @@ body {
     justify-content: center;
 }
 
+@media (max-width: 980px) {
+    .notification-title {
+        font-size: 1.4rem;
+    }
+    .dashboard{
+        display:flex;
+        flex-direction: column!important;
+    }
+    .dashboard-items{
+        margin-bottom: 20px!important;
+    }
+}
+
+@media (max-width:450px){
+    .appointer-details{
+        display:flex;
+        flex-direction: column!important;
+    }
+    .input-appointer-details{
+        width:100%!important;
+    }
+    .edit-slots{
+        display:flex;
+        flex-direction: column!important;
+    }
+    .date-edit-slots{
+        width:100%!important;
+    }
+}
+
+@media (max-width:600px){
+    .create-calendar {
+        margin-bottom: 30px !important;
+        display: flex;
+        flex-direction:column!important;
+    }
+    .create-calendar-slots{
+        width:100%!important;
+        margin:20px;
+    }
+    .calendar-notification{
+        font-size:0.9rem!important;
+    }
+}
+
+
+
+
+
 

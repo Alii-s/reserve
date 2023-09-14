@@ -2,13 +2,14 @@
 @model Reserve.Pages.Appointment.MeetingNotificationModel
 <h1 class="notification-title mb-lg-5">Appointment Reserved!</h1>
 <div class="d-flex flex-column justify-content-center align-items-center">
-    <div class="notification-border mb-lg-5">
+    <div class="notification-border mb-5">
         <div>
-            <p class="notification-text d-flex justify-content-center mb-1">
-                Congratulations, you have successfully reserved an appointment! 🎉
-                You can edit your reservation details by using this link:
+            <p class="notification-text calendar-notification d-flex">
+                Congratulations, you have successfully reserved an appointment! 🎉 You can edit your reservation details by using the following link:
             </p>
-            <a class="d-flex justify-content-center mb-md-2" href="@Url.Page("UserAppointmentDashboard", new {id = Model.Id})">www.reserve.com/appointment/@Model.Id</a>
+        </div>
+        <div class="m-0">
+            <p class="notification-text calendar-notification d-flex justify-content-center">by using this&nbsp;<a href="@Url.Page("UserAppointmentDashboard", new {id = Model.Id})">www.reserve.com/reservation-details/@Model.Id</a></p>
         </div>
     </div>
     <div class="d-flex justify-content-center">
