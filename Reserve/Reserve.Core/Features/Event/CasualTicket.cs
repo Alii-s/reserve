@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Reserve.Core.Features.Event;
 
-public class CasualTicketView
+public class CasualTicket
 {
     public Guid Id { get; set; }
     public string? ReserverName { get; set; }
