@@ -28,21 +28,49 @@ public class ReserveEventModel : PageModel
     }
     public async Task<IActionResult> OnGet()
     {
-        Event = await _eventRepository.GetByIdAsync(Id!);
-        if(Event is null)
+        CasualEvent? eventToReserve = await _eventRepository.GetByIdAsync(Id!);
+        if(eventToReserve is null)
         {
             return RedirectToPage("EventError");
         }
+        Event = new CasualEventView
+        {
+            Id = eventToReserve.Id,
+            Title = eventToReserve.Title,
+            OrganizerName = eventToReserve.OrganizerName,
+            OrganizerEmail = eventToReserve.OrganizerEmail,
+            Description = eventToReserve.Description,
+            StartDate = eventToReserve.StartDate,
+            EndDate = eventToReserve.EndDate,
+            ImageUrl = eventToReserve.ImageUrl,
+            Opened = eventToReserve.Opened,
+            MaximumCapacity = eventToReserve.MaximumCapacity,
+            CurrentCapacity = eventToReserve.CurrentCapacity,
+        };
         return Page();
     }
     public async Task<IActionResult> OnPost()
     {
-        Event = await _eventRepository.GetByIdAsync(Id!);
-        if(Event is null)
+        CasualEvent? eventToReserve = await _eventRepository.GetByIdAsync(Id!);
+        if(eventToReserve is null)
         {
             return RedirectToPage("EventError");
         }
-        Ticket.CasualEvent = Event;
+        Event = new CasualEventView
+        {
+            Id = eventToReserve.Id,
+            Title = eventToReserve.Title,
+            OrganizerName = eventToReserve.OrganizerName,
+            OrganizerEmail = eventToReserve.OrganizerEmail,
+            Description = eventToReserve.Description,
+            StartDate = eventToReserve.StartDate,
+            EndDate = eventToReserve.EndDate,
+            ImageUrl = eventToReserve.ImageUrl,
+            Opened = eventToReserve.Opened,
+            MaximumCapacity = eventToReserve.MaximumCapacity,
+            CurrentCapacity = eventToReserve.CurrentCapacity,
+        };
+        Ticket.CasualEvent = eventToReserve;
         ValidationResult result = await _validator.ValidateAsync(Ticket);
         if (!result.IsValid)
         {
@@ -50,21 +78,28 @@ public class ReserveEventModel : PageModel
         }
         else
         {
-            var alreadyReserved = (await _eventRepository.CheckIfAlreadyReserved(Ticket)).ToList();
+            CasualTicket ticket = new CasualTicket
+            {
+                ReserverName = Ticket.ReserverName,
+                ReserverEmail = Ticket.ReserverEmail,
+                CasualEvent = Ticket.CasualEvent,
+                ReserverPhoneNumber = Ticket.ReserverPhoneNumber
+            };
+            var alreadyReserved = (await _eventRepository.CheckIfAlreadyReserved(ticket)).ToList();
             if (alreadyReserved.Count != 0)
             {
                 ModelState.AddModelError("Ticket.ReserverEmail", "This email is already reserved");
             }
             if (ModelState.IsValid)
             {
-                Ticket = (await _eventRepository.AddReserverAsync(Ticket))!;
+                ticket = (await _eventRepository.AddReserverAsync(ticket))!;
                 if (Ticket is not null)
                 {
                     MailRequest mailRequest = new MailRequest
                     {
                         ToEmail = Ticket.ReserverEmail,
                         Subject = "Reservation Successful",
-                        Body = ReservationSuccessfulNotification(Ticket.Id.ToString())
+                        Body = ReservationSuccessfulNotification(ticket.Id.ToString())
                     };
                     //await _emailService.SendEmailAsync(mailRequest);
                     return RedirectToPage("ReservationNotification", new { id = Ticket.Id });

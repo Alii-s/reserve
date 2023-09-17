@@ -27,11 +27,25 @@ public class EditEventModel : PageModel
     }
     public async Task<IActionResult> OnGet()
     {
-        EditEvent = await _eventRepository.GetByIdForEditAsync(Id!);
-        if(EditEvent is null)
+        CasualEvent? editEvent = await _eventRepository.GetByIdForEditAsync(Id!);
+        if(editEvent is null)
         {
             return RedirectToPage("EventError");
         }
+        EditEvent = new CasualEventInput {
+            Id = editEvent.Id,
+            Title = editEvent.Title,
+            OrganizerName = editEvent.OrganizerName,
+            OrganizerEmail = editEvent.OrganizerEmail,
+            MaximumCapacity = editEvent.MaximumCapacity,
+            Location = editEvent.Location,
+            StartDate = editEvent.StartDate,
+            EndDate = editEvent.EndDate,
+            Opened = editEvent.Opened,
+            Description = editEvent.Description,
+            ImageUrl = editEvent.ImageUrl,
+            CurrentCapacity = editEvent.CurrentCapacity
+        };
         return Page();
     }
     public async Task<IActionResult> OnPost()
@@ -48,7 +62,22 @@ public class EditEventModel : PageModel
             if (result.IsValid)
             {
                 EditEvent.ImageUrl = SaveImage(imageFile, _webHostEnvironment);
-                await _eventRepository.UpdateAsync(EditEvent);
+                CasualEvent? editEvent = new CasualEvent
+                {
+                    Id = Guid.Parse(Id!),
+                    Title = EditEvent.Title,
+                    OrganizerName = EditEvent.OrganizerName,
+                    OrganizerEmail = EditEvent.OrganizerEmail,
+                    MaximumCapacity = EditEvent.MaximumCapacity,
+                    CurrentCapacity = EditEvent.CurrentCapacity,
+                    Location = EditEvent.Location,
+                    StartDate = EditEvent.StartDate,
+                    EndDate = EditEvent.EndDate,
+                    Opened = EditEvent.Opened,
+                    Description = EditEvent.Description,
+                    ImageUrl = EditEvent.ImageUrl
+                };
+                await _eventRepository.UpdateAsync(editEvent);
                 return RedirectToPage("ViewAttendees", new { id = Id });
             }
             else
@@ -61,7 +90,22 @@ public class EditEventModel : PageModel
             ValidationResult result = await _validator.ValidateAsync(EditEvent);
             if (result.IsValid)
             {
-                await _eventRepository.UpdateAsync(EditEvent);
+                CasualEvent? editEvent = new CasualEvent
+                {
+                    Id = Guid.Parse(Id!),
+                    Title = EditEvent.Title,
+                    OrganizerName = EditEvent.OrganizerName,
+                    OrganizerEmail = EditEvent.OrganizerEmail,
+                    MaximumCapacity = EditEvent.MaximumCapacity,
+                    CurrentCapacity = EditEvent.CurrentCapacity,
+                    Location = EditEvent.Location,
+                    StartDate = EditEvent.StartDate,
+                    EndDate = EditEvent.EndDate,
+                    Opened = EditEvent.Opened,
+                    Description = EditEvent.Description,
+                    ImageUrl = EditEvent.ImageUrl
+                };
+                await _eventRepository.UpdateAsync(editEvent);
                 return RedirectToPage("ViewAttendees", new { id = Id });
             }
             else
