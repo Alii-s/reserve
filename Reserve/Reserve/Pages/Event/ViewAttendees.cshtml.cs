@@ -30,6 +30,7 @@ public class ViewAttendeesModel : PageModel
             Title = eventDetails.Title,
             OrganizerName = eventDetails.OrganizerName,
             OrganizerEmail = eventDetails.OrganizerEmail,
+            Location = eventDetails.Location,
             Description = eventDetails.Description,
             StartDate = eventDetails.StartDate,
             EndDate = eventDetails.EndDate,
