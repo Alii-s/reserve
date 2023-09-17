@@ -66,7 +66,7 @@ public class ReserveEventModel : PageModel
                         Subject = "Reservation Successful",
                         Body = ReservationSuccessfulNotification(Ticket.Id.ToString())
                     };
-                    await _emailService.SendEmailAsync(mailRequest);
+                    //await _emailService.SendEmailAsync(mailRequest);
                     return RedirectToPage("ReservationNotification", new { id = Ticket.Id });
                 }
                 else
