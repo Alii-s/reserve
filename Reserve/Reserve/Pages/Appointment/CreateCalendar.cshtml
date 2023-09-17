@@ -3,42 +3,42 @@
 
 @Html.AntiForgeryToken()
 
-    <h1 class="notification-title mb-5">Upload Your schedule!</h1>
-            <div class="d-flex flex-column justify-content-center align-items-center col-12">
-                <div class="mb-lg-5">
-                    <div class="d-flex flex-column align-items-center justify-content-center">
-                        <div class="d-flex flex-lg-row flex-sm-column justify-content-around create-calendar mb-lg-5 mb-md-5 mb-sm-5">
-                            <div class="col-1">
-                                <label asp-for="NewAvailabilitySlot.StartTime" class="form-label">From:</label>
-                            </div>
-                            <input asp-for="NewAvailabilitySlot.StartTime" type="datetime-local" name="NewAvailabilitySlot.StartTime" id="NewAvailabilitySlot_StartTime" class="form-control w-25 create-calendar-slots" />
-                            <div class="col-1">
-                                <label asp-for="NewAvailabilitySlot.EndTime" class="form-label">To:</label>
-                            </div>
-                            <input asp-for="NewAvailabilitySlot.EndTime" type="datetime-local" name="NewAvailabilitySlot.EndTime" id="NewAvailabilitySlot_EndTime" class="form-control w-25 create-calendar-slots" />
-                            <button class="btn reserve-blue-button create-calendar-slots" id="Add" type="button">Add</button>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table col-lg-12 col-md-12 col-sm-6">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Start Time</th>
-                                        <th>End Time</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-body">
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<h1 class="notification-title mb-5">Upload Your schedule!</h1>
+<div class="d-flex flex-column justify-content-center align-items-center col-12">
+    <div class="mb-lg-5">
+        <div class="d-flex flex-column align-items-center justify-content-center">
+            <div class="d-flex flex-lg-row flex-sm-column justify-content-around create-calendar mb-lg-5 mb-md-5 mb-sm-5">
+                <div class="col-1">
+                    <label asp-for="NewAvailabilitySlot.StartTime" class="form-label">From:</label>
                 </div>
+                <input asp-for="NewAvailabilitySlot.StartTime" type="datetime-local" name="NewAvailabilitySlot.StartTime" id="NewAvailabilitySlot_StartTime" class="form-control w-25 create-calendar-slots" />
+                <div class="col-1">
+                    <label asp-for="NewAvailabilitySlot.EndTime" class="form-label">To:</label>
+                </div>
+                <input asp-for="NewAvailabilitySlot.EndTime" type="datetime-local" name="NewAvailabilitySlot.EndTime" id="NewAvailabilitySlot_EndTime" class="form-control w-25 create-calendar-slots" />
+                <button class="btn reserve-blue-button create-calendar-slots" id="Add" type="button">Add</button>
             </div>
-        <div class="d-flex justify-content-center">
-            <button type="submit" onclick="postDataToServer('@Model.NewAppointmentCalendar.Id.ToString()','@Model.NewAppointmentCalendar.Name', '@Model.NewAppointmentCalendar.Email','@Model.NewAppointmentCalendar.Description')" class="btn btn-custom reserve-blue-button">Continue</button>
+            <div class="table-responsive">
+                <table class="table col-lg-12 col-md-12 col-sm-6">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+
+                    </tbody>
+                </table>
+            </div>
         </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </div>
+</div>
+<div class="d-flex justify-content-center">
+    <button type="submit" onclick="postDataToServer('@Model.NewAppointmentCalendar.Id.ToString()','@Model.NewAppointmentCalendar.Name', '@Model.NewAppointmentCalendar.Email','@Model.NewAppointmentCalendar.Description')" class="btn btn-custom reserve-blue-button">Continue</button>
+</div>
 
 
 <script>
@@ -90,6 +90,10 @@
             var endTime = endTimeInput.value;
             if (!startTime || !endTime) {
                 alert("Please fill in all fields (Start Time, End Time) before adding.");
+                return;
+            }
+            if(endTime <= startTime){
+                alert("End Time must be after Start Time");
                 return;
             }
             var newRow = document.createElement("tr");

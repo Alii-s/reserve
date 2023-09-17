@@ -62,7 +62,11 @@ public static class AppointmentEndpoints
                 availabilitySlot = await _appointmentRepository.AddAppointmentSlotAsync(id, availabilitySlot);
                 if (availabilitySlot is null)
                 {
-                    return Results.BadRequest();
+                    return Results.BadRequest("Enter values in start date and end date");
+                }
+                if(availabilitySlot.EndTime < availabilitySlot.StartTime)
+                {
+                    return Results.BadRequest("End time must be after start time");
                 }
                 return Results.Content($"<tr>\r\n                          <td>{availabilitySlot.StartTime}</td>\r\n                <td>{availabilitySlot.EndTime}</td>\r\n                <td><button hx-delete=\"/delete-slot/{availabilitySlot.Id}\" hx-headers='js:{{\"X-CSRF-TOKEN\": document.getElementsByName(\"__RequestVerificationToken\")[0].value}}' hx-target=\"closest tr\" hx-swap=\"outerHTML swap:1s\" class=\"btn reserve-red-button\">Delete Slot</button></td>\r\n            </tr>", "text/html");
             }

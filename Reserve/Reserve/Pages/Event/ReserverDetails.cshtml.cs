@@ -16,11 +16,19 @@ public class ReserverDetailsModel : PageModel
     }
     public async Task<IActionResult> OnGet()
     {
-        Ticket = await _eventRepository.GetTicketByIdAsync(Id!);
-        if(Ticket is null)
+        CasualTicket? ticket = await _eventRepository.GetTicketByIdAsync(Id!);
+        if(ticket is null)
         {
             return RedirectToPage("EventError");
         }
+        Ticket = new CasualTicketView
+        {
+            Id = ticket.Id,
+            ReserverName = ticket.ReserverName,
+            ReserverEmail = ticket.ReserverEmail,
+            ReserverPhoneNumber = ticket.ReserverPhoneNumber,
+            CasualEvent = ticket.CasualEvent,
+        };
         return Page();
     }
 }

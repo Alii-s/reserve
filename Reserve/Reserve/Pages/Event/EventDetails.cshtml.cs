@@ -14,11 +14,26 @@ public class EventDetailsModel : PageModel
     }
     public async Task<IActionResult> OnGet(string id)
     {
-        DetailedEvent = await _eventRepository.GetByIdAsync(id);
-        if(DetailedEvent is null)
+        CasualEvent? detailedEvent = await _eventRepository.GetByIdAsync(id);
+        if(detailedEvent is null)
         {
             return RedirectToPage("EventError");
         }
+        DetailedEvent = new CasualEventView
+        {
+            Id = detailedEvent.Id,
+            Title = detailedEvent.Title,
+            OrganizerName = detailedEvent.OrganizerName,
+            OrganizerEmail = detailedEvent.OrganizerEmail,
+            MaximumCapacity = detailedEvent.MaximumCapacity,
+            Location = detailedEvent.Location,
+            StartDate = detailedEvent.StartDate,
+            EndDate = detailedEvent.EndDate,
+            Opened = detailedEvent.Opened,
+            Description = detailedEvent.Description,
+            ImageUrl = detailedEvent.ImageUrl,
+            CurrentCapacity = detailedEvent.CurrentCapacity
+        };
         return Page();
     }
 }
