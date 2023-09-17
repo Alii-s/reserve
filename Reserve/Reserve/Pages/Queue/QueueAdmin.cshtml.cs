@@ -24,7 +24,17 @@ namespace Reserve.Pages.Queue
             Id = id;
             Attendees = await _queueRepository.GetAttendees(id.ToString());
             QueueEvent queueEvent = await _queueRepository.GetQueueEventByID(id.ToString());
-            LastReset = queueEvent.LastReset;
+            QueueEventView queueEventView = new QueueEventView()
+            {
+                Id = queueEvent.Id,
+                Title = queueEvent.Title,
+                OrganizerEmail = queueEvent.OrganizerEmail,
+                Description = queueEvent.Description,
+                CurrentNumberServed = queueEvent.CurrentNumberServed,
+                TicketCounter = queueEvent.TicketCounter,
+                LastReset = queueEvent.LastReset
+            };
+            LastReset = queueEventView.LastReset;
             return Page();
         }
         public async Task<IActionResult> OnPostMarkAsReservedAsync(string Id, int queueNumber)

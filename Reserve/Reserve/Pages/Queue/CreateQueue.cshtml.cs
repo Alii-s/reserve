@@ -12,7 +12,7 @@ public class CreateQueueModel : PageModel
     private readonly IQueueRepository _queueRepository;
     private readonly IValidator<QueueEvent> _validator;
     [Required]
-    public QueueEvent NewQueue { get; set; }
+    public QueueEventInput NewQueue { get; set; }
 
     public CreateQueueModel(IQueueRepository queueRepository, IValidator<QueueEvent> validator)
     {
@@ -22,16 +22,22 @@ public class CreateQueueModel : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        var validationResult = await _validator.ValidateAsync(NewQueue);
+        var newQueueEvent = new QueueEvent
+        {
+            Title = NewQueue.Title,
+            OrganizerEmail = NewQueue.OrganizerEmail,
+            Description = NewQueue.Description,
+            CurrentNumberServed = 1,
+            TicketCounter = 0,
+            LastReset = DateTime.UtcNow
+        };
+        var validationResult = await _validator.ValidateAsync(newQueueEvent);
 
         if (!validationResult.IsValid)
         {
             return Page();
         }
-        NewQueue.CurrentNumberServed = 1;
-        NewQueue.TicketCounter = 0;
-        NewQueue.LastReset = DateTime.UtcNow;
-        NewQueue = await _queueRepository.Create(NewQueue);
-        return RedirectToPage("QueueURL", new { id = NewQueue.Id });
+        newQueueEvent = await _queueRepository.Create(newQueueEvent);
+        return RedirectToPage("QueueURL", new { id = newQueueEvent.Id });
     }
 }
