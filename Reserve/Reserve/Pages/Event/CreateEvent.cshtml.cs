@@ -75,7 +75,7 @@ public class CreateEventModel : PageModel
                     Subject = "Event Created",
                     Body = EventCreationNotification(casualEvent.Id.ToString())
                 };
-                await _emailService.SendEmailAsync(mailRequest);
+                //await _emailService.SendEmailAsync(mailRequest);
                 return RedirectToPage("CreationNotification", new { id = casualEvent.Id });
             }
             else
