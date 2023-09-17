@@ -21,9 +21,9 @@
     font-family: 'Source Sans 3', sans-serif;
 }
 
-    .reserve-blue-button:hover {
-        background-color: #20a3d7;
-    }
+.reserve-blue-button:hover {
+    background-color: #20a3d7;
+}
 
 .reserve-red-button {
     color: #ffffff !important;

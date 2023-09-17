@@ -1,0 +1,30 @@
+﻿@page
+@model Reserve.Pages.Event.FindEventModel
+
+<div class="container d-flex justify-content-evenly mb-5 w-100 mt-5 find-event-top">
+    <div class="d-flex flex-column justify-content-center">
+        <h1 class="event-title">Easiest place to find and create events!</h1>
+        <h2 class="find-event-text">
+            Looking for events to have fun with your friends? Look no further, Check out our list of events
+            related to all things like sports, music, and entertainment! You can also create your own event and
+            invite your friends to join you!
+        </h2>
+    </div>        
+    <img class="find-event-image" src="\images\FindEvent.jpg" />
+</div>
+
+<div class="container">
+    <h1 class="event-title">Explore Events!</h1>
+    <div class="d-flex justify-content-center flex-wrap">
+            @foreach(var casualEvent in Model.CasualEvents){
+                <div class="card card-find-event m-3" style="width: 18rem;">
+                    <img style="height:190px!important;" src="@casualEvent.ImageUrl" class="card-img-top" alt="eventImage">
+                    <div class="card-body">
+                        <a href="/Event/EventDetails/@casualEvent.Id" class="card-title">@casualEvent.Title</a>
+                        <p class="card-text card-find-event-date">@casualEvent.StartDate.ToLongDateString() @casualEvent.StartDate.ToShortTimeString()</p>
+                        <p class="card-find-event-location">@casualEvent.Location</p>
+                    </div>
+                </div>
+            }
+    </div>
+</div>

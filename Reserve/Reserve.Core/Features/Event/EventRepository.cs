@@ -383,4 +383,17 @@ public class EventRepository : IEventRepository
             return null!;
         }
     }
+    public async Task<List<CasualEventView>> GetAllEvents()
+    {
+        var query = @"SELECT CasualEvent{*};";
+        try
+        {
+            return (await _client.QueryAsync<CasualEventView>(query)).ToList();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null!;
+        }
+    }
 }
