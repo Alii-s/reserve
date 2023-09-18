@@ -97,6 +97,7 @@ body {
     }
     .dashboard-items{
         margin-bottom: 20px!important;
+        width:100%!important;
     }
 }
 

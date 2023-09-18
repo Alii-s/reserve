@@ -39,11 +39,11 @@
                         </div>
                     </div>
                     <div class="container form-group d-flex justify-content-evenly">
-                        <label asp-for="SelectedDate">New Date</label>
+                        <label class="d-flex align-items-center" asp-for="SelectedDate">New Date</label>
                         @Html.DropDownListFor(model => model.SelectedDate, new SelectList(Model.FreeSlots), new {@class = "form-control w-50"})
                     </div>
                 </div>
-                <div class="modal-footer d-flex justify-content-around border-0">
+                <div class="modal-footer mb-3 d-flex justify-content-around border-0">
                     <button type="submit" class="btn reserve-red-button" data-bs-dismiss="modal">Reschedule</button>
                     <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">Back</button>
                 </div>
@@ -52,44 +52,35 @@
     </div>
 </div>
 
-<div class="modal fade" id="viewDetails" tabindex="-1" aria-labelledby="viewDetailsLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="d-flex flex-column align-items-center mb-5">
-                <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="viewDetailsLabel">View Details!</h1>
-                <div class="notification-border col-10 d-flex flex-column justify-content-center mb-lg-5">
-                    <div class="container d-flex flex-column justify-content-evenly mb-lg-5">
+
+<div class="d-flex flex-column justify-content-center align-items-center align-items-center">
+    <div class="notification-border d-flex flex-column align-items-center align-content-center">
+        <h1 class="container notification-title mb-5">Appointment Details!</h1>
+        <div class="d-flex flex-column justify-content-evenly align-content-center align-items-center w-100">
+            <div class="d-flex flex-column justify-content-center align-content-center align-items-center mb-5 col-12">
+                <div class="d-flex col-12 d-flex flex-column justify-content-center align-content-center align-items-center">
+                    <div class="d-flex flex-column justify-content-evenly mb-lg-5">
                         <p class="notification-text">Calendar's Creator Name:</p>
                         <p class="notification-text">@Model.AppointmentDetails.Slot.AppointmentCalendar.Name</p>
                     </div>
-                    <div class="container d-flex flex-column justify-content-evenly mb-lg-5">
+                    <div class="d-flex flex-column justify-content-evenly mb-lg-5">
                         <p class="notification-text">Calendar's Creator Email:</p>
                         <p class="notification-text">@Model.AppointmentDetails.Slot.AppointmentCalendar.Email</p>
                     </div>
-                    <div class="container d-flex flex-column justify-content-evenly mb-lg-5">
+                    <div class="d-flex flex-column justify-content-evenly mb-lg-5">
                         <p class="notification-text">Appointment Start Date:</p>
                         <p class="notification-text">@Model.AppointmentDetails.Slot.StartTime</p>
                     </div>
-                    <div class="container d-flex flex-column justify-content-evenly">
+                    <div class="d-flex flex-column justify-content-evenly">
                         <p class="notification-text">Appointment End Date:</p>
                         <p class="notification-text">@Model.AppointmentDetails.Slot.EndTime</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="d-flex justify-content-center align-items-center">
-    <div class="notification-border d-flex flex-column">
-        <h1 class="container notification-title mb-3">Appointment Details!</h1>
-        <div class="d-flex flex-lg-row flex-sm-column dashboard flex-md-row justify-content-evenly">
-            <a class="dashboard-items btn reserve-blue-button m-0 m-sm-3" data-bs-toggle="modal" data-bs-target="#rescheduleAppointment">Reschedule</a>
-            <a class="dashboard-items btn reserve-blue-button m-0 m-sm-3" data-bs-toggle="modal" data-bs-target="#viewDetails">View Details</a>
-            <a class="dashboard-items btn reserve-red-button m-0 m-sm-3" data-bs-toggle="modal" data-bs-target="#cancelAppointment">Cancel Appointment</a>
+            <div class="d-flex flex-lg-row flex-column justify-content-evenly">
+                <a class="dashboard-items btn reserve-blue-button m-0 m-sm-3" data-bs-toggle="modal" data-bs-target="#rescheduleAppointment">Reschedule</a>
+                <a class="dashboard-items btn reserve-red-button m-0 m-sm-3" data-bs-toggle="modal" data-bs-target="#cancelAppointment">Cancel Appointment</a>
+            </div>
         </div>
     </div>
 </div>
