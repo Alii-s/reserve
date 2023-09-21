@@ -18,11 +18,37 @@ public class ViewAttendeesModel : PageModel
     }
     public async Task<IActionResult> OnGet()
     {
-        Event = await _eventRepository.GetByIdAsync(Id);
-        Attendees = await _eventRepository.GetAttendeesAsync(Id);
-        if(Event is null)
+        CasualEvent? eventDetails = await _eventRepository.GetByIdAsync(Id);
+        List<CasualTicket> attendees = await _eventRepository.GetAttendeesAsync(Id);
+        if(eventDetails is null)
         {
             return RedirectToPage("EventError");
+        }
+        Event = new CasualEventView
+        {
+            Id = eventDetails.Id,
+            Title = eventDetails.Title,
+            OrganizerName = eventDetails.OrganizerName,
+            OrganizerEmail = eventDetails.OrganizerEmail,
+            Location = eventDetails.Location,
+            Description = eventDetails.Description,
+            StartDate = eventDetails.StartDate,
+            EndDate = eventDetails.EndDate,
+            ImageUrl = eventDetails.ImageUrl,
+            Opened = eventDetails.Opened,
+            MaximumCapacity = eventDetails.MaximumCapacity,
+            CurrentCapacity = eventDetails.CurrentCapacity,
+        };
+        foreach (var attendee in attendees)
+        {
+            Attendees.Add(new CasualTicketView
+            {
+                Id = attendee.Id,
+                ReserverName = attendee.ReserverName,
+                ReserverEmail = attendee.ReserverEmail,
+                ReserverPhoneNumber = attendee.ReserverPhoneNumber,
+                CasualEvent = attendee.CasualEvent,
+            });
         }
         return Page();
     }

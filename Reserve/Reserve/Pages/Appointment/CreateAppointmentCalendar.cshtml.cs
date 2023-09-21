@@ -19,6 +19,12 @@ public class CreateAppointmentCalendarModel : PageModel
     {
         if(ModelState.IsValid)
         {
+            AppointmentCalendar calendar = await _appointmentRepository.GetCalendarFromEmail(NewAppointmentCalendar.Email);
+            if(calendar is not null)
+            {
+                ModelState.AddModelError("NewAppointmentCalendar.Email", "This email is already in use");
+                return Page();
+            }
             NewAppointmentCalendar = await _appointmentRepository.CreateAppointmentInfoAsync(NewAppointmentCalendar);
             if(NewAppointmentCalendar is null)
             {

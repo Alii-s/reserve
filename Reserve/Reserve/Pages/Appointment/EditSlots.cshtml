@@ -7,14 +7,25 @@
         opacity: 0;
         transition: opacity 1s ease-out;
     }
+
+    #error-message {
+        color: red;
+        font-size: 14px;
+        font-weight: 700;
+    }
 </style>
 <h1 class="notification-title mb-lg-5">Update Schedule!</h1>
-<div class="d-flex justify-content-between mb-lg-5">
+<div class="d-flex flex-lg-row edit-slots justify-content-between mb-5">
     <h2 class="notification-title">Add new Slot</h2>
-    <form class="d-flex justify-content-between w-50">
-        <input asp-for="NewAvailabilitySlot.StartTime" type="datetime-local" name="StartTime" id="NewAvailabilitySlot_StartTime" class="form-control w-25" />
-        <input asp-for="NewAvailabilitySlot.EndTime" type="datetime-local" name="EndTime" id="NewAvailabilitySlot_EndTime" class="form-control w-25" />
-        <button hx-post="/add-slot/@Model.AppointmentCalendar.Id" hx-target="#table-body" hx-swap="beforeend" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' class="btn reserve-blue-button" id="Add" type="submit">Add</button>
+    <form class="d-flex flex-column justify-content-between" hx-post="/add-slot/@Model.AppointmentCalendar.Id" hx-target="#table-body" hx-swap="beforeend" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}'>
+        <div class="d-flex justify-content-between edit-slots col-md-12">
+            <label asp-for="NewAvailabilitySlot.StartTime" class="form-label mb-3">From:</label>
+            <input asp-for="NewAvailabilitySlot.StartTime" type="datetime-local" name="StartTime" id="NewAvailabilitySlot_StartTime" class="mb-3 date-edit-slots form-control w-25" />
+            <label asp-for="NewAvailabilitySlot.EndTime" class="form-label" mb-3>To:</label>
+            <input asp-for="NewAvailabilitySlot.EndTime" type="datetime-local" name="EndTime" id="NewAvailabilitySlot_EndTime" class="mb-3 date-edit-slots form-control w-25" />
+            <button type="submit" style="height:40px!important;" class="btn reserve-blue-button mb-3" id="Add">Add</button>
+        </div>
+        <div class="d-flex justify-content-center" id="error-message"></div>
     </form>
 </div>
 <table class="table mb-lg-5">
@@ -84,3 +95,37 @@
     <a href="@Url.Page("AppointerNotifications", new {id = Model.AppointmentCalendar.Id})" class="btn reserve-blue-button">View Notifications</a>
     <a href="@Url.Page("UpcomingAppointments", new {id = Model.AppointmentCalendar.Id})" class="btn reserve-blue-button">View Upcoming appointments</a>
 </div>
+
+
+
+<script>
+    function validateForm() {
+        var startTimeInput = document.getElementById("NewAvailabilitySlot_StartTime");
+        var endTimeInput = document.getElementById("NewAvailabilitySlot_EndTime");
+        var errorMessage = document.getElementById("error-message");
+
+        
+        var startTime = new Date(startTimeInput.value);
+        var endTime = new Date(endTimeInput.value); 
+
+        if (!startTimeInput.value || !endTimeInput.value) {
+            errorMessage.textContent = "Please fill in both Start Time and End Time.";
+            return false; 
+        }
+        if (endTime <= startTime) {
+            errorMessage.textContent = "End Time must be after Start Time.";
+            console.log("hello")
+            return false; 
+        }   
+        errorMessage.textContent = "";
+        return true;
+    }
+
+    
+    var form = document.querySelector("form");
+    form.addEventListener("submit", function (event) {
+        if (!validateForm()) {
+            event.preventDefault(); 
+        }
+    });
+</script>

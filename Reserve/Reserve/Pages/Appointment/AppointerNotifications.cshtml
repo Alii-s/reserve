@@ -9,28 +9,30 @@
     }
 </style>
 <h1 class="notification-title mb-lg-5">Your Notifications!</h1>
-<table class="table mb-lg-5">
-    <thead class="table-light">
-        <tr>
-            <th>Name</th>
-            <th>Phone Number</th>
-            <th>Email</th>
-            <th>Date and Time</th>
-            <th>Notification Type</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody id="table-body">
-        @foreach (var appointment in Model.AppointerNotifications)
-        {
+<div class="table-responsive">
+    <table class="table mb-lg-5">
+        <thead class="table-light">
             <tr>
-                <td>@appointment.ReserverName</td>
-                <td>@appointment.ReserverPhoneNumber</td>
-                <td>@appointment.ReserverEmail</td>
-                <td>@appointment.Slot.StartTime.ToLongDateString() @appointment.Slot.StartTime.ToShortTimeString()</td>
-                <td>@appointment.NotificationType</td>
-                <td><button hx-delete="/delete-notification/@appointment.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' hx-target="closest tr" hx-swap="outerHTML swap:1s" class="btn reserve-red-button">Dismiss Notification</button></td>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Date and Time</th>
+                <th>Notification Type</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody id="table-body">
+            @foreach (var appointment in Model.AppointerNotifications)
+            {
+                <tr>
+                    <td>@appointment.ReserverName</td>
+                    <td>@appointment.ReserverPhoneNumber</td>
+                    <td>@appointment.ReserverEmail</td>
+                    <td>@appointment.Slot.StartTime.ToLongDateString() @appointment.Slot.StartTime.ToShortTimeString()</td>
+                    <td>@appointment.NotificationType</td>
+                    <td><button hx-delete="/delete-notification/@appointment.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' hx-target="closest tr" hx-swap="outerHTML swap:1s" class="btn reserve-red-button">Dismiss Notification</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

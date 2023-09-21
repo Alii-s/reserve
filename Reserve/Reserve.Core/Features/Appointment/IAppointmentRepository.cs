@@ -29,4 +29,5 @@ public interface IAppointmentRepository
     Task<AppointmentDetails> GetAppointmentDetailsByAvailabilityId(string id);
     Task CreateAppointmentReschedule(AppointmentReschedule appointmentReschedule);
     Task DeleteAppointmentReschedule(string id);
+    Task<AppointmentCalendar> GetCalendarFromEmail(string email);
 }

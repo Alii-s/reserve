@@ -13,7 +13,7 @@ public class CasualTicketInput
     public string? ReserverName { get; set; }
     public string? ReserverEmail { get; set; }
     public string? ReserverPhoneNumber { get; set; }
-    public CasualEventView? CasualEvent { get; set; }
+    public CasualEvent? CasualEvent { get; set; }
 }
 
 public class CasualTicketInputValidator : AbstractValidator<CasualTicketInput>

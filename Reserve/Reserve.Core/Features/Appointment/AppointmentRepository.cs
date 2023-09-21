@@ -648,5 +648,18 @@ FILTER .id = <uuid>$id;";
             Console.WriteLine(e.Message);
         }
     }
+    public async Task<AppointmentCalendar> GetCalendarFromEmail(string email)
+    {
+        var query = @"select AppointmentCalendar {
+                        id,
+                        name,
+                        email,
+                        description
+                    } filter .email = <str>$email;";
+        return await _client.QuerySingleAsync<AppointmentCalendar>(query, new Dictionary<string, object?>
+        {
+            {"email", email }
+        });
+    }
 }
 

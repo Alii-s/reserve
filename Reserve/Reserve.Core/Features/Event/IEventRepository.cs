@@ -8,15 +8,16 @@ namespace Reserve.Core.Features.Event;
 
 public interface IEventRepository
 {
-    Task<CasualEventInput?> CreateAsync(CasualEventInput? newEvent);
-    Task<CasualEventView?> GetByIdAsync(string id);
-    Task<CasualEventInput?> GetByIdForEditAsync(string id);
-    Task<CasualTicketInput?> AddReserverAsync(CasualTicketInput? newTicket);
-    Task<List<CasualTicketView?>> GetAttendeesAsync(string id);
-    Task UpdateAsync(CasualEventInput? editEvent);
+    Task<CasualEvent?> CreateAsync(CasualEvent? newEvent);
+    Task<CasualEvent?> GetByIdAsync(string id);
+    Task<CasualEvent?> GetByIdForEditAsync(string id);
+    Task<CasualTicket?> AddReserverAsync(CasualTicket? newTicket);
+    Task<List<CasualTicket?>> GetAttendeesAsync(string id);
+    Task UpdateAsync(CasualEvent? editEvent);
     Task CloseReservationAsync(string id);
-    Task<CasualEventView?> GetEventFromTicketAsync(string id);
-    Task<CasualTicketView?> GetTicketByIdAsync(string id);
+    Task<CasualEvent?> GetEventFromTicketAsync(string id);
+    Task<CasualTicket?> GetTicketByIdAsync(string id);
     Task CancelReservationAsync(Guid? deletedTicketId, Guid? eventId);
-    Task<List<CasualTicketInput?>> CheckIfAlreadyReserved(CasualTicketInput? newTicket);
+    Task<List<CasualTicket?>> CheckIfAlreadyReserved(CasualTicket? newTicket);
+    Task<List<CasualEvent>> GetAllEvents();
 }

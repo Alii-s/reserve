@@ -53,16 +53,30 @@ public class CreateEventModel : PageModel
             {
                 NewEvent.ImageUrl = SaveImage(imageFile, _webHostEnvironment);
             }
-            NewEvent = await _eventRepository.CreateAsync(NewEvent);
-            if (NewEvent is not null) {
+            CasualEvent? casualEvent = new CasualEvent
+            {
+                Title = NewEvent.Title,
+                OrganizerName = NewEvent.OrganizerName,
+                OrganizerEmail = NewEvent.OrganizerEmail,
+                MaximumCapacity = NewEvent.MaximumCapacity,
+                CurrentCapacity = NewEvent.CurrentCapacity,
+                Location = NewEvent.Location,
+                StartDate = NewEvent.StartDate,
+                EndDate = NewEvent.EndDate,
+                Opened = NewEvent.Opened,
+                Description = NewEvent.Description,
+                ImageUrl = NewEvent.ImageUrl
+            };
+            casualEvent = await _eventRepository.CreateAsync(casualEvent);
+            if (casualEvent is not null) {
                 MailRequest mailRequest = new MailRequest
                 {
                     ToEmail = NewEvent.OrganizerEmail,
                     Subject = "Event Created",
-                    Body = EventCreationNotification(NewEvent.Id.ToString())
+                    Body = EventCreationNotification(casualEvent.Id.ToString())
                 };
-                await _emailService.SendEmailAsync(mailRequest);
-                return RedirectToPage("CreationNotification", new { id = NewEvent.Id });
+                //await _emailService.SendEmailAsync(mailRequest);
+                return RedirectToPage("CreationNotification", new { id = casualEvent.Id });
             }
             else
             {
