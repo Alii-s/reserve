@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Queue;
 using System.ComponentModel.DataAnnotations;
-
+using Reserve.Helpers;
 namespace Reserve.Pages.Queue;
 
 [BindProperties]
@@ -25,10 +25,10 @@ public class QueueRegistrationModel : PageModel
         QueueEvent = new QueueEventView();
     }
 
-    public async Task OnGet(Guid id)
+    public async Task OnGet(string id)
     {
-        QueueEventId = id;
-        QueueEvent CurrentQueue = await _queueRepository.GetQueueEventByID(id.ToString());
+        QueueEventId = GuidShortener.RestoreGuid(id);
+        QueueEvent CurrentQueue = await _queueRepository.GetQueueEventByID(QueueEventId.ToString());
         QueueEvent = new QueueEventView()
         {
             Id = CurrentQueue.Id,
@@ -39,7 +39,7 @@ public class QueueRegistrationModel : PageModel
             TicketCounter = CurrentQueue.TicketCounter,
             LastReset = CurrentQueue.LastReset
         };
-        NextQueueNumber = await _queueRepository.GetNextQueueNumber(id.ToString());
+        NextQueueNumber = await _queueRepository.GetNextQueueNumber(QueueEventId.ToString());
     }
 
     public async Task<IActionResult> OnPost()

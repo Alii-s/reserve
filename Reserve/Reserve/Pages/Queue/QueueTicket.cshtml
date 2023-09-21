@@ -16,8 +16,8 @@
                 </div>
 
                 <p class="card-text text-center mt-3">
-                    Use this link to monitor your progress:
-                    <a href="@Model.CurrentUrl">@Model.CurrentUrl</a>
+                    Use this link
+                    <a href="@Model.CurrentUrl">link</a> to monitor your progress
                 </p>
 
             </div>
@@ -33,10 +33,58 @@ else if (Model.QueueTicketView.Status == "served")
     <div class="alert alert-success" role="alert">
         You have already been served.
     </div>
+    <div class="container mt-5">
+        <h1 class="display-4 text-center">Queue Ticket</h1>
+
+        <div class="card border rounded mt-4">
+            <div class="card-body">
+                <h3 class="card-title text-center">Welcome to @Model.CurrentQueueView.Title, you were served in the queue</h3>
+                <br />
+                <div class="text-center">
+                    <p class="card-text" style="font-size: 2rem; font-weight: bold;">Your Number was: @Model.QueueTicketView.QueueNumber</p>
+                    <p class="card-text text-center" style="font-size: 3rem; font-weight: bold;"></p>
+                </div>
+
+                <p class="card-text text-center mt-3">
+                    Use this link
+                    <a href="@Model.CurrentUrl">link</a> to monitor your progress
+                </p>
+
+            </div>
+
+            <div class="card-footer">
+                <p class="text-muted text-center">Current Number Served: @Model.CurrentQueueView.CurrentNumberServed</p>
+            </div>
+        </div>
+    </div>
 }
 else if (Model.QueueTicketView.Status == "reset")
 {
     <div class="alert alert-warning" role="alert">
         The Queue has ended and it has been reset, if you have any issues please contact the provider.
+    </div>
+    <div class="container mt-5">
+        <h1 class="display-4 text-center">Queue Ticket</h1>
+
+        <div class="card border rounded mt-4">
+            <div class="card-body">
+                <h3 class="card-title text-center">Welcome to @Model.CurrentQueueView.Title, you are currently in queue</h3>
+                <br />
+                <div class="text-center">
+                    <p class="card-text" style="font-size: 2rem; font-weight: bold;">Your Number: @Model.QueueTicketView.QueueNumber</p>
+                    <p class="card-text text-center" style="font-size: 3rem; font-weight: bold;"></p>
+                </div>
+
+                <p class="card-text text-center mt-3">
+                    Use this link
+                    <a href="@Model.CurrentUrl">link</a> to monitor your progress
+                </p>
+
+            </div>
+
+            <div class="card-footer">
+                <p class="text-muted text-center">Current Number Served: @Model.CurrentQueueView.CurrentNumberServed</p>
+            </div>
+        </div>
     </div>
 }

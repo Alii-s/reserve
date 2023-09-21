@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Reserve.Core.Features.Appointment;
 
-public class AppointmentRepository: IAppointmentRepository
+public class AppointmentRepository : IAppointmentRepository
 {
     private readonly EdgeDBClient _client;
     public AppointmentRepository(EdgeDBClient client)
@@ -60,6 +60,76 @@ public class AppointmentRepository: IAppointmentRepository
             return null;
         }
     }
+
+    public async Task<List<AppointmentReschedule>> GetReschedulesByIdAsync(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"SELECT RescheduleRequest { id, is_accepted, requested_time: {id,
+                            start_time,
+                            end_time,
+                            available,
+                            appointment_calendar: {
+                                id,
+                                name,
+                                email,
+                                description
+                            }   
+                        }, original_appointment: {*}
+                         }
+                        FILTER .original_appointment.id = <uuid>$id;
+;";
+            return (await _client.QueryAsync<AppointmentReschedule>(query, new Dictionary<string, object?>
+        {
+            { "id", guidId }
+        })).ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
+    }
+
+    public async Task DeleteAppointmentReschedule(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"DELETE RescheduleRequest
+FILTER .id = <uuid>$id;";
+            await _client.ExecuteAsync(query, new Dictionary<string, object?>
+            {
+                {"id", guidId }
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    public async Task<AppointmentDetails> GetAppointmentDetailsByAvailabilityId(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"select AppointmentDetails{*}
+                        filter .slot.id =<uuid>$id limit 1;";
+            return await _client.QuerySingleAsync<AppointmentDetails?>(query, new Dictionary<string, object?>
+            {
+                { "id", guidId }
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
+    }
+
+
     public async Task<List<Availability>> GetSlotsFromCalendarIdAsync(string id)
     {
         try
@@ -133,6 +203,33 @@ public class AppointmentRepository: IAppointmentRepository
             Console.WriteLine(e.Message);
         }
     }
+
+    public async Task CreateAppointmentReschedule(AppointmentReschedule rescheduleRequest)
+    {
+        try
+        {
+            var query = @"
+            INSERT RescheduleRequest {
+                original_appointment := (SELECT AppointmentDetails FILTER .id = <uuid>$originalAppointmentId),
+                requested_time := (SELECT Availability FILTER .id = <uuid>$requestedTimeId),
+                is_accepted := <bool>$isAccepted
+            }
+        ";
+
+            await _client.ExecuteAsync(query, new Dictionary<string, object?>
+        {
+            { "originalAppointmentId", rescheduleRequest.OriginalAppointment.Id },
+            { "requestedTimeId", rescheduleRequest.RequestedTime.Id },
+            { "isAccepted", rescheduleRequest.IsAccepted }
+        });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+
     public async Task<Availability> AddAppointmentSlotAsync(string id, Availability newSlot)
     {
         try
