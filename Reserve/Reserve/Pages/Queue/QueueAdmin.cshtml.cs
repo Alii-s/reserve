@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Queue;
 using System.Text;
+using Reserve.Helpers;
 
 namespace Reserve.Pages.Queue
 {
@@ -19,11 +20,11 @@ namespace Reserve.Pages.Queue
             _queueRepository = queueRepository;
             _validator = validator;
         }
-        public async Task<IActionResult> OnGet(Guid id)
+        public async Task<IActionResult> OnGet(string id)
         {
-            Id = id;
-            Attendees = await _queueRepository.GetAttendees(id.ToString());
-            QueueEvent queueEvent = await _queueRepository.GetQueueEventByID(id.ToString());
+            Id = GuidShortener.RestoreGuid(id);
+            Attendees = await _queueRepository.GetAttendees(Id.ToString());
+            QueueEvent queueEvent = await _queueRepository.GetQueueEventByID(Id.ToString());
             QueueEventView queueEventView = new QueueEventView()
             {
                 Id = queueEvent.Id,
@@ -70,7 +71,7 @@ namespace Reserve.Pages.Queue
                 sb.Append("<form method='post' id='markAsReservedForm-" + attendee.QueueNumber + "'>");
                 sb.Append("<input type='hidden'  name='Id' value='" + Id + "' />");
                 sb.Append("<input type='hidden' name='queueNumber' value='" + attendee.QueueNumber + "' />");
-                sb.Append("<button type='button' class='btn reserve-blue-button' onclick='markAsReserved(" + attendee.QueueNumber + ")'>Mark as reserved</button>");
+                sb.Append("<button type='button' class='btn reserve-blue-button' onclick='confirmMarkAsReserved(" + attendee.QueueNumber + ")'>Mark as reserved</button>");
                 sb.Append("</form>");
                 sb.Append("</td>");
                 sb.Append("</tr>");

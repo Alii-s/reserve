@@ -25,4 +25,8 @@ public interface IAppointmentRepository
     Task<List<Availability>> GetFreeSlotsOfCalendarByIdAsync(AppointmentDetails appointment);
     Task Reschedule(AppointmentDetails appointment, DateTime newSlot);
     Task FinishAppointment(string id);
+    Task<List<AppointmentReschedule>> GetReschedulesByIdAsync(string id);
+    Task<AppointmentDetails> GetAppointmentDetailsByAvailabilityId(string id);
+    Task CreateAppointmentReschedule(AppointmentReschedule appointmentReschedule);
+    Task DeleteAppointmentReschedule(string id);
 }

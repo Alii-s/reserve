@@ -94,3 +94,27 @@
     </div>
 </div>
 
+@if (Model.AppointmentReschedules != null && Model.AppointmentReschedules.Any())
+{
+    <div class="mt-4">
+        <h4 class="mb-3">The business has requested to reschedule to a new date, is it possible?</h4>
+
+        @foreach (var reschedule in Model.AppointmentReschedules)
+        {
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Requested Start Time: @reschedule.RequestedTime.StartTime</h5>
+                    <h5 class="card-title">Requested End Time: @reschedule.RequestedTime.EndTime</h5>
+                    <form method="post" asp-page-handler="AcceptReschedule" asp-route-rescheduleId="@reschedule.Id" class="d-inline">
+                        <button type="submit" class="btn reserve-blue-button">Accept</button>
+                    </form>
+                    <form method="post" asp-page-handler="RejectReschedule" asp-route-rescheduleId="@reschedule.Id" class="d-inline">
+                        <button type="submit" class="btn reserve-red-button">Reject</button>
+                    </form>
+
+                </div>
+            </div>
+        }
+    </div>
+}
+
