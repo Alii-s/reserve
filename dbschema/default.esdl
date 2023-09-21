@@ -94,4 +94,11 @@ module default {
             on target delete delete source;
         }
     }
+type RescheduleRequest {
+    required original_appointment: AppointmentDetails;
+    required requested_time: Availability;
+    required is_accepted: bool;
+}
+
+
 }

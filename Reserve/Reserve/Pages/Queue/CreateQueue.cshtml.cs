@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using Reserve.Core.Features.Queue;
 using FluentValidation;
+using Reserve.Helpers;
 
 namespace Reserve.Pages.Queue;
 
@@ -19,7 +20,6 @@ public class CreateQueueModel : PageModel
         _queueRepository = queueRepository;
         _validator = validator;
     }
-
     public async Task<IActionResult> OnPost()
     {
         var newQueueEvent = new QueueEvent
@@ -38,6 +38,8 @@ public class CreateQueueModel : PageModel
             return Page();
         }
         newQueueEvent = await _queueRepository.Create(newQueueEvent);
-        return RedirectToPage("QueueURL", new { id = newQueueEvent.Id });
+        string sendtopage = GuidShortener.ShortenGuid(newQueueEvent.Id);
+        return RedirectToPage("QueueURL", new { id = sendtopage });
     }
 }
+

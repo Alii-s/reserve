@@ -1,4 +1,4 @@
-﻿@page "/test"
+﻿@page
 @model Reserve.Pages.Queue.QueueURLModel
 
 <div class="container mt-5">
@@ -9,13 +9,13 @@
             <div class="card-body text-center">
                 <p class="card-text" style="font-size: 1.25rem;">You can now share your queue!</p>
                 <p class="card-text" style="font-size: 1.25rem;">
-                    <a href="@Url.Page("QueueRegistration", new {id = Model.QueueId})">
-                        www.reserve.com/QueueRegistration/@Model.QueueId
+                    <a href="@Url.Page("QueueRegistration", new {id = Model.ForURL})">
+                        www.reserve.com/QueueRegistration/@Model.ForURL
                     </a>
                 </p>
                 <p class="card-text" style="font-size: 1.25rem;">If you don't have an account, you can still edit your queue at</p>
                 <p class="card-text" style="font-size: 1.25rem;">
-                    <a href="@Url.Page("QueueAdmin", new { id = Model.QueueId })">www.reserve.com/QueueAdmin/@Model.QueueId</a>
+                    <a href="@Url.Page("QueueAdmin", new { id = Model.ForURL })">www.reserve.com/QueueAdmin/@Model.ForURL</a>
                 </p>
                 <p class="card-text" style="font-size: 1.25rem;">An email has been sent with both links.</p>
             </div>
