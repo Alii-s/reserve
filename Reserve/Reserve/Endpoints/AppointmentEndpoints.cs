@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json.Schema;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Reserve.Core.Features.Appointment;
 using Reserve.Core.Features.Event;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using static Reserve.Helpers.DateTimeHelper;
 
 namespace Reserve.Endpoints;
@@ -44,17 +47,22 @@ public static class AppointmentEndpoints
                 Availability deletedSlot = await _appointmentRepository.GetSlotByIdAsync(id);
                 if(deletedSlot.Available == false)
                 {
+                    context.Response.Headers["HX-Redirect"] = $"/Appointment/UpcomingAppointments/{deletedSlot.AppointmentCalendar.Id}";
+                    context.Response.Cookies.Append("error", "Can't delete a reserved slot");
                     return Results.BadRequest("Can't delete a reserved slot");
                 }
                 await _appointmentRepository.DeleteAppointmentSlotAsync(id);
+                context.Response.Headers["HX-Redirect"] = $"/Appointment/UpcomingAppointments/{deletedSlot.AppointmentCalendar.Id}";
+                context.Response.Cookies.Append("success", "Slot deleted successfully");
                 return Results.Ok();
             }
             catch (Exception e)
             {
+                context.Response.Cookies.Append("error", "error in deleting slot");
                 return Results.BadRequest(e.Message);
             }
         });
-        group.MapPost("add-slot/{id}", async ([FromForm] Availability availabilitySlot, string id, HttpContext context, IAppointmentRepository _appointmentRepository, IAntiforgery _antiforgery) =>
+        group.MapPost("add-slot/{id}", async ([FromBody] Availability availabilitySlot, string id, HttpContext context, IAppointmentRepository _appointmentRepository, IAntiforgery _antiforgery) =>
         {
             try
             {
@@ -68,7 +76,7 @@ public static class AppointmentEndpoints
                 {
                     return Results.BadRequest("End time must be after start time");
                 }
-                return Results.Content($"<tr>\r\n                          <td>{availabilitySlot.StartTime}</td>\r\n                <td>{availabilitySlot.EndTime}</td>\r\n                <td><button hx-delete=\"/delete-slot/{availabilitySlot.Id}\" hx-headers='js:{{\"X-CSRF-TOKEN\": document.getElementsByName(\"__RequestVerificationToken\")[0].value}}' hx-target=\"closest tr\" hx-swap=\"outerHTML swap:1s\" class=\"btn reserve-red-button\">Delete Slot</button></td>\r\n            </tr>", "text/html");
+                return Results.Ok(availabilitySlot);
             }
             catch (Exception e)
             {
@@ -108,13 +116,41 @@ public static class AppointmentEndpoints
             try
             {
                 await _antiforgery.ValidateRequestAsync(context);
-                await _appointmentRepository.FinishAppointment(id);
+                AppointmentDetails finishedAppointment = await _appointmentRepository.FinishAppointment(id);
+                context.Response.Headers["HX-Redirect"] = $"/Appointment/UpcomingAppointments/{finishedAppointment.Slot.AppointmentCalendar.Id}";
+                context.Response.Cookies.Append("success", "appointment finished successfully");
                 return Results.Ok();
+            }
+            catch (Exception e)
+            {
+                context.Response.Cookies.Append("error", "error in finishing appointment, try again");
+                return Results.BadRequest(e.Message);
+            }
+        });
+        group.MapGet("get-appointments/{id}", async (string id, IAppointmentRepository _appointmentRepository) =>
+        {
+            try
+            {
+                List<AppointmentDetails> appointments = await _appointmentRepository.GetAppointmentDetailsForCalendarAsync(id);
+                return Results.Ok(appointments);
             }
             catch (Exception e)
             {
                 return Results.BadRequest(e.Message);
             }
+        });
+        group.MapGet("free-slots/{id}", async (string id, IAppointmentRepository _appointmentRepository) =>
+        {
+            try
+            {
+                List<Availability> availableSlots = await _appointmentRepository.GetFreeSlotsForCalendarView(id);
+                return Results.Ok(availableSlots);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+            
         });
         return group;
     }

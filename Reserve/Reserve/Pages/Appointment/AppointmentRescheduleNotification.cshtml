@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{id}"
 @model Reserve.Pages.Appointment.AppointmentRescheduleNotificationModel
 
 <h1 class="notification-title mb-lg-5">Appointment Rescheduling successful!</h1>
@@ -6,11 +6,11 @@
     <div class="notification-border mb-lg-5">
         <div>
             <p class="notification-text d-flex justify-content-center mb-1">
-                Your request is pending for approval! Please check details in your dashboard.
+                You have rescheduled successfully! Please check details in your dashboard.
             </p>
         </div>
     </div>
     <div class="d-flex justify-content-center">
-        <a href="/" class="btn btn-custom reserve-blue-button">Home Page</a>
+        <a href="@Url.Page("UserAppointmentDashboard", new {id = Model.Id})" class="btn btn-custom reserve-blue-button">Back to dashboard</a>
     </div>
 </div>

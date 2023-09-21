@@ -1,18 +1,17 @@
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Appointment;
 
 namespace Reserve.Pages.Appointment;
 
-public class EditSlotsModel : PageModel
+public class FreeSlotModel : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public string Id { get; set; }
-    public List<Availability> AvailabilitySlots { get; set; } = new();
-    public AppointmentCalendar AppointmentCalendar { get; set; }
     private readonly IAppointmentRepository _appointmentRepository;
-    public Availability NewAvailabilitySlot { get; set; }
-    public EditSlotsModel(IAppointmentRepository appointmentRepository)
+    public Availability FreeSlot { get; set; }
+    public FreeSlotModel(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
     }
@@ -22,8 +21,12 @@ public class EditSlotsModel : PageModel
         {
             return RedirectToPage("/Appointment/AppointmentError");
         }
-        AppointmentCalendar = await _appointmentRepository.GetByIdAsync(Id);
-        AvailabilitySlots = await _appointmentRepository.GetSlotsFromCalendarIdAsync(Id);
+        FreeSlot = await _appointmentRepository.GetSlotByIdAsync(Id);
+        if(FreeSlot is null)
+        {
+            return RedirectToPage("/Appointment/AppointmentError");
+        }
         return Page();
+
     }
 }

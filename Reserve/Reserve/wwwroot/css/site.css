@@ -205,6 +205,15 @@ body {
     }
 }
 
+.reserve-appointment{
+    font-family: 'Mulish', sans-serif;
+    font-size: 0.9rem;
+}
+
+.font-appointment-details {
+    font-family: 'Mulish', sans-serif;
+    font-size: 1.9rem;
+}
 
 
 

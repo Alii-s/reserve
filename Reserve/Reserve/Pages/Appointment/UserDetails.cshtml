@@ -1,0 +1,68 @@
+﻿@page "{id}"
+@model Reserve.Pages.Appointment.UserDetailsModel
+
+@Html.AntiForgeryToken()
+<div class="modal fade" id="markAsDone" tabindex="-1" aria-labelledby="markAsDone" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex flex-column align-items-center m-3">
+                <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="markAsDoneLabel">Mark Appointment as Done!</h1>
+                <div class="notification-border d-flex justify-content-center">
+                    <p class="notification-text p-3">Are you sure you want to mark appointment as done? It will be deleted from the calendar</p>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-around border-0">
+                <button type="button" hx-delete="/finish-appointment/@Model.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' class="btn reserve-red-button" data-bs-dismiss="modal">Yes</button>
+                <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="d-flex flex-column justify-content-center align-items-center align-items-center">
+    <div class="notification-border d-flex flex-column align-items-center align-content-center">
+        <h1 class="container notification-title mb-5">Appointment Details!</h1>
+        <div class="d-flex flex-column justify-content-evenly align-content-center align-items-center w-100">
+            <div class="d-flex flex-column justify-content-center align-content-center align-items-center mb-5 col-12">
+                <div class="d-flex col-12 d-flex flex-column justify-content-center align-content-center align-items-center">
+                    <div class="d-flex flex-column justify-content-evenly align-items-center mb-lg-5 col-12">
+                        <p class="notification-text">Reserver Name:</p>
+                        <p class="notification-text">@Model.AppointmentDetails.ReserverName</p>
+                    </div>
+                    <div class="d-flex flex-column justify-content-evenly align-items-center mb-lg-5 col-12">
+                        <p class="notification-text">Reserver Email:</p>
+                        <p class="notification-text">@Model.AppointmentDetails.ReserverEmail</p>
+                    </div>
+                    <div class="d-flex flex-column justify-content-evenly align-items-center mb-lg-5 col-12">
+                        <p class="notification-text">Reserver Phone Number:</p>
+                        <p class="notification-text">@Model.AppointmentDetails.ReserverPhoneNumber</p>
+                    </div>
+                    <div class="d-flex flex-column justify-content-evenly align-items-center mb-lg-5 col-12">
+                        <p class="notification-text">Appointment Start Date:</p>
+                        <p class="notification-text">@Model.AppointmentDetails.Slot.StartTime</p>
+                    </div>
+                    <div class="d-flex flex-column justify-content-evenly align-items-center col-12">
+                        <p class="notification-text">Appointment End Date:</p>
+                        <p class="notification-text">@Model.AppointmentDetails.Slot.EndTime</p>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-lg-row flex-column justify-content-evenly">
+                @if (Model.FreeSlots.Count > 0)
+                {
+                    <a class="dashboard-items btn reserve-red-button m-0 m-sm-3" data-bs-toggle="modal" data-bs-target="#rescheduleAppointment">Reschedule</a>
+                }
+                else
+                {
+                    <p class=" dashboard-items m-0 m-sm-3 d-flex align-items-center notification-text">No slots for rescheduling!</p>
+                }
+                <a class="dashboard-items btn reserve-blue-button m-0 m-sm-3" data-bs-toggle="modal" data-bs-target="#markAsDone">Mark as done</a>
+                <a class="dashboard-items btn reserve-blue-button m-0 m-sm-3" href="@Url.Page("UpcomingAppointments", new {id = Model.AppointmentDetails.Slot.AppointmentCalendar.Id})">Back To Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>

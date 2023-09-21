@@ -78,7 +78,14 @@
                 </div>
             </div>
             <div class="d-flex flex-lg-row flex-column justify-content-evenly">
-                <a class="dashboard-items btn reserve-blue-button m-0 m-sm-3" data-bs-toggle="modal" data-bs-target="#rescheduleAppointment">Reschedule</a>
+                @if (Model.FreeSlots.Count > 0)
+                {
+                    <a class="dashboard-items btn reserve-blue-button m-0 m-sm-3" data-bs-toggle="modal" data-bs-target="#rescheduleAppointment">Reschedule</a>
+                }
+                else
+                {
+                    <p class=" dashboard-items m-0 m-sm-3 d-flex align-items-center notification-text">No slots for rescheduling!</p>
+                }
                 <a class="dashboard-items btn reserve-red-button m-0 m-sm-3" data-bs-toggle="modal" data-bs-target="#cancelAppointment">Cancel Appointment</a>
             </div>
         </div>

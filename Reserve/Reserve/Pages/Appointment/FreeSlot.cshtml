@@ -1,0 +1,41 @@
+﻿@page "{id}"
+@model Reserve.Pages.Appointment.FreeSlotModel
+
+@Html.AntiForgeryToken()
+
+<div class="modal fade" id="deleteFreeSlot" tabindex="-1" aria-labelledby="deleteFreeSlotLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="d-flex flex-column align-items-center m-3">
+                <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="deleteFreeSlotLabel">Delete Slot!</h1>
+                <div class="notification-border d-flex justify-content-center">
+                    <p class="notification-text p-3">Are you sure you want to delete this slot?</p>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-around border-0">
+                <button type="button" hx-delete="/delete-slot/@Model.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' class="btn reserve-red-button">Yes</button>
+                <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<h1 class="notification-title mb-lg-5">Free Slot Details!</h1>
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="notification-border d-flex flex-column mb-lg-5">
+        <div class="d-flex flex-column align-items-center">
+            <h3 class="reserve-appointment">Start Time: @Model.FreeSlot.StartTime.ToLongDateString() @Model.FreeSlot.StartTime.ToShortTimeString()</h3>
+            <h3 class="reserve-appointment">End Time: @Model.FreeSlot.EndTime.ToLongDateString() @Model.FreeSlot.EndTime.ToShortTimeString()</h3>
+        </div>
+        <div class="d-flex justify-content-evenly mt-5">
+            <button type="button" class="btn reserve-red-button" data-bs-toggle="modal" data-bs-target="#deleteFreeSlot">Delete Slot</button>
+            <a href="@Url.Page("UpcomingAppointments", new {id = Model.FreeSlot.AppointmentCalendar.Id})" class="btn reserve-blue-button">Back</a>
+        </div>
+    </div>
+</div>
+
+
