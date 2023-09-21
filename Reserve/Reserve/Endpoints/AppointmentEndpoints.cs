@@ -90,7 +90,7 @@ public static class AppointmentEndpoints
                 await _antiforgery.ValidateRequestAsync(context);
                 AppointmentDetails cancelledAppointment = await _appointmentRepository.GetAppointmentDetailsByIdAsync(id);
                 await _appointmentRepository.CancelAppointmentAsync(cancelledAppointment);
-                context.Response.Headers["HX-Redirect"] = "/Event/CancelNotification";
+                context.Response.Headers["HX-Redirect"] = "/event-cancellation";
                 return Results.Ok();
             }
             catch (Exception e)
