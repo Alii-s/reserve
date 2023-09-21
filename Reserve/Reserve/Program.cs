@@ -7,6 +7,7 @@ using Reserve.Core.Features.MailService;
 using Reserve.Endpoints;
 using Reserve.Helpers;
 using Reserve.Core.Features.Appointment;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 var builder = WebApplication.CreateBuilder(args);
 

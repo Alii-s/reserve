@@ -1,8 +1,27 @@
 ﻿@page "{id}"
 @model Reserve.Pages.Appointment.ReserveAppointmentModel
 
+<style>
+        a{
+            color:#000000;
+            text-decoration: none;
+        }
+
+        .fc .fc-button-primary {
+            color: #FFFFFF;
+            background-color: #06adef !important;
+            border-color: #FFFFFF !important;
+        }
+
+        .fc .fc-button-primary:hover {
+            color: #FFFFFF;
+            background-color: #20a3d7 !important;
+            border-color: #FFFFFF !important;
+        }
+</style>
+<script src='https://fastly.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 <h1 class="notification-title mb-lg-5">Schedule an appointment with @Model.AppointmentCalendar.Name</h1>
-<table class="table">
+@* <table class="table">
     <thead class="table-light">
         <tr>
             <th>Start Time</th>
@@ -20,4 +39,41 @@
             </tr>
         }
     </tbody>
-</table>
+</table> *@
+<div id="calendar"></div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        let appointmentsArg = [];
+        var freeSlots = await fetch("/free-slots/@Model.Id");
+        if (freeSlots.status === 200) {
+            var data = await freeSlots.json();
+            data.forEach(slot => {
+                appointmentsArg.push({
+                    id: slot.id,
+                    title: "Free Slot",
+                    start: slot.startTime,
+                    end: slot.endTime,
+                    backgroundColor: "#06adef",
+                    textColor: "#ffffff",
+                    borderColor: "#06adef",
+                    url: "/Appointment/ReserverDetails/" + slot.id
+                });
+            });
+        } else {
+            console.error(`API request failed with status code: ${freeSlots.status}`);
+        }
+        var calendarEl = document.getElementById('calendar');
+        let calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: appointmentsArg
+        });
+        calendar.render();
+    });
+</script>

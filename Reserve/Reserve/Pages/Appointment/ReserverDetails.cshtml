@@ -4,7 +4,11 @@
 <h1 class="notification-title mb-lg-5">Reserve Now!</h1>
 <div class="d-flex flex-column justify-content-center align-items-center">
     <div class="notification-border mb-lg-5">
-        <h2 class="font-event-details d-flex justify-content-center mb-lg-5">@Model.AvailabilitySlot.StartTime.ToShortTimeString() with @Model.AvailabilitySlot.AppointmentCalendar.Name</h2>
+        <h2 class="font-appointment-details d-flex justify-content-center mb-lg-5">Appointment with @Model.AvailabilitySlot.AppointmentCalendar.Name</h2>
+        <div class="d-flex flex-column align-items-center">
+            <h3 class="reserve-appointment">Start Time: @Model.AvailabilitySlot.StartTime.ToLongDateString() @Model.AvailabilitySlot.StartTime.ToShortTimeString()</h3>
+            <h3 class="reserve-appointment">End Time: @Model.AvailabilitySlot.EndTime.ToLongDateString() @Model.AvailabilitySlot.EndTime.ToShortTimeString()</h3>
+        </div>
         <form method="post" class="p-3">
             <span asp-validation-for="Appointment.Slot.Available" class="text-danger d-flex justify-content-center mb-lg-5"></span>
             <div class="d-flex flex-column">

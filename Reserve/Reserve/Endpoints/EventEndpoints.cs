@@ -32,7 +32,7 @@ public static class EventEndpoints
                 ArgumentNullException.ThrowIfNull(casualTicket.CasualEvent);
                 Guid guidTicketId = Guid.Parse(id);
                 await _eventRepository.CancelReservationAsync(guidTicketId, casualTicket.CasualEvent.Id);
-                context.Response.Headers["HX-Redirect"] = "/Event/CancelNotification";
+                context.Response.Headers["HX-Redirect"] = "/event-cancellation";
                 return Results.Ok();
             }
             catch (Exception e)

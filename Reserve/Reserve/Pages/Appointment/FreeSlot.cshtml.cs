@@ -1,25 +1,17 @@
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Appointment;
 
 namespace Reserve.Pages.Appointment;
 
-public class EditSlotsModel : PageModel
+public class FreeSlotModel : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public string Id { get; set; }
-    public List<Availability> AvailabilitySlots { get; set; } = new();
-    public List<Availability> OpenSlots { get; set; } = new();
-    public AppointmentCalendar AppointmentCalendar { get; set; }
     private readonly IAppointmentRepository _appointmentRepository;
-    public Availability NewAvailabilitySlot { get; set; }
-    public List<DateTime> FreeSlots { get; set; } = new();
-    [BindProperty]
-    public DateTime SelectedDate { get; set; }
-
-    [BindProperty]
-    public int SelectedSlotIndex { get; set; }
-    public EditSlotsModel(IAppointmentRepository appointmentRepository)
+    public Availability FreeSlot { get; set; }
+    public FreeSlotModel(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
     }
@@ -29,11 +21,13 @@ public class EditSlotsModel : PageModel
         {
             return RedirectToPage("/Appointment/AppointmentError");
         }
-        AppointmentCalendar = await _appointmentRepository.GetByIdAsync(Id);
-        AvailabilitySlots = await _appointmentRepository.GetSlotsFromCalendarIdAsync(Id);
-        OpenSlots = await _appointmentRepository.GetOpenSlotsAsync(Id);
-        FreeSlots = OpenSlots.Select(x => x.StartTime).ToList();
+        FreeSlot = await _appointmentRepository.GetSlotByIdAsync(Id);
+        if(FreeSlot is null)
+        {
+            return RedirectToPage("/Appointment/AppointmentError");
+        }
         return Page();
+
     }
 
     public async Task<IActionResult> OnPost()

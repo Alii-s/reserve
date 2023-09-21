@@ -71,7 +71,7 @@ module default {
             on target delete delete source;
         }
         required queue_number: int32;
-	status: str;
+	    status: str;
     }
     type AppointmentCalendar{
         required name: str;

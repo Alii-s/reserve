@@ -43,7 +43,7 @@ public class UserAppointmentDashboardModel : PageModel
         {
             AppointmentDetails = await _appointmentRepository.GetAppointmentDetailsByIdAsync(Id);
             await _appointmentRepository.Reschedule(AppointmentDetails, SelectedDate);
-            return RedirectToPage("/Appointment/AppointmentRescheduleNotification");
+            return RedirectToPage("/Appointment/AppointmentRescheduleNotification", new {id = Id });
         }
         catch (Exception)
         {

@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{id}"
 @model Reserve.Pages.Appointment.UpcomingAppointmentsModel
 
 @Html.AntiForgeryToken()
@@ -8,31 +8,196 @@
         opacity: 0;
         transition: opacity 1s ease-out;
     }
-</style>
-<h1 class="notification-title mb-lg-5">Upcoming Appointments!</h1>
+    a{
+        color:#000000;
+        text-decoration: none;
+    }
 
-<table class="table mb-lg-5">
-    <thead class="table-light">
-        <tr>
-            <th>Name</th>
-            <th>Phone Number</th>
-            <th>Email</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody id="table-body">
-        @foreach (var appointment in Model.Appointments)
-        {
-            <tr>
-                <td>@appointment.ReserverName</td>
-                <td>@appointment.ReserverPhoneNumber</td>
-                <td>@appointment.ReserverEmail</td>
-                <td>@appointment.Slot.StartTime.ToLongDateString() @appointment.Slot.StartTime.ToShortTimeString()</td>
-                <td>@appointment.Slot.EndTime.ToLongDateString() @appointment.Slot.EndTime.ToShortTimeString()</td>
-                <td><a hx-delete="/finish-appointment/@appointment.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' hx-target="closest tr" hx-swap="outerHTML swap:1s" class="btn reserve-blue-button">Mark as done</a></td>
-            </tr>
+    .fc .fc-button-primary {
+        color: #FFFFFF;
+        background-color: #06adef !important;
+        border-color: #FFFFFF !important;
+    }
+
+    .fc .fc-button-primary:hover {
+        color: #FFFFFF;
+        background-color: #20a3d7 !important;
+        border-color: #FFFFFF !important;
+    }
+
+    #error-message {
+        color: red;
+        font-size: 14px;
+        font-weight: 700;
+    }
+</style>
+<script src='https://fastly.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+
+
+@if(TempData["error"] != null)
+{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+    <script type="text/javascript">
+        toastr.options.closeButton = true;
+        toastr.error('@TempData["error"]');
+    </script>
+}
+
+@if (TempData["success"] != null)
+{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+    <script type="text/javascript">
+        toastr.options.closeButton = true;
+        toastr.info('@TempData["success"]');
+    </script>
+}
+
+<h1 class="notification-title mb-lg-5">Upcoming Appointments!</h1>
+<div class="d-flex flex-lg-row edit-slots justify-content-between mb-5">
+    <h2 class="notification-title">Add new Slot</h2>
+    <form class="d-flex flex-column justify-content-between">
+        <div class="d-flex justify-content-between edit-slots col-md-12">
+            <div class="d-flex align-items-center">
+                <label asp-for="NewAvailabilitySlot.StartTime" class="form-label mb-3">From:</label>
+            </div>
+            <input asp-for="NewAvailabilitySlot.StartTime" type="datetime-local" name="StartTime" id="NewAvailabilitySlot_StartTime" class="mb-3 date-edit-slots form-control w-25" />
+            <div class="d-flex align-items-center">
+                <label asp-for="NewAvailabilitySlot.EndTime" class="form-label mb-3">To:</label>
+            </div>
+            <input asp-for="NewAvailabilitySlot.EndTime" type="datetime-local" name="EndTime" id="NewAvailabilitySlot_EndTime" class="mb-3 date-edit-slots form-control w-25" />
+            <button type="submit" style="height:40px!important;" class="btn reserve-blue-button mb-3" id="Add">Add</button>
+        </div>
+        <div class="d-flex justify-content-center" id="error-message"></div>
+    </form>
+    <a href="@Url.Page("AppointerNotifications", new {id = Model.Id})" style="height:40px!important;" class="btn reserve-blue-button">View Notifications</a>
+</div>
+
+<div id='calendar'></div>
+
+<script>
+    let calendar;
+    function validateForm() {
+        var startTimeInput = document.getElementById("NewAvailabilitySlot_StartTime");
+        var endTimeInput = document.getElementById("NewAvailabilitySlot_EndTime");
+        var errorMessage = document.getElementById("error-message");
+
+
+        var startTime = new Date(startTimeInput.value);
+        var endTime = new Date(endTimeInput.value);
+
+        if (!startTimeInput.value || !endTimeInput.value) {
+            errorMessage.textContent = "Please fill in both Start Time and End Time.";
+            return false;
         }
-    </tbody>
-</table>
+        if (endTime <= startTime) {
+            errorMessage.textContent = "End Time must be after Start Time.";
+            return false;
+        }
+        errorMessage.textContent = "";
+        return true;
+    }
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        let appointmentsArg = [];
+        var response = await fetch("/get-appointments/@Model.Id");
+        if (response.status === 200) {
+            var data = await response.json();
+            data.forEach(appointment => {
+                appointmentsArg.push({
+                    id: appointment.id,
+                    title: appointment.reserverName, 
+                    start: appointment.slot.startTime, 
+                    end: appointment.slot.endTime,
+                    phoneNumber: appointment.reserverPhoneNumber,
+                    backgroundColor: "#ff3259",
+                    textColor: "#ffffff",
+                    borderColor: "#ff3259",
+                    url: "/Appointment/UserDetails/" + appointment.id
+                });
+            });
+        } else {
+            console.error(`API request failed with status code: ${response.status}`);
+        }
+
+        var freeSlots = await fetch("/free-slots/@Model.Id");
+        if (freeSlots.status === 200) {
+            var data = await freeSlots.json();
+            data.forEach(slot => {
+                appointmentsArg.push({
+                    id: slot.id,
+                    title: "Free Slot", 
+                    start: slot.startTime, 
+                    end: slot.endTime,
+                    backgroundColor: "#06adef",
+                    textColor: "#ffffff",
+                    borderColor: "#06adef",
+                    url: "/Appointment/FreeSlot/" + slot.id
+                });
+            });
+        } else {
+            console.error(`API request failed with status code: ${freeSlots.status}`);
+        }
+
+        var calendarEl = document.getElementById('calendar');
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            height: "auto",
+            themeSystem: 'bootstrap5',
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: appointmentsArg
+        });
+        calendar.render();
+    });
+    var startTimeInput = document.getElementById("NewAvailabilitySlot_StartTime");
+    var endTimeInput = document.getElementById("NewAvailabilitySlot_EndTime");
+    var form = document.querySelector("form");
+    var addButton = document.getElementById("Add");
+    form.addEventListener("submit", async function (event) {
+        if (!validateForm()) {
+            event.preventDefault();
+        } else {
+            event.preventDefault();
+            var startTime = new Date(startTimeInput.value).toISOString();
+            var endTime = new Date(endTimeInput.value).toISOString();
+            var data = {
+                startTime: startTime,
+                endTime: endTime,
+                available: true
+            };
+            var response = await fetch("/add-slot/@Model.Id", {
+                method: "POST",
+                headers: {
+                    'Accept' : 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('[name="__RequestVerificationToken"]').value,
+                },
+                body: JSON.stringify(data)
+            });
+            if (response.status === 200) {
+                var data = await response.json();
+                var event = {
+                    id: data.id,
+                    title: "Free Slot",
+                    start: data.startTime,
+                    end: data.endTime,
+                    backgroundColor: "#06adef",
+                    textColor: "#ffffff",
+                    borderColor: "#06adef",
+                    url: "/Appointment/FreeSlot/" + data.id
+                };
+                calendar.addEvent(event);
+                startTimeInput.value = "";
+                endTimeInput.value = "";
+            } else {
+                console.error(`API request failed with status code: ${response.status}`);
+            }
+        }
+    });
+</script>
