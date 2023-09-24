@@ -152,6 +152,31 @@ public static class AppointmentEndpoints
             }
             
         });
+        group.MapDelete("delete-request/{id}", async (string id, HttpContext context, IAntiforgery _antiforgery, IAppointmentRepository _appointmentRepository) =>
+        {
+            try
+            {
+                await _antiforgery.ValidateRequestAsync(context);
+                await _appointmentRepository.DeleteRequest(id);
+                return Results.Ok();
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        });
+        group.MapGet("get-pending-slots", async (IAppointmentRepository _appointmentRepository) =>
+        {
+            try
+            {
+                List<Availability> pendingSlots = await _appointmentRepository.GetPendingSlots();
+                return Results.Ok(pendingSlots);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        });
         return group;
     }
 }

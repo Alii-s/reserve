@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Event;
+using Reserve.Helpers;
 using System.Globalization;
 using static Reserve.Helpers.DateTimeHelper;
 using static Reserve.Helpers.ImageHelper;
@@ -27,7 +28,7 @@ public class EditEventModel : PageModel
     }
     public async Task<IActionResult> OnGet()
     {
-        CasualEvent? editEvent = await _eventRepository.GetByIdForEditAsync(Id!);
+        CasualEvent? editEvent = await _eventRepository.GetByIdForEditAsync(GuidShortener.RestoreGuid(Id!).ToString());
         if(editEvent is null)
         {
             return RedirectToPage("EventError");
@@ -64,7 +65,7 @@ public class EditEventModel : PageModel
                 EditEvent.ImageUrl = SaveImage(imageFile, _webHostEnvironment);
                 CasualEvent? editEvent = new CasualEvent
                 {
-                    Id = Guid.Parse(Id!),
+                    Id = GuidShortener.RestoreGuid(Id!),
                     Title = EditEvent.Title,
                     OrganizerName = EditEvent.OrganizerName,
                     OrganizerEmail = EditEvent.OrganizerEmail,
@@ -92,7 +93,7 @@ public class EditEventModel : PageModel
             {
                 CasualEvent? editEvent = new CasualEvent
                 {
-                    Id = Guid.Parse(Id!),
+                    Id = GuidShortener.RestoreGuid(Id!),
                     Title = EditEvent.Title,
                     OrganizerName = EditEvent.OrganizerName,
                     OrganizerEmail = EditEvent.OrganizerEmail,

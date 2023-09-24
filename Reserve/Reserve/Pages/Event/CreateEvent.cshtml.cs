@@ -10,6 +10,7 @@ using System;
 using System.Globalization;
 using static Reserve.Helpers.ImageHelper;
 using static Reserve.Core.Features.MailService.MailFormats;
+using Reserve.Helpers;
 
 namespace Reserve.Pages.Event;
 [BindProperties]
@@ -76,7 +77,7 @@ public class CreateEventModel : PageModel
                     Body = EventCreationNotification(casualEvent.Id.ToString())
                 };
                 //await _emailService.SendEmailAsync(mailRequest);
-                return RedirectToPage("CreationNotification", new { id = casualEvent.Id });
+                return RedirectToPage("CreationNotification", new { id = GuidShortener.ShortenGuid(casualEvent.Id) });
             }
             else
             {

@@ -140,7 +140,23 @@
         } else {
             console.error(`API request failed with status code: ${freeSlots.status}`);
         }
-
+        var pendingSlots = await fetch("/get-pending-slots");
+        if(pendingSlots.status === 200) {
+            var data = await pendingSlots.json();
+            data.forEach(slot => {
+                appointmentsArg.push({
+                    id: slot.id,
+                    title: "Pending Slot", 
+                    start: slot.startTime, 
+                    end: slot.endTime,
+                    backgroundColor: "#febe00",
+                    textColor: "#ffffff",
+                    borderColor: "#febe00"
+                });
+            });
+        } else {
+            console.error(`API request failed with status code: ${pendingSlots.status}`);
+        }
         var calendarEl = document.getElementById('calendar');
         calendar = new FullCalendar.Calendar(calendarEl, {
             height: "auto",

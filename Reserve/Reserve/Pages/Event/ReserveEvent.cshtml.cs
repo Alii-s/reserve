@@ -2,9 +2,11 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Event;
 using Reserve.Core.Features.MailService;
+using Reserve.Helpers;
 using static Reserve.Core.Features.MailService.MailFormats;
 
 
@@ -13,6 +15,7 @@ namespace Reserve.Pages.Event;
 public class ReserveEventModel : PageModel
 {
     [BindProperty(SupportsGet = true)]
+    [ValidateNever]
     public string? Id { get; set; }
 
     public CasualEventView? Event { get; set; }
@@ -28,7 +31,7 @@ public class ReserveEventModel : PageModel
     }
     public async Task<IActionResult> OnGet()
     {
-        CasualEvent? eventToReserve = await _eventRepository.GetByIdAsync(Id!);
+        CasualEvent? eventToReserve = await _eventRepository.GetByIdAsync(GuidShortener.RestoreGuid(Id!).ToString());
         if(eventToReserve is null)
         {
             return RedirectToPage("EventError");
@@ -51,7 +54,8 @@ public class ReserveEventModel : PageModel
     }
     public async Task<IActionResult> OnPost()
     {
-        CasualEvent? eventToReserve = await _eventRepository.GetByIdAsync(Id!);
+        Id = GuidShortener.RestoreGuid(Id).ToString();
+        CasualEvent? eventToReserve = await _eventRepository.GetByIdAsync(Id);
         if(eventToReserve is null)
         {
             return RedirectToPage("EventError");
@@ -90,6 +94,7 @@ public class ReserveEventModel : PageModel
             {
                 ModelState.AddModelError("Ticket.ReserverEmail", "This email is already reserved");
             }
+            ModelState.Remove("Id");
             if (ModelState.IsValid)
             {
                 ticket = (await _eventRepository.AddReserverAsync(ticket))!;
@@ -102,7 +107,7 @@ public class ReserveEventModel : PageModel
                         Body = ReservationSuccessfulNotification(ticket.Id.ToString())
                     };
                     //await _emailService.SendEmailAsync(mailRequest);
-                    return RedirectToPage("ReservationNotification", new { id = ticket.Id });
+                    return RedirectToPage("ReservationNotification", new { id = GuidShortener.ShortenGuid(ticket.Id )});
                 }
                 else
                 {
