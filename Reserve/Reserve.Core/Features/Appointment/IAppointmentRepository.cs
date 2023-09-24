@@ -37,4 +37,5 @@ public interface IAppointmentRepository
     Task<List<AppointmentReschedule>> GetAllRequestsForCalendar(string id);
     Task DeleteRequest(string id);
     Task<List<Availability>> GetPendingSlots();
+    Task<AppointmentReschedule> GetRequestByIdAsync(string id);
 }

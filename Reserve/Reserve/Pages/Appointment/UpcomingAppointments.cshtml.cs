@@ -19,12 +19,12 @@ public class UpcomingAppointmentsModel : PageModel
     {
         if(string.IsNullOrEmpty(Id))
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         Appointments = await _appointmentRepository.GetAppointmentDetailsForCalendarAsync(Id);
         if(Appointments is null)
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         if (HttpContext.Request.Cookies["error"] is not null)
         {

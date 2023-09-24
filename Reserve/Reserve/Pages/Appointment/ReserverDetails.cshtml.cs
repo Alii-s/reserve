@@ -26,7 +26,7 @@ public class ReserverDetailsModel : PageModel
         AvailabilitySlot = await _appointmentRepository.GetSlotByIdAsync(Id);
         if(AvailabilitySlot is null)
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("/appointment-error");
         }
         return Page();
     }
@@ -46,9 +46,9 @@ public class ReserverDetailsModel : PageModel
             Appointment = await _appointmentRepository.CreateAppointmentMeetingAsync(Appointment);
             if(Appointment is null)
             {
-                return RedirectToPage("/Appointment/AppointmentError");
+                return RedirectToPage("AppointmentError");
             }
-            return RedirectToPage("/Appointment/MeetingNotification", new {id = Appointment.Id});
+            return RedirectToPage("MeetingNotification", new {id = Appointment.Id});
         }
     }
 }

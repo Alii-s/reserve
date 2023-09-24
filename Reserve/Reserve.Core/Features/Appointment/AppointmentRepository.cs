@@ -798,6 +798,54 @@ public class AppointmentRepository : IAppointmentRepository
                 {"id", guidId },
                 {"reschedule_status", RescheduleState.Declined }
             });
+            query = @"SELECT AppointmentReschedule{
+                            id,
+                            reschedule_status,
+                            requested_time:{
+                                id,
+                                start_time,
+                                end_time,
+                                available,
+                                appointment_calendar: {
+                                    id,
+                                    name,
+                                    email,
+                                    description
+                                }   
+                        },
+                            original_appointment: {
+                                id,
+                                reserver_name,
+                                reserver_phone_number,
+                                reserver_email,
+                                slot: {
+                                    id,
+                                    start_time,
+                                    end_time,
+                                    available,
+                                    appointment_calendar: {
+                                        id,
+                                        name,
+                                        email,
+                                        description
+                                    }   
+                                }
+                            }
+                        }
+                      FILTER .id = <uuid>$id";
+            AppointmentReschedule declinedAppointment = await _client.QuerySingleAsync<AppointmentReschedule>(query, new Dictionary<string, object?>
+            {
+                {"id", guidId }
+            });
+            query = @"UPDATE Availability
+                        FILTER .id = <uuid>$id
+                        SET {
+                            available := true
+                        };";
+            await _client.ExecuteAsync(query, new Dictionary<string, object?>
+            {
+                {"id", declinedAppointment.RequestedTime.Id }
+            });
         }
         catch(Exception e)
         {
@@ -929,6 +977,57 @@ public class AppointmentRepository : IAppointmentRepository
                           FILTER .id = Availability.id
                         );";
         return (await _client.QueryAsync<Availability>(query)).ToList();
+    }
+    public async Task<AppointmentReschedule> GetRequestByIdAsync(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"SELECT AppointmentReschedule {
+                            id,
+                            reschedule_status,
+                            requested_time:{
+                                id,
+                                start_time,
+                                end_time,
+                                available,
+                                appointment_calendar: {
+                                    id,
+                                    name,
+                                    email,
+                                    description
+                                }   
+                        },
+                            original_appointment: {
+                                id,
+                                reserver_name,
+                                reserver_phone_number,
+                                reserver_email,
+                                slot: {
+                                    id,
+                                    start_time,
+                                    end_time,
+                                    available,
+                                    appointment_calendar: {
+                                        id,
+                                        name,
+                                        email,
+                                        description
+                                    }   
+                                }
+                            }
+                        }
+                        FILTER .id = <uuid>$id;";
+            return await _client.QuerySingleAsync<AppointmentReschedule>(query, new Dictionary<string, object?>
+            {
+                { "id", guidId }
+            });
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
     }
 }
 

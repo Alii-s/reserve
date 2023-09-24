@@ -9,6 +9,8 @@ using Reserve.Helpers;
 using System.Globalization;
 using static Reserve.Helpers.DateTimeHelper;
 using static Reserve.Helpers.ImageHelper;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace Reserve.Pages.Event;
 [BindProperties]
@@ -63,6 +65,18 @@ public class EditEventModel : PageModel
             if (result.IsValid)
             {
                 EditEvent.ImageUrl = SaveImage(imageFile, _webHostEnvironment);
+                string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/event"));
+                string fullPath = Path.Combine(path, Path.GetFileName(EditEvent.ImageUrl));
+                if (imageFile.Length >= 3 * 1024 * 1024)
+                {
+                    using (Image image = Image.Load(imageFile.OpenReadStream()))
+                    {
+                        int width = image.Width / 2;
+                        int height = image.Height / 2;
+                        image.Mutate(x => x.Resize(width, height));
+                        image.Save(fullPath);
+                    }
+                }
                 CasualEvent? editEvent = new CasualEvent
                 {
                     Id = GuidShortener.RestoreGuid(Id!),
