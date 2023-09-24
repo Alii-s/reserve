@@ -19,12 +19,12 @@ public class AppointerNotificationsModel : PageModel
     {
         if (string.IsNullOrEmpty(Id))
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         AppointerNotifications = await _appointmentRepository.GetAppointmentNotificationsForCalendarAsync(Id);
         if (AppointerNotifications is null)
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         RescheduleRequests = await _appointmentRepository.GetAllRequestsForCalendar(Id);
         return Page();

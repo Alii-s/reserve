@@ -20,17 +20,17 @@ public class ReserveAppointmentModel : PageModel
     {
         if(string.IsNullOrEmpty(Id))
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         AppointmentCalendar = await _appointmentRepository.GetByIdAsync(Id);
         if(AppointmentCalendar is null)
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         AvailabilitySlots = await _appointmentRepository.GetOpenSlotsAsync(Id);
         if(AvailabilitySlots is null)
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         return Page();
     }

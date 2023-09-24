@@ -1,4 +1,4 @@
-﻿@page "{id}"
+﻿@page "/upcoming-appointments/{id}"
 @model Reserve.Pages.Appointment.UpcomingAppointmentsModel
 
 @Html.AntiForgeryToken()
@@ -115,7 +115,7 @@
                     backgroundColor: "#ff3259",
                     textColor: "#ffffff",
                     borderColor: "#ff3259",
-                    url: "/Appointment/UserDetails/" + appointment.id
+                    url: "/user-details/" + appointment.id
                 });
             });
         } else {
@@ -134,7 +134,7 @@
                     backgroundColor: "#06adef",
                     textColor: "#ffffff",
                     borderColor: "#06adef",
-                    url: "/Appointment/FreeSlot/" + slot.id
+                    url: "/free-slot-details/" + slot.id
                 });
             });
         } else {
@@ -206,7 +206,7 @@
                     backgroundColor: "#06adef",
                     textColor: "#ffffff",
                     borderColor: "#06adef",
-                    url: "/Appointment/FreeSlot/" + data.id
+                    url: "/free-slot-details/" + data.id
                 };
                 calendar.addEvent(event);
                 startTimeInput.value = "";

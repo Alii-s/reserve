@@ -1,4 +1,4 @@
-﻿@page "{id}"
+﻿@page "/reserve-appointment/{id}"
 @model Reserve.Pages.Appointment.ReserveAppointmentModel
 
 <style>
@@ -21,25 +21,7 @@
 </style>
 <script src='https://fastly.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 <h1 class="notification-title mb-lg-5">Schedule an appointment with @Model.AppointmentCalendar.Name</h1>
-@* <table class="table">
-    <thead class="table-light">
-        <tr>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody id="table-body">
-        @foreach (var slot in Model.AvailabilitySlots)
-        {
-            <tr>
-                <td>@slot.StartTime.ToLongDateString() @slot.StartTime.ToShortTimeString()</td>
-                <td>@slot.EndTime.ToLongDateString() @slot.EndTime.ToShortTimeString()</td>
-                <td><a href="@Url.Page("ReserverDetails", new {id = slot.Id})" class="btn reserve-blue-button">Reserve Now!</a></td>
-            </tr>
-        }
-    </tbody>
-</table> *@
+
 <div id="calendar"></div>
 
 
@@ -58,7 +40,7 @@
                     backgroundColor: "#06adef",
                     textColor: "#ffffff",
                     borderColor: "#06adef",
-                    url: "/Appointment/ReserverDetails/" + slot.id
+                    url: "/appointee-details/" + slot.id
                 });
             });
         } else {

@@ -28,9 +28,9 @@ public class CreateAppointmentCalendarModel : PageModel
             NewAppointmentCalendar = await _appointmentRepository.CreateAppointmentInfoAsync(NewAppointmentCalendar);
             if(NewAppointmentCalendar is null)
             {
-                return RedirectToPage("/Appointment/AppointmentError");
+                return RedirectToPage("AppointmentError");
             }
-            return RedirectToPage("/Appointment/CreateCalendar", new {id = NewAppointmentCalendar.Id});
+            return RedirectToPage("CreateCalendar", new {id = NewAppointmentCalendar.Id});
         }
         return Page();
     }

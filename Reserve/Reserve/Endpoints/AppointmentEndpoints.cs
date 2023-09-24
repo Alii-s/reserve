@@ -26,7 +26,7 @@ public static class AppointmentEndpoints
                 await _appointmentRepository.CreateAppointmentCalendarAsync(newCalendar, slots);
                 if (newCalendar is not null)
                 {
-                    context.Response.Headers["X-Success-Redirect"] = $"/Appointment/CalendarNotification/{newCalendar.Id}";
+                    context.Response.Headers["X-Success-Redirect"] = $"/calendar-creation-notification/{newCalendar.Id}";
                     return Results.Ok();
                 }
                 else
@@ -47,12 +47,12 @@ public static class AppointmentEndpoints
                 Availability deletedSlot = await _appointmentRepository.GetSlotByIdAsync(id);
                 if(deletedSlot.Available == false)
                 {
-                    context.Response.Headers["HX-Redirect"] = $"/Appointment/UpcomingAppointments/{deletedSlot.AppointmentCalendar.Id}";
+                    context.Response.Headers["HX-Redirect"] = $"/upcoming-appointments/{deletedSlot.AppointmentCalendar.Id}";
                     context.Response.Cookies.Append("error", "Can't delete a reserved slot");
                     return Results.BadRequest("Can't delete a reserved slot");
                 }
                 await _appointmentRepository.DeleteAppointmentSlotAsync(id);
-                context.Response.Headers["HX-Redirect"] = $"/Appointment/UpcomingAppointments/{deletedSlot.AppointmentCalendar.Id}";
+                context.Response.Headers["HX-Redirect"] = $"/upcoming-appointments/{deletedSlot.AppointmentCalendar.Id}";
                 context.Response.Cookies.Append("success", "Slot deleted successfully");
                 return Results.Ok();
             }
@@ -88,6 +88,13 @@ public static class AppointmentEndpoints
             try
             {
                 await _antiforgery.ValidateRequestAsync(context);
+                AppointmentReschedule reschedule = await _appointmentRepository.GetRescheduleByIdAsync(id);
+                if(reschedule is not null)
+                {
+                    context.Response.Headers["HX-Redirect"] = $"/user-dashboard/{id}";
+                    context.Response.Cookies.Append("check", "Check notifications before taking this action");
+                    return Results.BadRequest("Check notifications before taking this action");
+                }
                 AppointmentDetails cancelledAppointment = await _appointmentRepository.GetAppointmentDetailsByIdAsync(id);
                 await _appointmentRepository.CancelAppointmentAsync(cancelledAppointment);
                 context.Response.Headers["HX-Redirect"] = "/event-cancellation";
@@ -117,13 +124,15 @@ public static class AppointmentEndpoints
             {
                 await _antiforgery.ValidateRequestAsync(context);
                 AppointmentDetails finishedAppointment = await _appointmentRepository.FinishAppointment(id);
-                context.Response.Headers["HX-Redirect"] = $"/Appointment/UpcomingAppointments/{finishedAppointment.Slot.AppointmentCalendar.Id}";
+                context.Response.Headers["HX-Redirect"] = $"/upcoming-appointments/{finishedAppointment.Slot.AppointmentCalendar.Id}";
                 context.Response.Cookies.Append("success", "appointment finished successfully");
                 return Results.Ok();
             }
             catch (Exception e)
             {
-                context.Response.Cookies.Append("error", "error in finishing appointment, try again");
+                context.Response.Cookies.Append("check", "error in finishing appointment, try again");
+                AppointmentDetails finishedAppointment = await _appointmentRepository.FinishAppointment(id);
+                context.Response.Headers["HX-Redirect"] = $"/upcoming-appointments/{finishedAppointment.Slot.AppointmentCalendar.Id}";
                 return Results.BadRequest(e.Message);
             }
         });
@@ -157,6 +166,17 @@ public static class AppointmentEndpoints
             try
             {
                 await _antiforgery.ValidateRequestAsync(context);
+                AppointmentReschedule reschedule = await _appointmentRepository.GetRequestByIdAsync(id);
+                if(reschedule is null)
+                {
+                    return Results.NotFound();
+                }
+                if(reschedule.RescheduleStatus == RescheduleState.Pending)
+                {
+                    await _appointmentRepository.DeclineRescheduling(id);
+                    await _appointmentRepository.DeleteRequest(id);
+                    return Results.Ok();
+                }
                 await _appointmentRepository.DeleteRequest(id);
                 return Results.Ok();
             }

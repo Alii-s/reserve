@@ -20,12 +20,12 @@ public class CreateCalendarModel : PageModel
     {
         if(string.IsNullOrEmpty(Id))
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         NewAppointmentCalendar = await _appointmentRepository.GetByIdAsync(Id);
         if(NewAppointmentCalendar is null)
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         return Page();
     }

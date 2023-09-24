@@ -21,12 +21,12 @@ public class UserDetailsModel : PageModel
     {
         if(string.IsNullOrEmpty(Id))
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         AppointmentDetails = await _appointmentRepository.GetAppointmentDetailsByIdAsync(Id);
         if(AppointmentDetails is null)
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         FreeSlots = await _appointmentRepository.GetFreeSlotsOfCalendarByIdAsync(AppointmentDetails);
         return Page();

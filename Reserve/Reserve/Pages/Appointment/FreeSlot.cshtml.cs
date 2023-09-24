@@ -19,12 +19,12 @@ public class FreeSlotModel : PageModel
     {
         if(string.IsNullOrEmpty(Id))
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         FreeSlot = await _appointmentRepository.GetSlotByIdAsync(Id);
         if(FreeSlot is null)
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         return Page();
 
