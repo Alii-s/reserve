@@ -1,4 +1,5 @@
 ﻿@page "/event-details/{id}"
+@using Reserve.Helpers;
 @model Reserve.Pages.Event.EventDetailsModel
 
 
@@ -13,7 +14,7 @@
                     <div class="justify-content-end">
                         @if (Model.DetailedEvent.Opened && Model.DetailedEvent.CurrentCapacity < Model.DetailedEvent.MaximumCapacity)
                         {
-                            <a href="@Url.Page("ReserveEvent", new {id = Model.DetailedEvent.Id})" class="btn btn-custom reserve-red-button">Reserve Now!</a>
+                            <a href="@Url.Page("ReserveEvent", new {id = GuidShortener.ShortenGuid(Model.DetailedEvent.Id)})" class="btn btn-custom reserve-red-button">Reserve Now!</a>
                         }
                         else
                         {

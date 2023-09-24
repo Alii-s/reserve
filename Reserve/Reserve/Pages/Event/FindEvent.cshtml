@@ -1,4 +1,5 @@
 ﻿@page "/find-event"
+@using Reserve.Helpers;
 @model Reserve.Pages.Event.FindEventModel
 
 <div class="container d-flex justify-content-evenly mb-5 w-100 mt-5 find-event-top">
@@ -20,7 +21,7 @@
                 <div class="card card-find-event m-3" style="width: 18rem;">
                     <img style="height:190px!important;" src="@casualEvent.ImageUrl" class="card-img-top" alt="eventImage">
                     <div class="card-body">
-                        <a href="/Event/EventDetails/@casualEvent.Id" class="card-title">@casualEvent.Title</a>
+                        <a href="/event-details/@GuidShortener.ShortenGuid(casualEvent.Id)" class="card-title">@casualEvent.Title</a>
                         <p class="card-text card-find-event-date">@casualEvent.StartDate.ToLongDateString() @casualEvent.StartDate.ToShortTimeString()</p>
                         <p class="card-find-event-location">@casualEvent.Location</p>
                     </div>

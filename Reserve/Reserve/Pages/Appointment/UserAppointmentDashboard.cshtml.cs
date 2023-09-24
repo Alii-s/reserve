@@ -34,7 +34,6 @@ public class UserAppointmentDashboardModel : PageModel
             return RedirectToPage("/Appointment/AppointmentError");
         }
         FreeSlots = availableSlots.Select(x => x.StartTime).ToList();
-        AppointmentReschedules = await _appointmentRepository.GetReschedulesByIdAsync(Id);
         return Page();
     }
     public async Task<IActionResult> OnPost()
@@ -50,29 +49,29 @@ public class UserAppointmentDashboardModel : PageModel
             return RedirectToPage("/Appointment/AppointmentError");
         }
     }
-    public async Task<IActionResult> OnPostAcceptRescheduleAsync(Guid rescheduleId)
-    {
-        AppointmentReschedules = await _appointmentRepository.GetReschedulesByIdAsync(Id);
-        AppointmentDetails = await _appointmentRepository.GetAppointmentDetailsByIdAsync(Id);
-        var rescheduleToAccept = AppointmentReschedules.FirstOrDefault(r => r.Id == rescheduleId);
-        await _appointmentRepository.Reschedule(AppointmentDetails, rescheduleToAccept.RequestedTime.StartTime);
-        await _appointmentRepository.DeleteAppointmentReschedule(rescheduleId.ToString());
-        return RedirectToPage("/Appointment/UserAppointmentDashboard", new { id = Id });
-    }
+    //public async Task<IActionResult> OnPostAcceptRescheduleAsync(Guid rescheduleId)
+    //{
+    //    AppointmentReschedules = await _appointmentRepository.GetRescheduleByIdAsync(Id);
+    //    AppointmentDetails = await _appointmentRepository.GetAppointmentDetailsByIdAsync(Id);
+    //    var rescheduleToAccept = AppointmentReschedules.FirstOrDefault(r => r.Id == rescheduleId);
+    //    await _appointmentRepository.Reschedule(AppointmentDetails, rescheduleToAccept.RequestedTime.StartTime);
+    //    await _appointmentRepository.DeleteAppointmentReschedule(rescheduleId.ToString());
+    //    return RedirectToPage("/Appointment/UserAppointmentDashboard", new { id = Id });
+    //}
 
-    public async Task<IActionResult> OnPostRejectRescheduleAsync(Guid rescheduleId)
-    {
-        AppointmentReschedules = await _appointmentRepository.GetReschedulesByIdAsync(Id);
-        var rescheduleToReject = AppointmentReschedules.FirstOrDefault(r => r.Id == rescheduleId);
+    //public async Task<IActionResult> OnPostRejectRescheduleAsync(Guid rescheduleId)
+    //{
+    //    AppointmentReschedules = await _appointmentRepository.GetRescheduleByIdAsync(Id);
+    //    var rescheduleToReject = AppointmentReschedules.FirstOrDefault(r => r.Id == rescheduleId);
 
-        if (rescheduleToReject != null)
-        {
-            AppointmentReschedules.Remove(rescheduleToReject);
-            await _appointmentRepository.DeleteAppointmentReschedule(rescheduleId.ToString());
-        }
+    //    if (rescheduleToReject != null)
+    //    {
+    //        AppointmentReschedules.Remove(rescheduleToReject);
+    //        await _appointmentRepository.DeleteAppointmentReschedule(rescheduleId.ToString());
+    //    }
 
-        return RedirectToPage("/Appointment/UserAppointmentDashboard", new { id = Id });
-    }
+    //    return RedirectToPage("/Appointment/UserAppointmentDashboard", new { id = Id });
+    //}
 
 
 }

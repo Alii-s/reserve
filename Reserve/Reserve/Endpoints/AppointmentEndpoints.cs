@@ -90,7 +90,7 @@ public static class AppointmentEndpoints
                 await _antiforgery.ValidateRequestAsync(context);
                 AppointmentDetails cancelledAppointment = await _appointmentRepository.GetAppointmentDetailsByIdAsync(id);
                 await _appointmentRepository.CancelAppointmentAsync(cancelledAppointment);
-                context.Response.Headers["HX-Redirect"] = "/Event/CancelNotification";
+                context.Response.Headers["HX-Redirect"] = "/event-cancellation";
                 return Results.Ok();
             }
             catch (Exception e)
@@ -151,6 +151,31 @@ public static class AppointmentEndpoints
                 return Results.BadRequest(e.Message);
             }
             
+        });
+        group.MapDelete("delete-request/{id}", async (string id, HttpContext context, IAntiforgery _antiforgery, IAppointmentRepository _appointmentRepository) =>
+        {
+            try
+            {
+                await _antiforgery.ValidateRequestAsync(context);
+                await _appointmentRepository.DeleteRequest(id);
+                return Results.Ok();
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        });
+        group.MapGet("get-pending-slots", async (IAppointmentRepository _appointmentRepository) =>
+        {
+            try
+            {
+                List<Availability> pendingSlots = await _appointmentRepository.GetPendingSlots();
+                return Results.Ok(pendingSlots);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
         });
         return group;
     }

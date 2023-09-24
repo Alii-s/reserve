@@ -11,5 +11,11 @@ public class AppointmentReschedule
     public Guid Id { get; set; }
     public AppointmentDetails OriginalAppointment { get; set; }
     public Availability RequestedTime { get; set; }
-    public bool IsAccepted { get; set; }
+    public RescheduleState RescheduleStatus { get; set; }
+}
+
+public enum RescheduleState{
+    Pending,
+    Accepted,
+    Declined
 }

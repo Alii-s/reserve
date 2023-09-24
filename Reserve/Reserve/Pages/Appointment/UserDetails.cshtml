@@ -22,6 +22,37 @@
     </div>
 </div>
 
+<div class="modal fade" id="rescheduleAppointment" tabindex="-1" aria-labelledby="rescheduleAppointmentLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post">
+                <div class="d-flex flex-column align-items-center m-3">
+                    <h1 class="modal-title fs-5 notification-title d-flex justify-content-center m-3" id="closeAppointmentLabel">Reschedule Appointment!</h1>
+                    <div class="container d-flex justify-content-center mb-5">
+                        <div class="notification-border d-flex justify-content-center">
+                            <p class="notification-text p-3">Choose a free slot for rescheduling!</p>
+                        </div>
+                    </div>
+                    <div class="container form-group d-flex justify-content-evenly">
+                        <label class="d-flex align-items-center" asp-for="SelectedSlot">New Date</label>
+                        @Html.DropDownListFor(model => model.SelectedSlot, new SelectList(Model.FreeSlots.Select(item => new SelectListItem
+                        {
+                            Text = item.StartTime.ToString("dd/MM/yyyy HH:mm") + " - " + item.EndTime.ToString("dd/MM/yyyy HH:mm"),
+                            Value = item.Id.ToString()
+                        }), "Value", "Text"), new {@class = "form-control w-50"})
+                    </div>
+                </div>
+                <div class="modal-footer mb-3 d-flex justify-content-around border-0">
+                    <button type="submit" class="btn reserve-red-button" data-bs-dismiss="modal">Reschedule</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">Back</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <div class="d-flex flex-column justify-content-center align-items-center align-items-center">
     <div class="notification-border d-flex flex-column align-items-center align-content-center">

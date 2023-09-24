@@ -1,6 +1,6 @@
 ﻿@page "{id}"
 @model Reserve.Pages.Appointment.AppointerNotificationsModel
-
+@using Reserve.Core.Features.Appointment
 @Html.AntiForgeryToken()
 <style>
     tr.htmx-swapping td {
@@ -9,7 +9,7 @@
     }
 </style>
 <h1 class="notification-title mb-lg-5">Your Notifications!</h1>
-<div class="table-responsive">
+<div class="table-responsive mb-5">
     <table class="table mb-lg-5">
         <thead class="table-light">
             <tr>
@@ -34,5 +34,37 @@
                 </tr>
             }
         </tbody>
+    </table>
+</div>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Old Slot Date</th>
+                <th>New Slot Date</th>
+                <th>Rescheduling status</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+            <tbody id="table-request-body">
+                @foreach (var reschedule in Model.RescheduleRequests)
+                {
+                    <tr>
+                        <td>@reschedule.OriginalAppointment.ReserverEmail</td>
+                        <td>@reschedule.OriginalAppointment.ReserverPhoneNumber</td>
+                        <td>@reschedule.OriginalAppointment.ReserverPhoneNumber</td>
+                        <td>@reschedule.OriginalAppointment.Slot.StartTime.ToShortDateString() - @reschedule.OriginalAppointment.Slot.StartTime.ToShortTimeString()</td>
+                        <td>@reschedule.RequestedTime.StartTime.ToShortDateString() - @reschedule.RequestedTime.StartTime.ToShortTimeString()</td>
+                        <td>@reschedule.RescheduleStatus</td>
+                    <td>
+                    <td><button hx-delete="/delete-request/@reschedule.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' hx-target="closest tr" hx-swap="outerHTML swap:1s" class="btn reserve-red-button">Dismiss Notification</button></td>
+                </tr>
+                }
+            </tbody>
     </table>
 </div>

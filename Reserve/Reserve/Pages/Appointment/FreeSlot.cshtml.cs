@@ -30,19 +30,4 @@ public class FreeSlotModel : PageModel
 
     }
 
-    public async Task<IActionResult> OnPost()
-    { //there has to be a better way to do this
-        AvailabilitySlots = await _appointmentRepository.GetSlotsFromCalendarIdAsync(Id);
-        OpenSlots = await _appointmentRepository.GetOpenSlotsAsync(Id);
-        AppointmentDetails appointmentDetails = await _appointmentRepository.GetAppointmentDetailsByAvailabilityId(AvailabilitySlots[SelectedSlotIndex].Id.ToString());
-        Availability RequestedAppointment = OpenSlots.FirstOrDefault(slot => slot.StartTime.Date == SelectedDate.Date);
-        AppointmentReschedule appointmentReschedule = new AppointmentReschedule
-        {
-            IsAccepted = false,
-            OriginalAppointment = appointmentDetails,
-            RequestedTime = RequestedAppointment
-        };
-        await _appointmentRepository.CreateAppointmentReschedule(appointmentReschedule);
-        return RedirectToPage("EditSlots", new {id = Id});
-    }
 }

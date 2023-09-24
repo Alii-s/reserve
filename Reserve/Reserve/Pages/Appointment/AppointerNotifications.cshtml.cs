@@ -10,6 +10,7 @@ public class AppointerNotificationsModel : PageModel
     public string Id { get; set; }
     private readonly IAppointmentRepository _appointmentRepository;
     public List<AppointerNotifications> AppointerNotifications { get; set; }
+    public List<AppointmentReschedule> RescheduleRequests { get; set; } = new();
     public AppointerNotificationsModel(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
@@ -25,6 +26,7 @@ public class AppointerNotificationsModel : PageModel
         {
             return RedirectToPage("/Appointment/AppointmentError");
         }
+        RescheduleRequests = await _appointmentRepository.GetAllRequestsForCalendar(Id);
         return Page();
     }
 }

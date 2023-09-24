@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Event;
+using Reserve.Helpers;
 
 namespace Reserve.Pages.Event;
 
@@ -14,7 +15,7 @@ public class EventDetailsModel : PageModel
     }
     public async Task<IActionResult> OnGet(string id)
     {
-        CasualEvent? detailedEvent = await _eventRepository.GetByIdAsync(id);
+        CasualEvent? detailedEvent = await _eventRepository.GetByIdAsync(GuidShortener.RestoreGuid(id).ToString());
         if(detailedEvent is null)
         {
             return RedirectToPage("EventError");
