@@ -29,5 +29,4 @@ public class FreeSlotModel : PageModel
         return Page();
 
     }
-
 }
