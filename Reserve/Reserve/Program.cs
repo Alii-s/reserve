@@ -17,11 +17,7 @@ builder.Services.AddRazorPages().AddMvcOptions(options =>
     options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
                _ => "This field is required.");
 });
-IConfiguration configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .Build();
-
-var connectionString = configuration.GetConnectionString("EdgeDB");
+var connectionString = builder.Configuration.GetConnectionString("EdgeDB");
 var connection = EdgeDBConnection.Parse(null, connectionString);
 builder.Services.AddEdgeDB(connection, config =>
 {
