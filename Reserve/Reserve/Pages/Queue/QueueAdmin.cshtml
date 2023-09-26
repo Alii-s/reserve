@@ -109,7 +109,7 @@
 <script>
     function markAsReserved(queueNumber) {
         $.ajax({
-            url: "/Queue/QueueAdmin?handler=MarkAsReserved",
+            url: "/q-admin/${@Model.Id}?handler=MarkAsReserved",
             type: "POST",
             data: {
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
@@ -121,7 +121,7 @@
                     console.log(result.html);
                     $("tbody").html(result.html);
                 } else {
-                    console.error("Failed to mark attendee as reserved.");
+                    console.error("Failed to mark attendee as reserved. Error message: " + result.error); // Log the error message
                 }
             },
             error: function (xhr, textStatus, errorThrown) {
@@ -132,6 +132,7 @@
             }
         });
     }
+
 
     function confirmMarkAsReserved(queueNumber) {
         $('#confirmationModal').modal('show');
@@ -146,7 +147,7 @@
     function resetQueue(event) {
         event.preventDefault();
         $.ajax({
-            url: "/Queue/QueueAdmin?handler=Reset",
+            url: "/q-admin/${@Model.Id}?handler=Reset",
             type: "POST",
             data: {
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
@@ -172,7 +173,7 @@
 
     function fetchNewData() {
         $.ajax({
-            url: "/Queue/QueueAdmin?handler=FetchNewData",
+            url: "/q-admin/${@Model.Id}?handler=FetchNewData",
             type: "POST",
             data: {
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
