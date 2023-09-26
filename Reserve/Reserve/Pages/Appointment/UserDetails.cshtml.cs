@@ -29,6 +29,11 @@ public class UserDetailsModel : PageModel
             return RedirectToPage("AppointmentError");
         }
         FreeSlots = await _appointmentRepository.GetFreeSlotsOfCalendarByIdAsync(AppointmentDetails);
+        if (HttpContext.Request.Cookies["error"] is not null)
+        {
+            TempData["error"] = HttpContext.Request.Cookies["error"];
+            HttpContext.Response.Cookies.Delete("error");
+        }
         return Page();
     }
     public async Task<IActionResult> OnPost()
@@ -36,6 +41,12 @@ public class UserDetailsModel : PageModel
         try
         {
             AppointmentDetails = await _appointmentRepository.GetAppointmentDetailsByIdAsync(Id);
+            var result = await _appointmentRepository.GetRescheduleByIdAsync(Id);
+            if(result is not null)
+            {
+                TempData["error"] = "You have already requested to reschedule this appointment.";
+                return RedirectToPage("UserDetails", new {id = Id });
+            }
             await _appointmentRepository.CreateAppointmentReschedule(new AppointmentReschedule
             {
                 OriginalAppointment = AppointmentDetails,

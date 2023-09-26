@@ -123,6 +123,13 @@ public static class AppointmentEndpoints
             try
             {
                 await _antiforgery.ValidateRequestAsync(context);
+                var result = await _appointmentRepository.GetRescheduleByIdAsync(id);
+                if(result is not null)
+                {
+                    context.Response.Cookies.Append("error", "please wait for rescheduled requests to be resolved or delete them");
+                    context.Response.Headers["HX-Redirect"] = $"/user-details/{id}";
+                    return Results.BadRequest("please wait for rescheduled requests to be resolved or delete them");
+                }
                 AppointmentDetails finishedAppointment = await _appointmentRepository.FinishAppointment(id);
                 context.Response.Headers["HX-Redirect"] = $"/upcoming-appointments/{finishedAppointment.Slot.AppointmentCalendar.Id}";
                 context.Response.Cookies.Append("success", "appointment finished successfully");
@@ -131,8 +138,7 @@ public static class AppointmentEndpoints
             catch (Exception e)
             {
                 context.Response.Cookies.Append("check", "error in finishing appointment, try again");
-                AppointmentDetails finishedAppointment = await _appointmentRepository.FinishAppointment(id);
-                context.Response.Headers["HX-Redirect"] = $"/upcoming-appointments/{finishedAppointment.Slot.AppointmentCalendar.Id}";
+                context.Response.Headers["HX-Redirect"] = $"/user-details/{id}";
                 return Results.BadRequest(e.Message);
             }
         });
