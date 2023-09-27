@@ -98,7 +98,8 @@ public class AppointmentRepository : IAppointmentRepository
                                         email,
                                         description
                                     }   
-                                }
+                                },
+                                appointment_status
                             }
                         }
                         FILTER .original_appointment.id = <uuid>$id;";
@@ -377,7 +378,8 @@ public class AppointmentRepository : IAppointmentRepository
                                 select Availability
                                 filter .id = <uuid>$id
                                 limit 1
-                            )
+                            ),
+                            appointment_status := <AppointmentState>$status
                         }
                     )
                     Select Inserted{*};";
@@ -386,7 +388,8 @@ public class AppointmentRepository : IAppointmentRepository
                     {"name", appointmentDetails.ReserverName },
                     { "email", appointmentDetails.ReserverEmail },
                     { "reserver_phone_number", appointmentDetails.ReserverPhoneNumber },
-                    { "id", appointmentDetails.Slot.Id }
+                    { "id", appointmentDetails.Slot.Id },
+                    {"status", AppointmentState.Pending }
                 });
                 
             });
@@ -419,11 +422,13 @@ public class AppointmentRepository : IAppointmentRepository
                                     email,
                                     description
                                 }
-                            }
-                        } filter .slot.appointment_calendar.id = <uuid>$id and .slot.available = false;";
+                            },
+                            appointment_status
+                        } filter .slot.appointment_calendar.id = <uuid>$id and .slot.available = false and .appointment_status = <AppointmentState>$status;";
             return (await _client.QueryAsync<AppointmentDetails>(query, new Dictionary<string, object?>
             {
                 { "id", guidId },
+                {"status", AppointmentState.Pending }
             })).ToList();
         }
         catch (Exception e)
@@ -453,7 +458,8 @@ public class AppointmentRepository : IAppointmentRepository
                                 email,
                                 description
                             }
-                        }
+                        },
+                        appointment_status
                     } filter .id = <uuid>$id;";
             return await _client.QuerySingleAsync<AppointmentDetails>(query, new Dictionary<string, object?>
             {
@@ -664,54 +670,25 @@ public class AppointmentRepository : IAppointmentRepository
             Console.WriteLine(e.Message);
         }
     }
-    public async Task<AppointmentDetails> FinishAppointment(string id)
+    public async Task FinishAppointment(string id)
     {
         try
         {
             Guid guidId = Guid.Parse(id);
-            AppointmentDetails finishedAppointment = new();
-            await _client.TransactionAsync(async (tx) =>
+            var query = @"UPDATE AppointmentDetails
+                            FILTER .id = <uuid>$id
+                            SET {
+                                appointment_status := <AppointmentState>$status
+                            };";
+            await _client.ExecuteAsync(query, new Dictionary<string, object?>
             {
-                var query = @"WITH
-                                deleted_appointment := (
-                                    DELETE AppointmentDetails
-                                    FILTER .id = <uuid>$id
-                                )
-                                SELECT deleted_appointment { 
-                                    id,
-                                    reserver_name,
-                                    reserver_phone_number,
-                                    reserver_email,
-                                    slot: {
-                                        id,
-                                        start_time,
-                                        end_time,
-                                        available,
-                                        appointment_calendar: {
-                                            id,
-                                            name,
-                                            email,
-                                            description
-                                        }
-                                    }
-                                };";
-                finishedAppointment = await tx.QuerySingleAsync<AppointmentDetails>(query, new Dictionary<string, object?>
-                {
-                    {"id", guidId }
-                });
-                var query2 = @"DELETE Availability
-                                FILTER .id = <uuid>$slot_id;";
-                await tx.ExecuteAsync(query2, new Dictionary<string, object?>
-                {
-                    {"slot_id", finishedAppointment.Slot.Id }
-                });
+                {"id", guidId },
+                {"status", AppointmentState.Done }
             });
-            return finishedAppointment;
         }
         catch(Exception e)
         {
             Console.WriteLine(e.Message);
-            return null;
         }
     }
     public async Task<AppointmentCalendar> GetCalendarFromEmail(string email)
@@ -748,7 +725,8 @@ public class AppointmentRepository : IAppointmentRepository
                                     email,
                                     description
                                 }
-                            }
+                            },
+                            appointment_status
                         } filter .slot.appointment_calendar.id = <uuid>$id;";
             return (await _client.QueryAsync<AppointmentDetails>(query, new Dictionary<string, object?>
             {
@@ -829,7 +807,8 @@ public class AppointmentRepository : IAppointmentRepository
                                         email,
                                         description
                                     }   
-                                }
+                                },
+                                appointment_status
                             }
                         }
                       FILTER .id = <uuid>$id";
@@ -940,7 +919,8 @@ public class AppointmentRepository : IAppointmentRepository
                                         email,
                                         description
                                     }   
-                                }
+                                },
+                                appointment_status
                             }
                         }
                         FILTER .original_appointment.slot.appointment_calendar.id = <uuid>$id;";
@@ -964,9 +944,12 @@ public class AppointmentRepository : IAppointmentRepository
             {"id", Guid.Parse(id) }
         });
     }
-    public async Task<List<Availability>> GetPendingSlots()
+    public async Task<List<Availability>> GetPendingSlots(string id)
     {
-        var query = @"SELECT Availability {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"SELECT Availability {
                           start_time,
                           end_time,
                           available,
@@ -975,8 +958,17 @@ public class AppointmentRepository : IAppointmentRepository
                         FILTER .available = false AND NOT EXISTS (
                           SELECT AppointmentDetails.slot
                           FILTER .id = Availability.id
-                        );";
-        return (await _client.QueryAsync<Availability>(query)).ToList();
+                        ) AND .appointment_calendar.id = <uuid>$id;";
+            return (await _client.QueryAsync<Availability>(query, new Dictionary<string, object?>
+            {
+                {"id", guidId}
+            })).ToList();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
     }
     public async Task<AppointmentReschedule> GetRequestByIdAsync(string id)
     {
@@ -1014,7 +1006,8 @@ public class AppointmentRepository : IAppointmentRepository
                                         email,
                                         description
                                     }   
-                                }
+                                },
+                                appointment_status
                             }
                         }
                         FILTER .id = <uuid>$id;";
@@ -1022,6 +1015,42 @@ public class AppointmentRepository : IAppointmentRepository
             {
                 { "id", guidId }
             });
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return null;
+        }
+    }
+    public async Task<List<AppointmentDetails>> GetDoneAppointmentsByCalendarId(string id)
+    {
+        try
+        {
+            Guid guidId = Guid.Parse(id);
+            var query = @"select AppointmentDetails {
+                            id,
+                            reserver_name,
+                            reserver_phone_number,
+                            reserver_email,
+                            slot: {
+                                id,
+                                start_time,
+                                end_time,
+                                available,
+                                appointment_calendar: {
+                                    id,
+                                    name,
+                                    email,
+                                    description
+                                }
+                            },
+                            appointment_status
+                        } filter .slot.appointment_calendar.id = <uuid>$id and .appointment_status = <AppointmentState>$status;";
+            return (await _client.QueryAsync<AppointmentDetails>(query, new Dictionary<string, object?>
+            {
+                {"id", guidId },
+                {"status", AppointmentState.Done }
+            })).ToList();
         }
         catch(Exception e)
         {

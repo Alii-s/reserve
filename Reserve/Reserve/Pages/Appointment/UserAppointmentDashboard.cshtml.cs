@@ -44,6 +44,11 @@ public class UserAppointmentDashboardModel : PageModel
     public async Task<IActionResult> OnPost()
     {
         AppointmentDetails = await _appointmentRepository.GetAppointmentDetailsByIdAsync(Id);
+        if(AppointmentDetails.AppointmentStatus == AppointmentState.Done)
+        {
+            TempData["error"] = "This appointment has already been completed.";
+            return RedirectToPage("UserAppointmentDashboard", new {id = Id });
+        }
         AppointmentReschedule appointmentReschedule = await _appointmentRepository.GetRescheduleByIdAsync(Id);
         if (appointmentReschedule is not null)
         {

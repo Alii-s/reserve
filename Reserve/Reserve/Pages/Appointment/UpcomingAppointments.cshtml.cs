@@ -21,11 +21,6 @@ public class UpcomingAppointmentsModel : PageModel
         {
             return RedirectToPage("AppointmentError");
         }
-        Appointments = await _appointmentRepository.GetAppointmentDetailsForCalendarAsync(Id);
-        if(Appointments is null)
-        {
-            return RedirectToPage("AppointmentError");
-        }
         if (HttpContext.Request.Cookies["error"] is not null)
         {
             TempData["error"] = HttpContext.Request.Cookies["error"];
