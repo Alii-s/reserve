@@ -21,6 +21,10 @@ public class RescheduleDetailsModel : PageModel
     public async Task<IActionResult> OnPostDecline()
     {
         RescheduleDetails = await _appointmentRepository.GetRescheduleByIdAsync(Id);
+        if (RescheduleDetails is null)
+        {
+            return RedirectToPage("AppointmentError");
+        }
         await _appointmentRepository.DeclineRescheduling(RescheduleDetails.Id.ToString());
         TempData["reschedule-request"] = "Reschedule request recorded successfully";
         return RedirectToPage("UserAppointmentDashboard", new { id = Id });
@@ -28,6 +32,10 @@ public class RescheduleDetailsModel : PageModel
     public async Task<IActionResult> OnPostAccept()
     {
         RescheduleDetails = await _appointmentRepository.GetRescheduleByIdAsync(Id);
+        if(RescheduleDetails is null)
+        {
+            return RedirectToPage("AppointmentError");
+        }
         await _appointmentRepository.AcceptRescheduling(RescheduleDetails.Id.ToString());
         TempData["reschedule-request"] = "Reschedule request recorded successfully";
         return RedirectToPage("UserAppointmentDashboard", new { id = Id });
