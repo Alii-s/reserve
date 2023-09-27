@@ -58,7 +58,7 @@ body {
 
 .notification-title{
     font-family: 'Source Sans 3', sans-serif;
-    font-size: 2.2rem;
+    font-size: 2rem;
     display:flex;
     justify-content: center;
 }
@@ -98,6 +98,9 @@ body {
     .dashboard-items{
         margin-bottom: 20px!important;
         width:100%!important;
+    }
+    .attendees-button {
+        height: 150px!important;
     }
 }
 

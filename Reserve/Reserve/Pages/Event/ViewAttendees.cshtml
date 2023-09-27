@@ -26,7 +26,7 @@
 </div>
 
 <div class="d-flex justify-content-around">
-    <h1 class="event-title mb-lg-5 me-lg-auto">Attendees List</h1>
+    <h1 class="event-title d-flex justify-content-center mb-lg-5 me-lg-auto">Attendees List</h1>
     <div class="d-flex justify-content-end" id="reservation">
         @if (Model.Event.Opened is true)
         {
@@ -42,7 +42,7 @@
     <h2 class="notification-title m-3">@Model.Event!.Title</h2>
     <h3 class="notification-title m-3">Location: @Model.Event.Location</h3>
     <div class="d-flex w-25 justify-content-end">
-        <a href="@Url.Page("EditEvent", new {id = Model.Id})" style="height:40px!important;" class="btn reserve-blue-button m-3">Edit Event</a>
+        <a href="@Url.Page("EditEvent", new {id = Model.Id})" style="height:40px!important;" class="btn col-12 col-md-4 d-flex align-items-center justify-content-center reserve-blue-button m-3 attendees-button">Edit Event</a>
     </div>
 </div>
 <table class="table">
