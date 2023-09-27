@@ -26,7 +26,7 @@ public class ReserverDetailsModel : PageModel
         AvailabilitySlot = await _appointmentRepository.GetSlotByIdAsync(Id);
         if(AvailabilitySlot is null)
         {
-            return RedirectToPage("/appointment-error");
+            return RedirectToPage("AppointmentError");
         }
         return Page();
     }

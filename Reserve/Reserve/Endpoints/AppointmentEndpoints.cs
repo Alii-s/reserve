@@ -130,6 +130,12 @@ public static class AppointmentEndpoints
             {
                 await _antiforgery.ValidateRequestAsync(context);
                 AppointmentDetails appointmentToCheck = await _appointmentRepository.GetAppointmentDetailsByIdAsync(id);
+                if(appointmentToCheck is null)
+                {
+                    context.Response.Cookies.Append("error", "appointment not found");
+                    context.Response.Headers["HX-Redirect"] = $"/user-details/{id}";
+                    return Results.BadRequest("appointment not found");
+                }
                 if(appointmentToCheck.AppointmentStatus == AppointmentState.Done)
                 {
                     context.Response.Cookies.Append("error", "appointment already finished");
