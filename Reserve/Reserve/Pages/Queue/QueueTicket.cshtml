@@ -1,4 +1,4 @@
-﻿@page 
+﻿@page "/q-ticket/{QueueTicketId}/{QueueId}"
 @model Reserve.Pages.Queue.QueueTicketModel
 
 @if (string.IsNullOrEmpty(Model.QueueTicketView.Status))
@@ -38,7 +38,7 @@ else if (Model.QueueTicketView.Status == "served")
 
         <div class="card border rounded mt-4">
             <div class="card-body">
-                <h3 class="card-title text-center">Welcome to @Model.CurrentQueueView.Title, you were served in the queue</h3>
+                <h3 class="card-title text-center">Welcome to @Model.CurrentQueueView.Title, you were served in the queue!</h3>
                 <br />
                 <div class="text-center">
                     <p class="card-text" style="font-size: 2rem; font-weight: bold;">Your Number was: @Model.QueueTicketView.QueueNumber</p>
