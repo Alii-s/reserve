@@ -1,4 +1,5 @@
 ﻿@page "/reserver-details/{id}"
+@using Reserve.Helpers;
 @model Reserve.Pages.Event.ReserverDetailsModel
 
 @Html.AntiForgeryToken()
@@ -15,7 +16,7 @@
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-around border-0">
-                <button type="button" hx-delete="/cancel-reservation/@Model.Ticket.Id" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' class="btn reserve-red-button">Yes</button>
+                <button type="button" hx-delete="/cancel-reservation/@GuidShortener.ShortenGuid(Model.Ticket.Id)" hx-headers='js:{"X-CSRF-TOKEN": document.getElementsByName("__RequestVerificationToken")[0].value}' class="btn reserve-red-button">Yes</button>
                 <button type="button" data-bs-dismiss="modal" class="btn reserve-blue-button">No</button>
             </div>
         </div>

@@ -15,7 +15,7 @@ public class UpcomingAppointmentsModel : PageModel
     {
         _appointmentRepository = appointmentRepository;
     }
-    public async Task<IActionResult> OnGet()
+    public IActionResult OnGet()
     {
         if(string.IsNullOrEmpty(Id))
         {
