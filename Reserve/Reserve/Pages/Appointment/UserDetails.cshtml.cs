@@ -41,6 +41,11 @@ public class UserDetailsModel : PageModel
         try
         {
             AppointmentDetails = await _appointmentRepository.GetAppointmentDetailsByIdAsync(Id);
+            if(AppointmentDetails.AppointmentStatus == AppointmentState.Done)
+            {
+                TempData["error"] = "This appointment has already been completed.";
+                return RedirectToPage("UserDetails", new {id = Id });
+            }
             var result = await _appointmentRepository.GetRescheduleByIdAsync(Id);
             if(result is not null)
             {

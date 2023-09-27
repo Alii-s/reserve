@@ -96,6 +96,12 @@ public static class AppointmentEndpoints
                     return Results.BadRequest("Check notifications before taking this action");
                 }
                 AppointmentDetails cancelledAppointment = await _appointmentRepository.GetAppointmentDetailsByIdAsync(id);
+                if(cancelledAppointment.AppointmentStatus == AppointmentState.Done)
+                {
+                    context.Response.Headers["HX-Redirect"] = $"/user-dashboard/{id}";
+                    context.Response.Cookies.Append("error", "appointment already finished");
+                    return Results.BadRequest("appointment already finished");
+                }
                 await _appointmentRepository.CancelAppointmentAsync(cancelledAppointment);
                 context.Response.Headers["HX-Redirect"] = "/event-cancellation";
                 return Results.Ok();
@@ -118,11 +124,18 @@ public static class AppointmentEndpoints
                 return Results.BadRequest(e.Message);
             }
         });
-        group.MapDelete("finish-appointment/{id}", async (string id, HttpContext context, IAntiforgery _antiforgery, IAppointmentRepository _appointmentRepository) =>
+        group.MapPut("finish-appointment/{id}", async (string id, HttpContext context, IAntiforgery _antiforgery, IAppointmentRepository _appointmentRepository) =>
         {
             try
             {
                 await _antiforgery.ValidateRequestAsync(context);
+                AppointmentDetails appointmentToCheck = await _appointmentRepository.GetAppointmentDetailsByIdAsync(id);
+                if(appointmentToCheck.AppointmentStatus == AppointmentState.Done)
+                {
+                    context.Response.Cookies.Append("error", "appointment already finished");
+                    context.Response.Headers["HX-Redirect"] = $"/user-details/{id}";
+                    return Results.BadRequest("appointment already finished");
+                }
                 var result = await _appointmentRepository.GetRescheduleByIdAsync(id);
                 if(result is not null)
                 {
@@ -130,7 +143,8 @@ public static class AppointmentEndpoints
                     context.Response.Headers["HX-Redirect"] = $"/user-details/{id}";
                     return Results.BadRequest("please wait for rescheduled requests to be resolved or delete them");
                 }
-                AppointmentDetails finishedAppointment = await _appointmentRepository.FinishAppointment(id);
+                await _appointmentRepository.FinishAppointment(id);
+                AppointmentDetails finishedAppointment = await _appointmentRepository.GetAppointmentDetailsByIdAsync(id);
                 context.Response.Headers["HX-Redirect"] = $"/upcoming-appointments/{finishedAppointment.Slot.AppointmentCalendar.Id}";
                 context.Response.Cookies.Append("success", "appointment finished successfully");
                 return Results.Ok();
@@ -191,12 +205,24 @@ public static class AppointmentEndpoints
                 return Results.BadRequest(e.Message);
             }
         });
-        group.MapGet("get-pending-slots", async (IAppointmentRepository _appointmentRepository) =>
+        group.MapGet("get-pending-slots/{id}", async (string id, IAppointmentRepository _appointmentRepository) =>
         {
             try
             {
-                List<Availability> pendingSlots = await _appointmentRepository.GetPendingSlots();
+                List<Availability> pendingSlots = await _appointmentRepository.GetPendingSlots(id);
                 return Results.Ok(pendingSlots);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        });
+        group.MapGet("get-done-appointments/{id}", async (string id, IAppointmentRepository _appointmentRepository) =>
+        {
+            try
+            {
+                List<AppointmentDetails> doneAppointments = await _appointmentRepository.GetDoneAppointmentsByCalendarId(id);
+                return Results.Ok(doneAppointments);
             }
             catch (Exception e)
             {

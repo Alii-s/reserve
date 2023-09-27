@@ -1,5 +1,6 @@
 module default {
     scalar type RescheduleState extending enum<Pending, Accepted, Declined>;
+    scalar type AppointmentState extending enum<Pending, Done>;
     type CasualEvent{
         required title: str;
         required organizer_name: str;
@@ -37,6 +38,7 @@ module default {
         required slot: Availability{
             on target delete delete source;
         }
+        required appointment_status: AppointmentState;
     }
     type QueueEvent{
         required title: str;

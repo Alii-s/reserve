@@ -140,7 +140,8 @@
         } else {
             console.error(`API request failed with status code: ${freeSlots.status}`);
         }
-        var pendingSlots = await fetch("/get-pending-slots");
+
+        var pendingSlots = await fetch("/get-pending-slots/@Model.Id");
         if(pendingSlots.status === 200) {
             var data = await pendingSlots.json();
             data.forEach(slot => {
@@ -157,6 +158,27 @@
         } else {
             console.error(`API request failed with status code: ${pendingSlots.status}`);
         }
+
+        var doneSlots = await fetch("/get-done-appointments/@Model.Id");
+        if (doneSlots.status === 200) {
+            var data = await doneSlots.json();
+            console.log(data);
+            data.forEach(appointment => {
+                appointmentsArg.push({
+                    id: appointment.id,
+                    title: appointment.reserverName,
+                    start: appointment.slot.startTime,
+                    end: appointment.slot.endTime,
+                    backgroundColor: "#006400",
+                    textColor: "#ffffff",
+                    borderColor: "#006400",
+                    url: "/user-details/" + appointment.id
+                });
+            });
+        } else {
+            console.error(`API request failed with status code: ${doneSlots.status}`);
+        }
+
         var calendarEl = document.getElementById('calendar');
         calendar = new FullCalendar.Calendar(calendarEl, {
             height: "auto",

@@ -24,7 +24,7 @@ public interface IAppointmentRepository
     Task DeleteNotification(string id);
     Task<List<Availability>> GetFreeSlotsOfCalendarByIdAsync(AppointmentDetails appointment);
     Task Reschedule(AppointmentDetails appointment, DateTime newSlot);
-    Task<AppointmentDetails> FinishAppointment(string id);
+    Task FinishAppointment(string id);
     Task<AppointmentReschedule> GetRescheduleByIdAsync(string id);
     Task<AppointmentDetails> GetAppointmentDetailsByAvailabilityId(string id);
     Task CreateAppointmentReschedule(AppointmentReschedule appointmentReschedule);
@@ -36,6 +36,7 @@ public interface IAppointmentRepository
     Task AcceptRescheduling(string id);
     Task<List<AppointmentReschedule>> GetAllRequestsForCalendar(string id);
     Task DeleteRequest(string id);
-    Task<List<Availability>> GetPendingSlots();
+    Task<List<Availability>> GetPendingSlots(string id);
     Task<AppointmentReschedule> GetRequestByIdAsync(string id);
+    Task<List<AppointmentDetails>> GetDoneAppointmentsByCalendarId(string id);
 }

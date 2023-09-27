@@ -17,6 +17,12 @@ public class AppointmentDetails
     public string ReserverEmail { get; set; }
     public string ReserverPhoneNumber { get; set; }
     public Availability Slot { get; set; }
+    public AppointmentState AppointmentStatus { get; set; }
+}
+public enum AppointmentState
+{
+    Pending,
+    Done
 }
 
 public class AppointmentDetailsValidator: AbstractValidator<AppointmentDetails>
