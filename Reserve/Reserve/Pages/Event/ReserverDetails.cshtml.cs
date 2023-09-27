@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Event;
+using Reserve.Helpers;
 
 namespace Reserve.Pages.Event;
 [BindProperties]
@@ -16,7 +17,7 @@ public class ReserverDetailsModel : PageModel
     }
     public async Task<IActionResult> OnGet()
     {
-        CasualTicket? ticket = await _eventRepository.GetTicketByIdAsync(Id!);
+        CasualTicket? ticket = await _eventRepository.GetTicketByIdAsync(GuidShortener.RestoreGuid(Id!).ToString());
         if(ticket is null)
         {
             return RedirectToPage("EventError");

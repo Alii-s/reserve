@@ -21,58 +21,45 @@ public class UserAppointmentDashboardModel : PageModel
     {
         if (string.IsNullOrEmpty(Id))
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         AppointmentDetails = await _appointmentRepository.GetAppointmentDetailsByIdAsync(Id);
         if (AppointmentDetails is null)
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
+        }
+        if (HttpContext.Request.Cookies["check"] is not null)
+        {
+            TempData["check"] = HttpContext.Request.Cookies["check"];
+            HttpContext.Response.Cookies.Delete("check");
         }
         List<Availability> availableSlots = await _appointmentRepository.GetFreeSlotsOfCalendarByIdAsync(AppointmentDetails);
         if(availableSlots is null)
         {
-            return RedirectToPage("/Appointment/AppointmentError");
+            return RedirectToPage("AppointmentError");
         }
         FreeSlots = availableSlots.Select(x => x.StartTime).ToList();
-        AppointmentReschedules = await _appointmentRepository.GetReschedulesByIdAsync(Id);
         return Page();
     }
     public async Task<IActionResult> OnPost()
     {
-        try
-        {
-            AppointmentDetails = await _appointmentRepository.GetAppointmentDetailsByIdAsync(Id);
-            await _appointmentRepository.Reschedule(AppointmentDetails, SelectedDate);
-            return RedirectToPage("/Appointment/AppointmentRescheduleNotification");
-        }
-        catch (Exception)
-        {
-            return RedirectToPage("/Appointment/AppointmentError");
-        }
-    }
-    public async Task<IActionResult> OnPostAcceptRescheduleAsync(Guid rescheduleId)
-    {
-        AppointmentReschedules = await _appointmentRepository.GetReschedulesByIdAsync(Id);
         AppointmentDetails = await _appointmentRepository.GetAppointmentDetailsByIdAsync(Id);
-        var rescheduleToAccept = AppointmentReschedules.FirstOrDefault(r => r.Id == rescheduleId);
-        await _appointmentRepository.Reschedule(AppointmentDetails, rescheduleToAccept.RequestedTime.StartTime);
-        await _appointmentRepository.DeleteAppointmentReschedule(rescheduleId.ToString());
-        return RedirectToPage("/Appointment/UserAppointmentDashboard", new { id = Id });
-    }
-
-    public async Task<IActionResult> OnPostRejectRescheduleAsync(Guid rescheduleId)
-    {
-        AppointmentReschedules = await _appointmentRepository.GetReschedulesByIdAsync(Id);
-        var rescheduleToReject = AppointmentReschedules.FirstOrDefault(r => r.Id == rescheduleId);
-
-        if (rescheduleToReject != null)
+        if(AppointmentDetails.AppointmentStatus == AppointmentState.Done)
         {
-            AppointmentReschedules.Remove(rescheduleToReject);
-            await _appointmentRepository.DeleteAppointmentReschedule(rescheduleId.ToString());
+            TempData["error"] = "This appointment has already been completed.";
+            return RedirectToPage("UserAppointmentDashboard", new {id = Id });
         }
-
-        return RedirectToPage("/Appointment/UserAppointmentDashboard", new { id = Id });
+        AppointmentReschedule appointmentReschedule = await _appointmentRepository.GetRescheduleByIdAsync(Id);
+        if (appointmentReschedule is not null)
+        {
+            TempData["check"] = "Please check notifications before making this action";
+            return RedirectToPage("UserAppointmentDashboard", new { id = Id });
+        }
+        if(AppointmentDetails is null)
+        {
+            return RedirectToPage("AppointmentError");
+        }
+        await _appointmentRepository.Reschedule(AppointmentDetails, SelectedDate);
+        return RedirectToPage("AppointmentRescheduleNotification", new {id = Id });
     }
-
-
 }

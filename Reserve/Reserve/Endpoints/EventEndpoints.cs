@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Reserve.Core.Features.Event;
+using Reserve.Helpers;
 namespace Reserve.Endpoints;
 
 public static class EventEndpoints
@@ -13,7 +14,7 @@ public static class EventEndpoints
             try
             {
                 await antiforgery.ValidateRequestAsync(context);
-                await _eventRepository.CloseReservationAsync(id);
+                await _eventRepository.CloseReservationAsync(GuidShortener.RestoreGuid(id).ToString());
                 var html = @"<p class=""notification-text m-3"">Reservation closed!</p>";
                 return Results.Content(html, "text/html");
             }
@@ -27,12 +28,12 @@ public static class EventEndpoints
             try
             {
                 await antiforgery.ValidateRequestAsync(context);
-                CasualTicket? casualTicket = await _eventRepository.GetTicketByIdAsync(id);
+                CasualTicket? casualTicket = await _eventRepository.GetTicketByIdAsync(GuidShortener.RestoreGuid(id).ToString());
                 ArgumentNullException.ThrowIfNull(casualTicket);
                 ArgumentNullException.ThrowIfNull(casualTicket.CasualEvent);
-                Guid guidTicketId = Guid.Parse(id);
+                Guid guidTicketId = GuidShortener.RestoreGuid(id);
                 await _eventRepository.CancelReservationAsync(guidTicketId, casualTicket.CasualEvent.Id);
-                context.Response.Headers["HX-Redirect"] = "/Event/CancelNotification";
+                context.Response.Headers["HX-Redirect"] = "/event-cancellation";
                 return Results.Ok();
             }
             catch (Exception e)

@@ -7,6 +7,7 @@ using Reserve.Core.Features.MailService;
 using Reserve.Endpoints;
 using Reserve.Helpers;
 using Reserve.Core.Features.Appointment;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,9 @@ builder.Services.AddRazorPages().AddMvcOptions(options =>
     options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
                _ => "This field is required.");
 });
-builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("reserve"), config =>
+var connectionString = builder.Configuration.GetConnectionString("EdgeDB");
+var connection = EdgeDBConnection.Parse(null, connectionString);
+builder.Services.AddEdgeDB(connection, config =>
 {
     config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
 });

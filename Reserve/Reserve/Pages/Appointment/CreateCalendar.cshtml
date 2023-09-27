@@ -1,59 +1,55 @@
-﻿@page "{id}"
+﻿@page "/upload-schedule/{id}"
 @model Reserve.Pages.Appointment.CreateCalendarModel
 
 @Html.AntiForgeryToken()
+<style>
+    a{
+        color:#000000;
+        text-decoration: none;
+    }
+
+    .fc .fc-button-primary {
+        color: #FFFFFF;
+        background-color: #06adef !important;
+        border-color: #FFFFFF !important;
+    }
+
+    .fc .fc-button-primary:hover {
+        color: #FFFFFF;
+        background-color: #20a3d7 !important;
+        border-color: #FFFFFF !important;
+    }
+</style>
+<script src='https://fastly.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 
 <h1 class="notification-title mb-5">Upload Your schedule!</h1>
 <div class="d-flex flex-column justify-content-center align-items-center col-12">
     <div class="mb-lg-5">
         <div class="d-flex flex-column align-items-center justify-content-center">
             <div class="d-flex flex-lg-row flex-sm-column justify-content-around create-calendar mb-lg-5 mb-md-5 mb-sm-5">
-                <div class="col-1">
+                <div class="d-flex align-items-center">
                     <label asp-for="NewAvailabilitySlot.StartTime" class="form-label">From:</label>
                 </div>
                 <input asp-for="NewAvailabilitySlot.StartTime" type="datetime-local" name="NewAvailabilitySlot.StartTime" id="NewAvailabilitySlot_StartTime" class="form-control w-25 create-calendar-slots" />
-                <div class="col-1">
+                <div class="d-flex align-items-center">
                     <label asp-for="NewAvailabilitySlot.EndTime" class="form-label">To:</label>
                 </div>
                 <input asp-for="NewAvailabilitySlot.EndTime" type="datetime-local" name="NewAvailabilitySlot.EndTime" id="NewAvailabilitySlot_EndTime" class="form-control w-25 create-calendar-slots" />
                 <button class="btn reserve-blue-button create-calendar-slots" id="Add" type="button">Add</button>
             </div>
-            <div class="table-responsive">
-                <table class="table col-lg-12 col-md-12 col-sm-6">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-
-                    </tbody>
-                </table>
-            </div>
+            
         </div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     </div>
 </div>
-<div class="d-flex justify-content-center">
+<div id="calendar"></div>
+<div class="d-flex justify-content-center mt-3">
     <button type="submit" onclick="postDataToServer('@Model.NewAppointmentCalendar.Id.ToString()','@Model.NewAppointmentCalendar.Name', '@Model.NewAppointmentCalendar.Email','@Model.NewAppointmentCalendar.Description')" class="btn btn-custom reserve-blue-button">Continue</button>
 </div>
 
 
 <script>
-    function formatTimeTo12Hour(time) {
-        const date = new Date();
-        const [hours, minutes] = time.split(":").map(Number);
-
-        date.setHours(hours);
-        date.setMinutes(minutes);
-
-        const formattedTime = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
-
-        return formattedTime;
-    }
-
+    let availableSlots = [];
     function formatLocalDateTime(inputValue) {
         const inputDate = new Date(inputValue);
 
@@ -78,11 +74,18 @@
         return `${month}/${day}/${year} ${hours}:${minutes} ${ampm}`;
     }
 
-
-
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {      
+        var calendarEl = document.getElementById('calendar');
+        let calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+        });
+        calendar.render();
         var addButton = document.getElementById("Add");
-        var tableBody = document.getElementById("table-body");
         var startTimeInput = document.getElementById("NewAvailabilitySlot_StartTime");
         var endTimeInput = document.getElementById("NewAvailabilitySlot_EndTime");
         addButton.addEventListener("click", function () {
@@ -96,28 +99,21 @@
                 alert("End Time must be after Start Time");
                 return;
             }
-            var newRow = document.createElement("tr");
-            newRow.innerHTML = `
-                    <td>${formatLocalDateTime(startTime)}</td>
-                    <td>${formatLocalDateTime(endTime)}</td>
-                    <td><button type="button" class="btn reserve-red-button">Remove</button></td>
-                `;
-
-            tableBody.appendChild(newRow);
-
-
-
+            var event = {
+                title: "Free Slot",
+                start: new Date(startTime).toISOString(),
+                end: new Date(endTime).toISOString(),
+                backgroundColor: "#06adef",
+                textColor: "#ffffff",
+                borderColor: "#06adef",
+            };
+            availableSlots.push({
+                startTime: new Date(startTime).toISOString(),
+                endTime: new Date(endTime).toISOString()
+            });
+            calendar.addEvent(event);
             startTimeInput.value = "";
             endTimeInput.value = "";
-        });
-
-        tableBody.addEventListener("click", function (event) {
-            if (event.target && event.target.classList.contains("reserve-red-button")) {
-                var row = event.target.closest("tr");
-                if (row) {
-                    row.remove();
-                }
-            }
         });
     }); 
 </script>
@@ -126,26 +122,12 @@
     async function postDataToServer(id, name, email, description) {
         const url = "/create-calendar";
 
-        const tableRows = document.querySelectorAll("#table-body tr");
-        const tableData = [];
-        tableRows.forEach((row) => {
-            const cells = row.querySelectorAll("td");
-            if (cells.length === 3) {
-                var startTime = cells[0].textContent;
-                startTime = new Date(startTime).toISOString();
-                var endTime = cells[1].textContent;
-                endTime = new Date(endTime).toISOString();
-
-                tableData.push({startTime, endTime });
-            }
-        });
-
         const data = {
             id: id,
             name: name,
             email: email,
             description: description,
-            availabilitySlots: tableData
+            availabilitySlots: availableSlots
         }
         var options = {
             method: 'POST',
@@ -161,9 +143,7 @@
         try {
             var response = await fetch(url, options);
             if (response.ok) {
-                console.log('Request succeeded');
                 const successHeader = response.headers.get('X-Success-Redirect');
-                console.log(successHeader);
                 if (successHeader) {
                     window.location.href = successHeader;
                 } else {
@@ -176,3 +156,4 @@
         }
     }
 </script>
+

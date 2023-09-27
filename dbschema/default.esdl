@@ -1,14 +1,6 @@
 module default {
-    type User{
-        required name: str;
-        required phone_number: str;
-        required email: str{
-            constraint exclusive;
-        };
-        required gender: str;
-        required date_of_birth: datetime;
-        required password: str;
-    }
+    scalar type RescheduleState extending enum<Pending, Accepted, Declined>;
+    scalar type AppointmentState extending enum<Pending, Done>;
     type CasualEvent{
         required title: str;
         required organizer_name: str;
@@ -39,15 +31,6 @@ module default {
             on target delete delete source;
         }
     }
-    type Business{
-        required name: str;
-        required email: str{
-            constraint exclusive;
-        };
-        required password: str;
-        required description: str;
-        multi availability_slots: Availability
-    }
     type AppointmentDetails{
         required reserver_name: str;
         required reserver_phone_number: str;
@@ -55,6 +38,7 @@ module default {
         required slot: Availability{
             on target delete delete source;
         }
+        required appointment_status: AppointmentState;
     }
     type QueueEvent{
         required title: str;
@@ -71,7 +55,7 @@ module default {
             on target delete delete source;
         }
         required queue_number: int32;
-	status: str;
+	    status: str;
     }
     type AppointmentCalendar{
         required name: str;
@@ -94,11 +78,13 @@ module default {
             on target delete delete source;
         }
     }
-type RescheduleRequest {
-    required original_appointment: AppointmentDetails;
-    required requested_time: Availability;
-    required is_accepted: bool;
-}
-
-
+    type AppointmentReschedule {
+        required original_appointment: AppointmentDetails{
+            on target delete delete source;
+        }
+        required requested_time: Availability{
+            on target delete delete source;
+        };
+        required reschedule_status: RescheduleState;
+    }
 }

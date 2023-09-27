@@ -10,6 +10,9 @@ using System;
 using System.Globalization;
 using static Reserve.Helpers.ImageHelper;
 using static Reserve.Core.Features.MailService.MailFormats;
+using Reserve.Helpers;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace Reserve.Pages.Event;
 [BindProperties]
@@ -52,6 +55,19 @@ public class CreateEventModel : PageModel
             if (imageFile is not null)
             {
                 NewEvent.ImageUrl = SaveImage(imageFile, _webHostEnvironment);
+                string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, NewEvent.ImageUrl);
+                string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/event"));
+                string fullPath = Path.Combine(path, Path.GetFileName(NewEvent.ImageUrl));
+                if (imageFile.Length >= 3 * 1024 * 1024)
+                {
+                    using (Image image = Image.Load(imageFile.OpenReadStream()))
+                    {
+                        int width = image.Width / 2;
+                        int height = image.Height / 2;
+                        image.Mutate(x => x.Resize(width, height));
+                        image.Save(fullPath);
+                    }
+                }
             }
             CasualEvent? casualEvent = new CasualEvent
             {
@@ -76,7 +92,7 @@ public class CreateEventModel : PageModel
                     Body = EventCreationNotification(casualEvent.Id.ToString())
                 };
                 //await _emailService.SendEmailAsync(mailRequest);
-                return RedirectToPage("CreationNotification", new { id = casualEvent.Id });
+                return RedirectToPage("CreationNotification", new { id = GuidShortener.ShortenGuid(casualEvent.Id) });
             }
             else
             {

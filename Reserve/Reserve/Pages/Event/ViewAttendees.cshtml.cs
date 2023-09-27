@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Event;
+using Reserve.Helpers;
 namespace Reserve.Pages.Event;
 
 public class ViewAttendeesModel : PageModel
@@ -18,8 +19,9 @@ public class ViewAttendeesModel : PageModel
     }
     public async Task<IActionResult> OnGet()
     {
-        CasualEvent? eventDetails = await _eventRepository.GetByIdAsync(Id);
-        List<CasualTicket> attendees = await _eventRepository.GetAttendeesAsync(Id);
+        string restoredId = GuidShortener.RestoreGuid(Id).ToString();
+        CasualEvent? eventDetails = await _eventRepository.GetByIdAsync(restoredId);
+        List<CasualTicket> attendees = await _eventRepository.GetAttendeesAsync(restoredId);
         if(eventDetails is null)
         {
             return RedirectToPage("EventError");
