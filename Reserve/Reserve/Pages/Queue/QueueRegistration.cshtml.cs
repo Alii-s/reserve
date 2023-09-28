@@ -51,10 +51,35 @@ public class QueueRegistrationModel : PageModel
         {
             return Page();
         }
+
+        bool doesPhoneNumberExist = await _queueRepository.DoesPhoneNumberExist(NewQueueTicket.CustomerPhoneNumber, QueueEventId.ToString());
+        if (doesPhoneNumberExist)
+        {
+            ModelState.AddModelError("NewQueueTicket.CustomerPhoneNumber", "This phone number already exists in the queue.");
+
+            // Repopulate the data
+            QueueEvent CurrentQueue = await _queueRepository.GetQueueEventByID(QueueEventId.ToString());
+            QueueEvent = new QueueEventView()
+            {
+                Id = CurrentQueue.Id,
+                Title = CurrentQueue.Title,
+                OrganizerEmail = CurrentQueue.OrganizerEmail,
+                Description = CurrentQueue.Description,
+                CurrentNumberServed = CurrentQueue.CurrentNumberServed,
+                TicketCounter = CurrentQueue.TicketCounter,
+                LastReset = CurrentQueue.LastReset
+            };
+            NextQueueNumber = await _queueRepository.GetNextQueueNumber(QueueEventId.ToString());
+
+            return Page();
+        }
+
         NewQueueTicket.QueueNumber = await _queueRepository.GetNextQueueNumber(QueueEventId.ToString());
         await _queueRepository.IncrementTicketCounter(QueueEventId.ToString());
         NewQueueTicket = await _queueRepository.RegisterCustomer(NewQueueTicket);
-        return RedirectToPage("QueueTicket", new { QueueTicketId = NewQueueTicket.Id, QueueId = QueueEventId });
+        return RedirectToPage("QueueTicket", new { QueueTicketId = GuidShortener.ShortenGuid(NewQueueTicket.Id), QueueId = GuidShortener.ShortenGuid(QueueEventId) });
     }
+
+
 
 }

@@ -213,4 +213,21 @@ FILTER .queue_event = QueueEvent AND NOT exists .status;
       });
     }
 
+    public async Task<bool> DoesPhoneNumberExist(string phoneNumber, string queueEventId)
+    {
+        Guid guidId = Guid.Parse(queueEventId);
+        var query = @"SELECT EXISTS (
+                    SELECT QueueTicket 
+                    FILTER .customer_phone_number = <str>$phoneNumber AND .queue_event.id = <uuid>$queueEventId
+                  );";
+        var result = await _client.QuerySingleAsync<bool>(query, new Dictionary<string, object?>
+    {
+        {"phoneNumber", phoneNumber },
+        {"queueEventId", guidId }
+    });
+        return result;
+    }
+
+
+
 }

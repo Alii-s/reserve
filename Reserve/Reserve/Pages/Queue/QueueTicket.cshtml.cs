@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Reserve.Core.Features.Queue;
+using Reserve.Helpers;
 using System.ComponentModel.DataAnnotations;
 
 namespace Reserve.Pages.Queue;
@@ -18,10 +19,12 @@ public class QueueTicketModel : PageModel
     }
 
 
-    public async Task<IActionResult> OnGet(Guid QueueTicketId, Guid QueueId)
+    public async Task<IActionResult> OnGet(string QueueTicketId, string QueueId)
     {
+        Guid QueueTicketid = GuidShortener.RestoreGuid(QueueTicketId);
+        Guid Queueid = GuidShortener.RestoreGuid(QueueId);
         CurrentUrl = $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
-        QueueEvent CurrentQueue = await _queueRepository.GetQueueEventByID(QueueId.ToString());
+        QueueEvent CurrentQueue = await _queueRepository.GetQueueEventByID(Queueid.ToString());
         CurrentQueueView = new QueueEventView()
         {
             Id = CurrentQueue.Id,
@@ -33,7 +36,7 @@ public class QueueTicketModel : PageModel
             LastReset = CurrentQueue.LastReset
         };
 
-        QueueTicket QueueTicket = await _queueRepository.GetQueueTicketByID(QueueTicketId.ToString());
+        QueueTicket QueueTicket = await _queueRepository.GetQueueTicketByID(QueueTicketid.ToString());
         QueueTicketView = new QueueTicketView()
         {
             Id = QueueTicket.Id,
