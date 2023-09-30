@@ -1,4 +1,4 @@
-﻿@page "/upload-schedule/{id}"
+﻿@page "/plan-schedule/{id}"
 @model Reserve.Pages.Appointment.CreateCalendarModel
 
 @Html.AntiForgeryToken()
@@ -21,8 +21,15 @@
     }
 </style>
 <script src='https://fastly.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
 
-<h1 class="notification-title mb-5">Upload Your schedule!</h1>
+<div class="container">
+    <h1 class="event-title">Plan Your schedule!</h1>
+</div>
+<div class="container">
+    <p class="notification-text d-flex justify-content-center">Add slots to your calendar. After you are finished, click the continue button below. You can also click on a slot to delete it.</p>
+</div>
 <div class="d-flex flex-column justify-content-center align-items-center col-12">
     <div class="mb-lg-5">
         <div class="d-flex flex-column align-items-center justify-content-center">
@@ -83,6 +90,14 @@
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
+            eventClick: function (info) {
+                var event = info.event;
+                event.remove();
+                availableSlots = availableSlots.filter(function (slot) {
+                    return slot.startTime !== event.start.toISOString() && slot.endTime !== event.end.toISOString();
+                });
+                toastr.info("slot removed successfully");
+            },
         });
         calendar.render();
         var addButton = document.getElementById("Add");
@@ -112,6 +127,8 @@
                 endTime: new Date(endTime).toISOString()
             });
             calendar.addEvent(event);
+            toastr.options.closeButton = true;
+            toastr.info("slot added successfully");
             startTimeInput.value = "";
             endTimeInput.value = "";
         });

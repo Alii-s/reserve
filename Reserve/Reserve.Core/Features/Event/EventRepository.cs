@@ -1,4 +1,5 @@
 ﻿using EdgeDB;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,11 @@ namespace Reserve.Core.Features.Event;
 public class EventRepository : IEventRepository
 {
     private readonly EdgeDBClient _client;
-    public EventRepository(EdgeDBClient client)
+    private readonly ILogger<EventRepository> _logger;
+    public EventRepository(EdgeDBClient client, ILogger<EventRepository> logger)
     {
         _client = client;
+        _logger = logger;
     }
 
     public async Task<CasualEvent?> CreateAsync(CasualEvent? newEvent)
@@ -55,7 +58,7 @@ public class EventRepository : IEventRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         } 
     }
@@ -75,7 +78,7 @@ public class EventRepository : IEventRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -94,7 +97,7 @@ public class EventRepository : IEventRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -140,7 +143,7 @@ public class EventRepository : IEventRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -176,7 +179,7 @@ public class EventRepository : IEventRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null!;
         }
     }
@@ -216,7 +219,7 @@ public class EventRepository : IEventRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
 
@@ -238,7 +241,7 @@ public class EventRepository : IEventRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
 
@@ -273,7 +276,7 @@ public class EventRepository : IEventRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -311,7 +314,7 @@ public class EventRepository : IEventRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -343,7 +346,7 @@ public class EventRepository : IEventRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
     public async Task<List<CasualTicket?>> CheckIfAlreadyReserved(CasualTicket? newTicket)
@@ -379,7 +382,7 @@ public class EventRepository : IEventRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null!;
         }
     }
@@ -392,7 +395,7 @@ public class EventRepository : IEventRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null!;
         }
     }

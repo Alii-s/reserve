@@ -1,5 +1,6 @@
 ﻿using EdgeDB;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,9 +14,11 @@ namespace Reserve.Core.Features.Appointment;
 public class AppointmentRepository : IAppointmentRepository
 {
     private readonly EdgeDBClient _client;
-    public AppointmentRepository(EdgeDBClient client)
+    private readonly ILogger<AppointmentRepository> _logger;
+    public AppointmentRepository(EdgeDBClient client, ILogger<AppointmentRepository> logger)
     {
         _client = client;
+        _logger = logger;
     }
     public async Task CreateAppointmentCalendarAsync(AppointmentCalendar appointmentCalendar, string availabilitySlots)
     {
@@ -57,7 +60,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -111,7 +114,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -130,11 +133,11 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
 
-    public async Task<AppointmentDetails> GetAppointmentDetailsByAvailabilityId(string id)
+    public async Task<AppointmentDetails?> GetAppointmentDetailsByAvailabilityId(string id)
     {
         try
         {
@@ -148,7 +151,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -179,7 +182,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -206,7 +209,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -224,7 +227,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
 
@@ -258,7 +261,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
 
@@ -292,7 +295,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -318,7 +321,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -348,7 +351,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -385,11 +388,11 @@ public class AppointmentRepository : IAppointmentRepository
                     Select Inserted{*};";
                 appointmentDetails = await tx.QuerySingleAsync<AppointmentDetails>(query2, new Dictionary<string, object?>
                 {
-                    {"name", appointmentDetails.ReserverName },
+                    { "name", appointmentDetails.ReserverName },
                     { "email", appointmentDetails.ReserverEmail },
                     { "reserver_phone_number", appointmentDetails.ReserverPhoneNumber },
                     { "id", appointmentDetails.Slot.Id },
-                    {"status", AppointmentState.Pending }
+                    { "status", AppointmentState.Pending }
                 });
                 
             });
@@ -397,7 +400,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -433,7 +436,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -468,7 +471,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
 
@@ -515,7 +518,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
     public async Task<List<AppointerNotifications>> GetAppointmentNotificationsForCalendarAsync(string id)
@@ -549,7 +552,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -567,7 +570,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
     public async Task<List<Availability>> GetFreeSlotsOfCalendarByIdAsync(AppointmentDetails appointment)
@@ -594,7 +597,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -667,7 +670,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
     public async Task FinishAppointment(string id)
@@ -688,7 +691,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
     public async Task<AppointmentCalendar> GetCalendarFromEmail(string email)
@@ -735,7 +738,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -757,7 +760,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -828,7 +831,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
     public async Task AcceptRescheduling(string id)
@@ -880,7 +883,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
         }
     }
     public async Task<List<AppointmentReschedule>> GetAllRequestsForCalendar(string id)
@@ -931,7 +934,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -966,7 +969,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -1018,7 +1021,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
@@ -1054,7 +1057,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            _logger.LogError(e.Message);
             return null;
         }
     }
