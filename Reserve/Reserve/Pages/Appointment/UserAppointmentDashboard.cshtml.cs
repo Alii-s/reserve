@@ -12,7 +12,7 @@ public class UserAppointmentDashboardModel : PageModel
     private readonly IAppointmentRepository _appointmentRepository;
     public List<DateTime> FreeSlots { get; set; } = new();
     public DateTime SelectedDate { get; set; }
-    public List<AppointmentReschedule> AppointmentReschedules { get; set; } = new();
+    public AppointmentReschedule AppointmentReschedule { get; set; }
     public UserAppointmentDashboardModel(IAppointmentRepository appointmentRepository)
     {
         _appointmentRepository = appointmentRepository;
@@ -39,6 +39,7 @@ public class UserAppointmentDashboardModel : PageModel
             return RedirectToPage("AppointmentError");
         }
         FreeSlots = availableSlots.Select(x => x.StartTime).ToList();
+        AppointmentReschedule = await _appointmentRepository.GetRescheduleByIdAsync(Id);
         return Page();
     }
     public async Task<IActionResult> OnPost()

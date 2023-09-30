@@ -65,7 +65,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
     }
 
-    public async Task<AppointmentReschedule> GetRescheduleByIdAsync(string id)
+    public async Task<AppointmentReschedule?> GetRescheduleByIdAsync(string id)
     {
         try
         {
@@ -157,7 +157,7 @@ public class AppointmentRepository : IAppointmentRepository
     }
 
 
-    public async Task<List<Availability>> GetSlotsFromCalendarIdAsync(string id)
+    public async Task<List<Availability?>> GetSlotsFromCalendarIdAsync(string id)
     {
         try
         {
@@ -186,7 +186,7 @@ public class AppointmentRepository : IAppointmentRepository
             return null;
         }
     }
-    public async Task<AppointmentCalendar> CreateAppointmentInfoAsync(AppointmentCalendar appointmentCalendar)
+    public async Task<AppointmentCalendar?> CreateAppointmentInfoAsync(AppointmentCalendar? appointmentCalendar)
     {
         try
         {
@@ -199,7 +199,7 @@ public class AppointmentRepository : IAppointmentRepository
                         }
                     )
                     Select Inserted{*};";
-            appointmentCalendar = await _client.QuerySingleAsync<AppointmentCalendar>(query, new Dictionary<string, object?>
+            appointmentCalendar = await _client.QuerySingleAsync<AppointmentCalendar?>(query, new Dictionary<string, object?>
             {
                 {"name", appointmentCalendar.Name },
                 { "email", appointmentCalendar.Email },
@@ -266,7 +266,7 @@ public class AppointmentRepository : IAppointmentRepository
     }
 
 
-    public async Task<Availability> AddAppointmentSlotAsync(string id, Availability newSlot)
+    public async Task<Availability?> AddAppointmentSlotAsync(string id, Availability newSlot)
     {
         try
         {
@@ -285,7 +285,7 @@ public class AppointmentRepository : IAppointmentRepository
                             }
                         )
                         Select Inserted{*};";
-            return await _client.QuerySingleAsync<Availability>(query, new Dictionary<string, object?>
+            return await _client.QuerySingleAsync<Availability?>(query, new Dictionary<string, object?>
             {
                 {"start_time", newSlot.StartTime },
                 {"end_time", newSlot.EndTime },
@@ -300,7 +300,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
     }
 
-    public async Task<List<Availability>> GetOpenSlotsAsync(string id)
+    public async Task<List<Availability?>> GetOpenSlotsAsync(string id)
     {
         try
         {
@@ -314,7 +314,7 @@ public class AppointmentRepository : IAppointmentRepository
                             FILTER
                               .available = true AND
                               .appointment_calendar.id = <uuid>$id;";
-            return (await _client.QueryAsync<Availability>(query, new Dictionary<string, object?>
+            return (await _client.QueryAsync<Availability?>(query, new Dictionary<string, object?>
             {
                 {"id", guidId }
             })).ToList();
@@ -325,7 +325,7 @@ public class AppointmentRepository : IAppointmentRepository
             return null;
         }
     }
-    public async Task<Availability> GetSlotByIdAsync(string id)
+    public async Task<Availability?> GetSlotByIdAsync(string id)
     {
         try
         {
@@ -344,7 +344,7 @@ public class AppointmentRepository : IAppointmentRepository
                             }
                             FILTER
                               Availability.id = <uuid>$id;";
-            return await _client.QuerySingleAsync<Availability>(query, new Dictionary<string, object?>
+            return await _client.QuerySingleAsync<Availability?>(query, new Dictionary<string, object?>
             {
                 {"id", guidId }
             });
@@ -356,7 +356,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
     }
 
-    public async Task<AppointmentDetails> CreateAppointmentMeetingAsync(AppointmentDetails appointmentDetails)
+    public async Task<AppointmentDetails?> CreateAppointmentMeetingAsync(AppointmentDetails? appointmentDetails)
     {
         ArgumentNullException.ThrowIfNull(appointmentDetails);
         try
@@ -404,7 +404,7 @@ public class AppointmentRepository : IAppointmentRepository
             return null;
         }
     }
-    public async Task<List<AppointmentDetails>> GetAppointmentDetailsForCalendarAsync(string id)
+    public async Task<List<AppointmentDetails?>> GetAppointmentDetailsForCalendarAsync(string id)
     {
         try
         {
@@ -428,7 +428,7 @@ public class AppointmentRepository : IAppointmentRepository
                             },
                             appointment_status
                         } filter .slot.appointment_calendar.id = <uuid>$id and .slot.available = false and .appointment_status = <AppointmentState>$status;";
-            return (await _client.QueryAsync<AppointmentDetails>(query, new Dictionary<string, object?>
+            return (await _client.QueryAsync<AppointmentDetails?>(query, new Dictionary<string, object?>
             {
                 { "id", guidId },
                 {"status", AppointmentState.Pending }
@@ -440,7 +440,7 @@ public class AppointmentRepository : IAppointmentRepository
             return null;
         }
     }
-    public async Task<AppointmentDetails> GetAppointmentDetailsByIdAsync(string id)
+    public async Task<AppointmentDetails?> GetAppointmentDetailsByIdAsync(string id)
     {
         try
         {
@@ -464,7 +464,7 @@ public class AppointmentRepository : IAppointmentRepository
                         },
                         appointment_status
                     } filter .id = <uuid>$id;";
-            return await _client.QuerySingleAsync<AppointmentDetails>(query, new Dictionary<string, object?>
+            return await _client.QuerySingleAsync<AppointmentDetails?>(query, new Dictionary<string, object?>
             {
                 {"id", guidId },
             });
@@ -476,7 +476,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
 
     }
-    public async Task CancelAppointmentAsync(AppointmentDetails cancelledAppointment)
+    public async Task CancelAppointmentAsync(AppointmentDetails? cancelledAppointment)
     {
         try
         {
@@ -521,7 +521,7 @@ public class AppointmentRepository : IAppointmentRepository
             _logger.LogError(e.Message);
         }
     }
-    public async Task<List<AppointerNotifications>> GetAppointmentNotificationsForCalendarAsync(string id)
+    public async Task<List<AppointerNotifications?>> GetAppointmentNotificationsForCalendarAsync(string id)
     {
         try
         {
@@ -545,7 +545,7 @@ public class AppointmentRepository : IAppointmentRepository
                                 description
                             }
                         } filter .appointment_calendar.id = <uuid>$id;";
-            return (await _client.QueryAsync<AppointerNotifications>(query, new Dictionary<string, object?>
+            return (await _client.QueryAsync<AppointerNotifications?>(query, new Dictionary<string, object?>
             {
                 { "id", guidId }
             })).ToList();
@@ -573,7 +573,7 @@ public class AppointmentRepository : IAppointmentRepository
             _logger.LogError(e.Message);
         }
     }
-    public async Task<List<Availability>> GetFreeSlotsOfCalendarByIdAsync(AppointmentDetails appointment)
+    public async Task<List<Availability?>> GetFreeSlotsOfCalendarByIdAsync(AppointmentDetails appointment)
     {
         try
         {
@@ -590,7 +590,7 @@ public class AppointmentRepository : IAppointmentRepository
                                 description
                             }
                         } filter .appointment_calendar.id = <uuid>$id and .available = true;";
-            return (await _client.QueryAsync<Availability>(query, new Dictionary<string, object?>
+            return (await _client.QueryAsync<Availability?>(query, new Dictionary<string, object?>
             {
                 {"id", appointment.Slot.AppointmentCalendar.Id }
             })).ToList();
@@ -648,7 +648,7 @@ public class AppointmentRepository : IAppointmentRepository
                                 }
                             )
                             SELECT updated { * };";
-                Availability newDate = await tx.QuerySingleAsync<Availability>(query3, new Dictionary<string, object?>
+                Availability? newDate = await tx.QuerySingleAsync<Availability>(query3, new Dictionary<string, object?>
                 {
                     {"new_slot", newSlot },
                     {"id", appointmentDetails.Slot.AppointmentCalendar.Id }
@@ -664,7 +664,7 @@ public class AppointmentRepository : IAppointmentRepository
                 await tx.ExecuteAsync(query4, new Dictionary<string, object?>
                 {
                     {"id", appointmentDetails.Id },
-                    {"new_slot_id", newDate.Id }
+                    {"new_slot_id", newDate?.Id }
                 });
             });         
         }
@@ -694,7 +694,7 @@ public class AppointmentRepository : IAppointmentRepository
             _logger.LogError(e.Message);
         }
     }
-    public async Task<AppointmentCalendar> GetCalendarFromEmail(string email)
+    public async Task<AppointmentCalendar?> GetCalendarFromEmail(string email)
     {
         var query = @"select AppointmentCalendar {
                         id,
@@ -707,7 +707,7 @@ public class AppointmentRepository : IAppointmentRepository
             {"email", email }
         });
     }
-    public async Task<List<AppointmentDetails>> GetAppointmentsOfCalendar(string id)
+    public async Task<List<AppointmentDetails?>> GetAppointmentsOfCalendar(string id)
     {
         try
         {
@@ -743,7 +743,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
     }
 
-    public async Task<List<Availability>> GetFreeSlotsForCalendarView(string id)
+    public async Task<List<Availability?>> GetFreeSlotsForCalendarView(string id)
     {
         try
         {
@@ -815,7 +815,7 @@ public class AppointmentRepository : IAppointmentRepository
                             }
                         }
                       FILTER .id = <uuid>$id";
-            AppointmentReschedule declinedAppointment = await _client.QuerySingleAsync<AppointmentReschedule>(query, new Dictionary<string, object?>
+            AppointmentReschedule? declinedAppointment = await _client.QuerySingleAsync<AppointmentReschedule>(query, new Dictionary<string, object?>
             {
                 {"id", guidId }
             });
@@ -826,7 +826,7 @@ public class AppointmentRepository : IAppointmentRepository
                         };";
             await _client.ExecuteAsync(query, new Dictionary<string, object?>
             {
-                {"id", declinedAppointment.RequestedTime.Id }
+                {"id", declinedAppointment?.RequestedTime.Id }
             });
         }
         catch(Exception e)
@@ -886,7 +886,7 @@ public class AppointmentRepository : IAppointmentRepository
             _logger.LogError(e.Message);
         }
     }
-    public async Task<List<AppointmentReschedule>> GetAllRequestsForCalendar(string id)
+    public async Task<List<AppointmentReschedule?>> GetAllRequestsForCalendar(string id)
     {
         try
         {
@@ -947,7 +947,7 @@ public class AppointmentRepository : IAppointmentRepository
             {"id", Guid.Parse(id) }
         });
     }
-    public async Task<List<Availability>> GetPendingSlots(string id)
+    public async Task<List<Availability?>> GetPendingSlots(string id)
     {
         try
         {
@@ -973,7 +973,7 @@ public class AppointmentRepository : IAppointmentRepository
             return null;
         }
     }
-    public async Task<AppointmentReschedule> GetRequestByIdAsync(string id)
+    public async Task<AppointmentReschedule?> GetRequestByIdAsync(string id)
     {
         try
         {
@@ -1025,7 +1025,7 @@ public class AppointmentRepository : IAppointmentRepository
             return null;
         }
     }
-    public async Task<List<AppointmentDetails>> GetDoneAppointmentsByCalendarId(string id)
+    public async Task<List<AppointmentDetails?>> GetDoneAppointmentsByCalendarId(string id)
     {
         try
         {

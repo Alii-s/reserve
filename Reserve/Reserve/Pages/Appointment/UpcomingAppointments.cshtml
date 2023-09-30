@@ -32,7 +32,8 @@
     }
 </style>
 <script src='https://fastly.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
-
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
 
 
 @if(TempData["error"] != null)
@@ -233,7 +234,9 @@
                 calendar.addEvent(event);
                 startTimeInput.value = "";
                 endTimeInput.value = "";
+                toastr.info("Slot added successfully!");
             } else {
+                toastr.error("Slot could not be added!");
                 console.error(`API request failed with status code: ${response.status}`);
             }
         }
