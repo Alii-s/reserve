@@ -12,7 +12,7 @@ public class QueueRepository : IQueueRepository
         _client = client;
     }
 
-    public async Task<QueueEvent> Create(QueueEvent queueEvent)
+    public async Task<QueueEvent?> Create(QueueEvent queueEvent)
     {
         var query = @"WITH Inserted := (
                     INSERT QueueEvent {
@@ -36,7 +36,7 @@ public class QueueRepository : IQueueRepository
         return result;
     }
 
-    public async Task<QueueEvent> GetQueueEventByID(string id)
+    public async Task<QueueEvent?> GetQueueEventByID(string id)
     {
         Guid guidId = Guid.Parse(id);
         var query = @"SELECT QueueEvent {*} FILTER .id = <uuid>$id;";
@@ -48,7 +48,7 @@ public class QueueRepository : IQueueRepository
         return result;
     }
 
-    public async Task<QueueTicket> GetQueueTicketByID(string id)
+    public async Task<QueueTicket?> GetQueueTicketByID(string id)
     {
         Guid guidId = Guid.Parse(id);
         var query = @"SELECT QueueTicket {*} FILTER .id = <uuid>$id;";
@@ -86,7 +86,7 @@ public class QueueRepository : IQueueRepository
     }
 
 
-    public async Task<QueueTicket> RegisterCustomer(QueueTicket queueTicket)
+    public async Task<QueueTicket?> RegisterCustomer(QueueTicket queueTicket)
     {
         Guid guidId = queueTicket.QueueEvent.Id;
         var query = @"WITH Inserted := (
@@ -129,22 +129,22 @@ public class QueueRepository : IQueueRepository
             {"queueEventId", guidId }
         });
     }
-    public async Task<List<QueueTicket>> GetAttendees(string queueEventId)
+    public async Task<List<QueueTicket?>> GetAttendees(string queueEventId)
     {
         Guid guidId = Guid.Parse(queueEventId);
         var query = @"
                WITH
-    QueueEvent := (SELECT QueueEvent FILTER .id = <uuid>$queueEventId)
-SELECT QueueTicket {  
-    id,
-    customer_name,
-    customer_phone_number,
-    queue_number,
-    status,
-    queue_event: {*}
-} 
-FILTER .queue_event = QueueEvent AND NOT exists .status;
-";
+                QueueEvent := (SELECT QueueEvent FILTER .id = <uuid>$queueEventId)
+            SELECT QueueTicket {  
+                id,
+                customer_name,
+                customer_phone_number,
+                queue_number,
+                status,
+                queue_event: {*}
+            } 
+            FILTER .queue_event = QueueEvent AND NOT exists .status;
+            ";
         var result = await _client.QueryAsync<QueueTicket>(query, new Dictionary<string, object?>
 {
     {"queueEventId", guidId }
